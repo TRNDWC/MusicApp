@@ -1,7 +1,13 @@
 <resources>
-    <string name="app_name">BaseProject</string>
+    <string name="appname">BaseProject</string>
     <string name="home">Home</string>
     <string name="favorite">Favorite</string>
     <string name="splash">Splash</string>
+    <string name="signIn">Sign In</string>
+    <string name="millions_of_songs">Millions of songs</string>
+    <string name="free_on_spotify">Free on Spotify</string>
+    <string name="sign_up_free">Sign up free</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="log_in">Log in</string>
 
 </resources>
