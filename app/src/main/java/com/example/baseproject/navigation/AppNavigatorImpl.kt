@@ -2,7 +2,7 @@ package com.example.baseproject.navigation
 
 import android.os.Bundle
 import com.example.baseproject.R
-import com.example.core.navigationComponent.BaseNavigatorImpl
+import com.example.core.model.network.navigationComponent.BaseNavigatorImpl
 import com.example.setting.DemoNavigation
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
@@ -12,11 +12,11 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
     AppNavigation, DemoNavigation {
 
     override fun openSplashToHomeScreen(bundle: Bundle?) {
-        openScreen(R.id.action_splashFragment_to_homeFragment, bundle)
+        openScreen(R.id.action_splashFragment_to_loginFragment, bundle)
     }
 
     override fun openDemoViewPager(bundle: Bundle?) {
-        openScreen(R.id.action_homeFragment_to_demoViewPager, bundle)
+        openScreen(R.id.action_splashFragment_to_loginFragment, bundle)
     }
 
 }

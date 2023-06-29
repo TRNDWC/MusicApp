@@ -1,4 +1,4 @@
-package com.example.core.navigationComponent
+package com.example.core.model.network.navigationComponent
 
 import android.os.Bundle
 import androidx.annotation.IdRes
