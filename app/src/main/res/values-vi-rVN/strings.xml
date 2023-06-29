@@ -4,6 +4,11 @@
     <string name="home">Trang chu</string>
     <string name="favorite">Yeu thich</string>
     <string name="splash">Bắn tung tóe</string>
+    <string name="next">Tiếp tục</string>
+    <string name="password">Mật khẩu</string>
+    <string name="your_username">Tên đăng nhập</string>
+    <string name="what_s_your_email">Địa chỉ email</string>
+    <string name="sign_up">Tạo tài khoản</string>
     <string name="signIn">Tạo tài khoản</string>
     <string name="millions_of_songs">Hàng ngàn bài hát</string>
     <string name="free_on_spotify">Miễn phí trên Spotify</string>
