@@ -4,9 +4,9 @@
     <string name="favorite">Yeu thich</string>
     <string name="splash">Bắn tung tóe</string>
     <string name="sign_up">Sign up</string>
-    <string name="what_s_your_email">What\'s your email?</string>
-    <string name="your_username">Your username</string>
-    <string name="password">Password</string>
-    <string name="next">Next</string>
+    <string name="what_s_your_email">Email của bạn</string>
+    <string name="your_username">Tên đăng nhập</string>
+    <string name="password">Mật khẩu</string>
+    <string name="next">Tiếp tục</string>
 
 </resources>
