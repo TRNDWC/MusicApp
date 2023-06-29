@@ -1,7 +1,7 @@
 package com.example.baseproject.navigation
 
 import android.os.Bundle
-import com.example.core.navigationComponent.BaseNavigator
+import com.example.core.model.network.navigationComponent.BaseNavigator
 
 interface AppNavigation : BaseNavigator {
 

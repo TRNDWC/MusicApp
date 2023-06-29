@@ -28,11 +28,11 @@ class SplashFragment :
         }
     }
 
-    override fun bindingStateView() {
-        super.bindingStateView()
-        viewModel.splashTitle.observe(viewLifecycleOwner) {
-            binding.text.setTextCompute(getString(it))
-        }
-    }
+//    override fun bindingStateView() {
+//        super.bindingStateView()
+//        viewModel.splashTitle.observe(viewLifecycleOwner) {
+//            binding.text.setTextCompute(getString(it))
+//        }
+//    }
 
 }
