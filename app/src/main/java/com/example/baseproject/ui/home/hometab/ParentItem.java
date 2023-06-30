@@ -1,4 +1,4 @@
-package com.example.baseproject.ui.home.tab;
+package com.example.baseproject.ui.home.hometab;
 
 import java.util.List;
 

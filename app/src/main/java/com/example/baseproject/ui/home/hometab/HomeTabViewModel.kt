@@ -1,6 +1,5 @@
-package com.example.baseproject.ui.home.tab
+package com.example.baseproject.ui.home.hometab
 
-import androidx.lifecycle.ViewModel
 import com.example.core.base.BaseViewModel
 
 class HomeTabViewModel : BaseViewModel() {

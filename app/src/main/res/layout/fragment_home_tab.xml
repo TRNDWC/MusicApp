@@ -4,7 +4,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.home.tab.HomeTabFragment"
+        tools:context=".ui.home.hometab.HomeTabFragment"
         android:orientation="vertical"
         android:background="@drawable/hometab_bg_color">
         <LinearLayout

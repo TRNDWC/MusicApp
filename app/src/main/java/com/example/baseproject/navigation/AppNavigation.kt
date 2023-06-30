@@ -5,5 +5,6 @@ import com.example.core.model.network.navigationComponent.BaseNavigator
 
 interface AppNavigation : BaseNavigator {
 
-    fun openSplashToHomeScreen(bundle: Bundle? = null)
+    fun openSplashToLogin(bundle: Bundle? = null)
+    fun openLogintoHomeScreen(bundle: Bundle? = null)
 }

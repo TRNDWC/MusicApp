@@ -11,9 +11,14 @@ import javax.inject.Inject
 class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
     AppNavigation, DemoNavigation {
 
-    override fun openSplashToHomeScreen(bundle: Bundle?) {
+    override fun openSplashToLogin(bundle: Bundle?) {
         openScreen(R.id.action_splashFragment_to_loginFragment, bundle)
     }
+
+    override fun openLogintoHomeScreen(bundle: Bundle?) {
+        openScreen(R.id.action_splashFragment_to_homeTabFragment, bundle)
+    }
+
 
     override fun openDemoViewPager(bundle: Bundle?) {
         openScreen(R.id.action_splashFragment_to_loginFragment, bundle)
