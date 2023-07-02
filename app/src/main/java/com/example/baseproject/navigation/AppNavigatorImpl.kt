@@ -16,7 +16,11 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
     }
 
     override fun openLogintoHomeScreen(bundle: Bundle?) {
-        openScreen(R.id.action_splashFragment_to_homeTabFragment, bundle)
+        openScreen(R.id.action_loginFragment_to_homeFragment, bundle)
+    }
+
+    override fun openLogintoSignUp(bundle: Bundle?) {
+        openScreen(R.id.action_loginFragment_to_signupFragment, bundle)
     }
 
 

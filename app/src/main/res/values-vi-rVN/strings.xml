@@ -15,5 +15,7 @@
     <string name="sign_up_free">Đăng kí miễn phí</string>
     <string name="continue_with_google">Tiếp tục với Google</string>
     <string name="log_in">Đăng nhập</string>
+    <string name="search">Search</string>
+    <string name="library">Library</string>
 
 </resources>

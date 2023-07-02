@@ -15,5 +15,7 @@
     <string name="sign_up_free">Sign up free</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="log_in">Log in</string>
+    <string name="search">Search</string>
+    <string name="library">Library</string>
 
 </resources>
