@@ -15,7 +15,9 @@
     <string name="sign_up_free">Đăng kí miễn phí</string>
     <string name="continue_with_google">Tiếp tục với Google</string>
     <string name="log_in">Đăng nhập</string>
-    <string name="search">Search</string>
-    <string name="library">Library</string>
+    <string name="artists_songs_or_podcasts">Nghệ sĩ, bài hát hoặc podcasts</string>
+    <string name="category">Phân loại</string>
+    <string name="search">Tìm kiếm</string>
+    <string name="library">Thư viện</string>
 
 </resources>

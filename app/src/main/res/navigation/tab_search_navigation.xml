@@ -3,11 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_search_navigation"
-    app:startDestination="@+id/commonFragment">
-
+    app:startDestination="@id/searchFragment2">
     <fragment
-        android:id="@+id/commonFragment"
-        android:name="com.example.setting.ui.home.HomePageFragment"
-        android:label="CommonFragment"
-        tools:layout="@layout/fragment_home_page" />
+        android:id="@+id/searchFragment2"
+        android:name="com.example.baseproject.ui.search.SearchFragment"
+        android:label="SearchFragment" />
 </navigation>
