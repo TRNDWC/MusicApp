@@ -16,6 +16,8 @@
     <string name="continue_with_google">Continue with Google</string>
     <string name="log_in">Log in</string>
     <string name="search">Search</string>
+    <string name="artists_songs_or_podcasts">Artists, songs, or podcasts</string>
+    <string name="category">Category</string>
     <string name="library">Library</string>
 
 </resources>
