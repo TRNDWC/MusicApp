@@ -7,8 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentLoginBinding
+import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.ui.home.HomeFragment
 import com.example.core.base.BaseFragment
 
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
@@ -17,6 +21,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         fun newInstance() = LoginFragment()
     }
 
+    lateinit var appNavigation: AppNavigation
     private val viewModel: LoginViewModel by viewModels()
     override fun getVM() = viewModel
 
@@ -24,7 +29,14 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        val mLogin : FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
+        mLogin.loginTextView.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+        }
+        mLogin.freeSignUpButton.setOnClickListener{
+            findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
+        }
+        return mLogin.root
     }
 
 //    override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -32,5 +44,4 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 //        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 //        // TODO: Use the ViewModel
 //    }
-
 }

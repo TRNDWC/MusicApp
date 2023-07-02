@@ -6,7 +6,8 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.hometab.HomeTabFragment"
         android:orientation="vertical"
-        android:background="@drawable/hometab_bg_color">
+        android:background="@drawable/hometab_bg_color"
+        android:id="@+id/hometab_fragment">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

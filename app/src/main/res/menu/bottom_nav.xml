@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/common"
-        android:icon="@drawable/ic_birthday"
+        android:id="@+id/tab_home_navigation"
+        android:icon="@drawable/ic_home"
         android:contentDescription="@string/home"
         android:title="@string/home" />
 
     <item
-        android:id="@+id/favorite"
-        android:icon="@drawable/ic_birthday"
-        android:contentDescription="@string/favorite"
-        android:title="@string/favorite" />
+        android:id="@+id/tab_search_navigation"
+        android:icon="@drawable/ic_search"
+        android:contentDescription="@string/search"
+        android:title="@string/search" />
+
+    <item
+        android:id="@+id/tab_library_navigation"
+        android:icon="@drawable/ic_musiclibrary"
+        android:contentDescription="@string/library"
+        android:title="@string/library" />
 </menu>

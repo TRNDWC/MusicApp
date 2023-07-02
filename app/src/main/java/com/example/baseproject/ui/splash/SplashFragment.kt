@@ -24,7 +24,7 @@ class SplashFragment :
         super.bindingAction()
 
         viewModel.actionSPlash.observe(viewLifecycleOwner) {
-            appNavigation.openLogintoHomeScreen()
+            appNavigation.openSplashToLogin()
         }
     }
 
