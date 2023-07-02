@@ -19,5 +19,8 @@
     <string name="category">Phân loại</string>
     <string name="search">Tìm kiếm</string>
     <string name="library">Thư viện</string>
+    <string name="library_music">Library</string>
+    <string name="add_artist">Add artist</string>
+    <string name="add_playlist">Add playlist</string>
 
 </resources>

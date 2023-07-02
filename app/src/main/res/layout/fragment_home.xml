@@ -5,7 +5,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/black">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_container"
@@ -14,17 +15,63 @@
             android:layout_height="match_parent"
             app:defaultNavHost="true"
             app:navGraph="@navigation/home_navigation" />
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:background="@drawable/nav_bar"
-            app:menu="@menu/bottom_nav"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:padding="5dp"
-            app:itemIconTint="@color/color_btn"
-            app:itemTextColor="@color/color_btn"
-            app:itemRippleColor="@color/bottomnav_ripple" />
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:padding="5dp"
+                android:layout_margin="5dp"
+                android:background="@drawable/play_background">
+                <ImageView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp">
+                </ImageView>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:layout_weight="1"
+                    android:text="ABN\nDEF"
+                    android:layout_gravity="center_vertical">
+                </TextView>
+                <ImageButton
+                    android:id="@+id/pre_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/ic_pre">
+                </ImageButton>
+                <ImageButton
+                    android:id="@+id/play_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/ic_play">
+                </ImageButton>
+                <ImageButton
+                    android:id="@+id/next_btn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:src="@drawable/ic_next">
+                </ImageButton>
+            </LinearLayout>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_nav"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:background="@drawable/nav_bar"
+                app:menu="@menu/bottom_nav"
+                android:padding="5dp"
+                app:itemIconTint="@color/color_btn"
+                app:itemTextColor="@color/color_btn"
+                app:itemRippleColor="@color/bottomnav_ripple" />
+        </LinearLayout>
     </FrameLayout>
 </layout>

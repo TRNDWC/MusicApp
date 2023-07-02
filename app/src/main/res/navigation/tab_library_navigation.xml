@@ -3,11 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_library_navigation"
-    app:startDestination="@id/favoriteFragment">
-
+    app:startDestination="@id/libraryFragment">
     <fragment
-        android:id="@+id/favoriteFragment"
-        android:name="com.example.setting.ui.tabFavorite.FavoriteFragment"
-        android:label="FavoriteFragment"
-        tools:layout="@layout/fragment_favorite" />
+        android:id="@+id/libraryFragment"
+        android:name="com.example.baseproject.ui.library.LibraryFragment"
+        android:label="LibraryFragment" />
 </navigation>
