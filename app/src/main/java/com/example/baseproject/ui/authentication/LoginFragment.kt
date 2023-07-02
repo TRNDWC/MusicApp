@@ -14,13 +14,16 @@ import com.example.baseproject.databinding.FragmentLoginBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.ui.home.HomeFragment
 import com.example.core.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layout.fragment_login) {
 
     companion object {
         fun newInstance() = LoginFragment()
     }
-
+    @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: LoginViewModel by viewModels()
     override fun getVM() = viewModel
@@ -31,10 +34,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     ): View? {
         val mLogin : FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
         mLogin.loginTextView.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
+            appNavigation.openLogintoHomeScreen()
         }
         mLogin.freeSignUpButton.setOnClickListener{
-            findNavController().navigate(R.id.action_loginFragment_to_signupFragment)
+            appNavigation.openLogintoSignUp()
         }
         return mLogin.root
     }

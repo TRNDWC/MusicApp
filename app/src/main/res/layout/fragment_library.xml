@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.library.LibraryFragment"
+        android:background="@color/black">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="40dp"
+            android:paddingHorizontal="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <ImageButton
+                android:id="@+id/avatar_btn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="15dp"
+                android:src="@drawable/ic_launcher_foreground"
+                android:layout_gravity="center_vertical">
+            </ImageButton>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/library_music"
+                android:textSize="28sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical">
+            </TextView>
+
+            <ImageView
+                android:id="@+id/search_lib"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="15dp"
+                android:src="@drawable/ic_search">
+            </ImageView>
+        </LinearLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/library_rcv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        tools:listitem="@layout/parent_layout">
+                    </androidx.recyclerview.widget.RecyclerView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>
