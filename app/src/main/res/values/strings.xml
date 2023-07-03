@@ -10,8 +10,8 @@
     <string name="what_s_your_email">What\'s your email?</string>
     <string name="sign_up">Sign up</string>
     <string name="signIn">Sign In</string>
-    <string name="millions_of_songs">Millions of songs</string>
-    <string name="free_on_spotify">Free on Spotify</string>
+    <string name="millions_of_songs">Millions of songs\nFree on Spotify</string>
+
     <string name="sign_up_free">Sign up free</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="log_in">Log in</string>
