@@ -15,8 +15,6 @@ class CategoryAdapter(private val categoryList: List<SearchCategoryItem>): Recyc
         val categoryTitle: TextView = itemView.searchCategory
     }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val mSearchCategoryItem: SearchCategoryBinding = SearchCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return CategoryViewHolder(mSearchCategoryItem)

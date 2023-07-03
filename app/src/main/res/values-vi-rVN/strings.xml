@@ -10,8 +10,7 @@
     <string name="what_s_your_email">Địa chỉ email</string>
     <string name="sign_up">Tạo tài khoản</string>
     <string name="signIn">Tạo tài khoản</string>
-    <string name="millions_of_songs">Hàng ngàn bài hát</string>
-    <string name="free_on_spotify">Miễn phí trên Spotify</string>
+    <string name="millions_of_songs">Hàng ngàn bài hát\nMiễn phí trên Spotify</string>
     <string name="sign_up_free">Đăng kí miễn phí</string>
     <string name="continue_with_google">Tiếp tục với Google</string>
     <string name="log_in">Đăng nhập</string>
