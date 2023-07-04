@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentSearchBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.baseproject.ui.home.HomeViewModel
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,7 +48,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         val layoutManager = GridLayoutManager(mSearchFragment!!.root.context, 2)
 
         val searchCategoryAdapter = CategoryAdapter(dummyCategoryList())
-        searchCategoryAdapter.setOnItemClickListener(object : CategoryAdapter.OnItemClickListener{
+        searchCategoryAdapter.setOnItemClickListener(object : ItemClickNavigation{
             override fun onItemClick(position: Int) {
                 appNavigation.openHomeScreentoPlaylistScreen()
             }

@@ -1,5 +1,6 @@
 package com.example.baseproject.ui.search
 
+import android.content.ClipData.Item
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -10,24 +11,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.SearchCategoryBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.navigation.ItemClickNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
 class CategoryAdapter(private val categoryList: List<SearchCategoryItem>): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    private lateinit var myListener: OnItemClickListener
+    private lateinit var myListener: ItemClickNavigation
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
-    }
-
-
-    fun setOnItemClickListener(listener: OnItemClickListener){
+    fun setOnItemClickListener(listener: ItemClickNavigation){
         myListener = listener
     }
 
-    inner class CategoryViewHolder(itemView: SearchCategoryBinding, listener: OnItemClickListener): RecyclerView.ViewHolder(itemView.root){
+    inner class CategoryViewHolder(itemView: SearchCategoryBinding, listener: ItemClickNavigation): RecyclerView.ViewHolder(itemView.root){
         val categoryTitle: TextView = itemView.searchCategory
 
         init {
