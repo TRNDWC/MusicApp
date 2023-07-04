@@ -50,7 +50,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         val searchCategoryAdapter = CategoryAdapter(dummyCategoryList())
         searchCategoryAdapter.setOnItemClickListener(object : ItemClickNavigation{
             override fun onItemClick(position: Int) {
+
                 appNavigation.openHomeScreentoPlaylistScreen()
+
             }
         })
 

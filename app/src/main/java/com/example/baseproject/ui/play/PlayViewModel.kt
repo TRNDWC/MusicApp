@@ -1,7 +1,7 @@
 package com.example.baseproject.ui.play
 
-import androidx.lifecycle.ViewModel
+import com.example.core.base.BaseViewModel
 
-class PlayViewModel : ViewModel() {
+class PlayViewModel : BaseViewModel() {
     // TODO: Implement the ViewModel
 }

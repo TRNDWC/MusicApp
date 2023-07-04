@@ -72,16 +72,21 @@
             android:background="#00FFFFFF">
         </ImageButton>
 
-        <ProgressBar
+        <SeekBar
+            android:id="@+id/seek_bar"
             android:layout_width="340dp"
             android:layout_height="4dp"
+            android:background="@color/transparent"
+            android:progressDrawable="@drawable/custom_seekbar"
+            android:thumb="@drawable/thumb"
+            android:progressBackgroundTint="@color/spotifyGreen"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.75">
-        </ProgressBar>
+        </SeekBar>
         <ImageButton
             android:id="@+id/btn_shu"
             android:layout_width="wrap_content"
@@ -112,21 +117,22 @@
             android:src="@drawable/ic_pre"
             android:background="#00FFFFFF">
         </ImageButton>
+
         <ImageButton
             android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/btn_white_play"
+            android:src="@drawable/ic_green_play"
+            android:textColor="@color/white"
+            android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.87"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:src="@drawable/ic_play_circle"
-            android:background="#00FFFFFF">
-        </ImageButton>
+            app:layout_constraintVertical_bias="0.863"></ImageButton>
+
         <ImageButton
             android:id="@+id/btn_next"
             android:layout_width="wrap_content"
