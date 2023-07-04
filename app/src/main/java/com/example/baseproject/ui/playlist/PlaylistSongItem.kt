@@ -1,4 +1,8 @@
 package com.example.baseproject.ui.playlist
 
-data class PlaylistSongItem(var songTitle: String, var artists: String) {
-}
+import android.media.Image
+
+data class PlaylistSongItem(
+//    var songImage: Image,
+    var songTitle: String,
+    var artists: String)
