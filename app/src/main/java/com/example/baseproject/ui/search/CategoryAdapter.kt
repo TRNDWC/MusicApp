@@ -22,6 +22,7 @@ class CategoryAdapter(private val categoryList: List<SearchCategoryItem>): Recyc
         fun onItemClick(position: Int)
     }
 
+<<<<<<< HEAD
     fun setOnItemClickListener(listener: OnItemClickListener){
         myListener = listener
     }
@@ -36,6 +37,8 @@ class CategoryAdapter(private val categoryList: List<SearchCategoryItem>): Recyc
         }
     }
 
+=======
+>>>>>>> 81004b2f39ddab61c0e59513785033ec57dd8ce0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val mSearchCategoryItem: SearchCategoryBinding = SearchCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 

@@ -8,14 +8,21 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentSignupBinding
+import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.ui.authentication.SignupViewModel
 import com.example.core.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class signupFragment : BaseFragment<FragmentSignupBinding,SignupViewModel>(R.layout.fragment_signup) {
+@AndroidEntryPoint
+class signupFragment : BaseFragment<FragmentSignupBinding, SignupViewModel>(R.layout.fragment_signup) {
 
     companion object {
         fun newInstance() = signupFragment()
     }
 
+    @Inject
+    lateinit var appNavigation: AppNavigation
     private val viewModel: SignupViewModel by viewModels()
     override fun getVM() = viewModel
 
@@ -25,15 +32,8 @@ class signupFragment : BaseFragment<FragmentSignupBinding,SignupViewModel>(R.lay
     ): View? {
         val mSignup : FragmentSignupBinding = FragmentSignupBinding.inflate(inflater, container, false)
         mSignup.buttonNext.setOnClickListener {
-            findNavController().navigate(R.id.action_signupFragment_to_homeFragment)
+            appNavigation.openSignUptoHome()
         }
         return mSignup.root
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        viewModel = ViewModelProvider(this).get(SignupViewModel::class.java)
-//        // TODO: Use the ViewModel
-//    }
-
 }
