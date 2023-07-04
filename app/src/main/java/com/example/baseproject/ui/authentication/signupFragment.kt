@@ -1,4 +1,4 @@
-package com.example.baseproject.ui.Authentication
+package com.example.baseproject.ui.authentication
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.baseproject.R
-import com.example.baseproject.databinding.FragmentLoginBinding
 import com.example.baseproject.databinding.FragmentSignupBinding
 import com.example.core.base.BaseFragment
 

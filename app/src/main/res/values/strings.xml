@@ -22,5 +22,8 @@
     <string name="library_music">Library</string>
     <string name="add_artist">Add artist</string>
     <string name="add_playlist">Add playlist</string>
+    <string name="tune_in_to_top_tracks_from_imagine_dragons_alan_walker_and_many_more">Tune in to Top Tracks from Imagine Dragons, Alan Walker and many more</string>
+    <string name="song_title">Song Title</string>
+    <string name="artist">Artist</string>
 
 </resources>

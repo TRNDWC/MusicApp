@@ -4,22 +4,42 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.SearchCategoryBinding
+import com.example.baseproject.navigation.AppNavigation
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
 
 class CategoryAdapter(private val categoryList: List<SearchCategoryItem>): RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    class CategoryViewHolder(itemView: SearchCategoryBinding): RecyclerView.ViewHolder(itemView.root){
-        val categoryTitle: TextView = itemView.searchCategory
+    private lateinit var myListener: OnItemClickListener
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
     }
 
+    fun setOnItemClickListener(listener: OnItemClickListener){
+        myListener = listener
+    }
 
+    inner class CategoryViewHolder(itemView: SearchCategoryBinding, listener: OnItemClickListener): RecyclerView.ViewHolder(itemView.root){
+        val categoryTitle: TextView = itemView.searchCategory
+
+        init {
+            itemView.categoryCard.setOnClickListener {
+                listener.onItemClick(adapterPosition)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val mSearchCategoryItem: SearchCategoryBinding = SearchCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(mSearchCategoryItem)
+
+        return CategoryViewHolder(mSearchCategoryItem, myListener)
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {

@@ -14,16 +14,25 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentSearchBinding
+import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.ui.home.HomeViewModel
 import com.example.core.base.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+
+@AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.layout.fragment_search) {
 
     private var mSearchFragment: FragmentSearchBinding? = null
 
+    @Inject
+    lateinit var appNavigation : AppNavigation
+
     companion object {
         fun newInstance() = SearchFragment()
     }
+
     private val viewModel: SearchViewModel by viewModels()
     override fun getVM() = viewModel
 
@@ -32,15 +41,22 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mSearchFragment = FragmentSearchBinding.inflate(inflater, container, false)
         val rcvSearchCategory: RecyclerView = mSearchFragment!!.rcvSearch
         val layoutManager = GridLayoutManager(mSearchFragment!!.root.context, 2)
 
         val searchCategoryAdapter = CategoryAdapter(dummyCategoryList())
+        searchCategoryAdapter.setOnItemClickListener(object : CategoryAdapter.OnItemClickListener{
+            override fun onItemClick(position: Int) {
+                appNavigation.openHomeScreentoPlaylistScreen()
+            }
+        })
 
         rcvSearchCategory.adapter = searchCategoryAdapter
         rcvSearchCategory.layoutManager = layoutManager
+
+
         return mSearchFragment!!.root
     }
 
@@ -74,6 +90,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         itemList.add(item12)
         return itemList
     }
+
+
 
 
 }

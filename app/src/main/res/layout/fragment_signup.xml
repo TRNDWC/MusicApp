@@ -5,7 +5,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.Authentication.signupFragment"
+            tools:context=".ui.authentication.signupFragment"
             android:background="#121212"
             android:orientation="vertical">
         <FrameLayout
