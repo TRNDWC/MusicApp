@@ -54,8 +54,10 @@ class PlaylistFragment : BaseFragment<FragmentPlaylistBinding, PlaylistViewModel
         return mPlaylistFragment!!.root
     }
 
+
+
     private fun songItemList() : MutableList<PlaylistSongItem>{
-        val songItemList : MutableList<PlaylistSongItem> = ArrayList()
+        var songItemList : MutableList<PlaylistSongItem> = ArrayList()
             songItemList.add(PlaylistSongItem("Có ai hẹn hò cùng em chưa", "Quân AP"))
             songItemList.add(PlaylistSongItem("Đưa em về nhà", "GreyD, Chillies"))
             songItemList.add(PlaylistSongItem("Nếu lúc đó", "TLinh"))
