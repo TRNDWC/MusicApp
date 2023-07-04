@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="_1dp">1dp</dimen>
-<<<<<<< HEAD
     <dimen name="_50dp">50dp</dimen>
-=======
     <dimen name="_10dp">10dp</dimen>
->>>>>>> 81004b2f39ddab61c0e59513785033ec57dd8ce0
+    <dimen name="_135dp">135dp</dimen>
 </resources>

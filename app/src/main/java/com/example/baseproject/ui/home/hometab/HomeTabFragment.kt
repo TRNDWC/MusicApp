@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
-import com.example.baseproject.ui.authentication.LoginViewModel
 import com.example.core.base.BaseFragment
 
 class HomeTabFragment : BaseFragment<FragmentHomeTabBinding,HomeTabViewModel>(R.layout.fragment_home_tab) {

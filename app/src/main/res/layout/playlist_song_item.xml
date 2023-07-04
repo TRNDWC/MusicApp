@@ -24,6 +24,7 @@
             android:layout_marginStart="12dp"
             android:layout_marginBottom="8dp"
             android:text="@string/song_title"
+            android:textColor="@color/white"
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/song_artist"
@@ -38,6 +39,7 @@
 
             android:layout_marginBottom="4dp"
             android:text="@string/artist"
+            android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/song_image_view" />
