@@ -80,7 +80,13 @@ class PlaylistFragment :
                 "GreyD, Chillies"
             )
         )
-        songItemList.add(PlaylistSongItem(R.drawable.green_play_circle, "Nếu lúc đó", "TLinh"))
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Nếu lúc đó",
+                "TLinh"
+            )
+        )
         return songItemList
     }
 
