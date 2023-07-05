@@ -9,13 +9,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
+import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
+class HomeTabFragment :
+    BaseFragment<FragmentHomeTabBinding, HomeTabViewModel>(R.layout.fragment_home_tab) {
 
-class HomeTabFragment : BaseFragment<FragmentHomeTabBinding,HomeTabViewModel>(R.layout.fragment_home_tab) {
-
-
-
+    var mList = ParentItemList()
     private var mHometabFragment: FragmentHomeTabBinding? = null
+    @Inject
+    lateinit var appNavigation: AppNavigation
+
     companion object {
         fun newInstance() = HomeTabFragment()
     }
@@ -30,17 +37,28 @@ class HomeTabFragment : BaseFragment<FragmentHomeTabBinding,HomeTabViewModel>(R.
     ): View? {
         mHometabFragment = FragmentHomeTabBinding.inflate(inflater, container, false)
 
-        val rcvUser : RecyclerView = mHometabFragment!!.rcvFrg
+        val rcvUser: RecyclerView = mHometabFragment!!.rcvFrg
         val layoutManager = LinearLayoutManager(
-            mHometabFragment!!.root.context , LinearLayoutManager.VERTICAL, false
+            mHometabFragment!!.root.context, LinearLayoutManager.VERTICAL, false
         )
 
         val parentAdapter = ParentAdapter(
-            ParentItemList()
+            mList
         )
 
-        rcvUser.adapter=parentAdapter
+        rcvUser.adapter = parentAdapter
         rcvUser.layoutManager = layoutManager
+        val myItem = ParentItemList()
+        parentAdapter.setRvItemClickListener(object : ParentAdapter.RvItemClickListener {
+            override fun onChildItemClick(parentPosition: Int, childPosition: Int) {
+
+                val bundle = Bundle()
+                bundle.putString("title", getItem(myItem, parentPosition, childPosition)?.childItemTitle.toString())
+//                getItem(myItem, parentPosition, childPosition)?.childItemTitle.toString().toast(requireContext())
+                appNavigation.openHomeScreentoPlaylistScreen(bundle)
+            }
+
+        })
 
         return mHometabFragment!!.root
     }
@@ -80,6 +98,16 @@ class HomeTabFragment : BaseFragment<FragmentHomeTabBinding,HomeTabViewModel>(R.
         ChildItemList.add(ChildItem("Card 3"))
         ChildItemList.add(ChildItem("Card 4"))
         return ChildItemList
+    }
+
+    private fun get(listC: List<ChildItem>, position: Int): ChildItem? {
+        return listC[position]
+    }
+
+    private fun getItem(listP: List<ParentItem>, parentP: Int, childP: Int): ChildItem? {
+        var mChildItem: ChildItem? = null
+        mChildItem = get(listP[parentP].childItemList, childP)
+        return mChildItem
     }
 
 }

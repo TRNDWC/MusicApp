@@ -28,11 +28,11 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
     }
 
     override fun openHomeScreentoPlaylistScreen(bundle: Bundle?) {
-        openScreen(R.id.action_homeFragment_to_playlistFragment2)
+        openScreen(R.id.action_homeFragment_to_playlistFragment2,bundle)
     }
 
     override fun openPlaylistScreentoPlayScreen(bundle: Bundle?) {
-        openScreen(R.id.action_playlistFragment2_to_playFragment)
+        openScreen(R.id.action_playlistFragment2_to_playFragment,bundle)
     }
 
 

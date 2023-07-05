@@ -16,11 +16,7 @@ import com.example.core.base.BaseFragment
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
 
     private lateinit var musicPlayer: MediaPlayer
-    private var playBinding: FragmentPlayBinding? = null
-
-    companion object {
-        fun newInstance() = PlayFragment()
-    }
+    private var mPlayFragment: FragmentPlayBinding? = null
 
     private val viewModel: PlayViewModel by viewModels()
     override fun getVM() = viewModel
@@ -29,11 +25,16 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
+        val description: String = arguments?.getString("title").toString() +
+                "\n" + arguments?.getString("artist").toString()
+        mPlayFragment!!.songDes.text = description
+
         musicPlayer = MediaPlayer.create(context, R.raw.querry_qnt)
-        playBinding = FragmentPlayBinding.inflate(inflater, container, false)
-        playBinding!!.seekBar.progress = musicPlayer.currentPosition
-        playBinding!!.seekBar.max = musicPlayer.duration
-        playBinding!!.seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
+        mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
+        mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
+        mPlayFragment!!.seekBar.max = musicPlayer.duration
+        mPlayFragment!!.seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if(fromUser){
                     musicPlayer.seekTo(progress)
@@ -49,22 +50,26 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
         })
 
-        playBinding!!.btnPlay.setOnClickListener {
+        mPlayFragment!!.btnPlay.setOnClickListener {
             if (!musicPlayer.isPlaying) {
                 playSound()
-                playBinding!!.btnPlay.setImageResource(R.drawable.ic_pause)
+                mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_pause)
                 initSeekBar()
             } else {
                 pauseSound()
-                playBinding!!.btnPlay.setImageResource(R.drawable.ic_green_play)
+                mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_green_play)
             }
         }
 
-        return playBinding!!.root
+        return mPlayFragment!!.root
+    }
+    
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun playSound() {
-        musicPlayer.playbackParams.speed = 0.5F
         musicPlayer.start()
     }
 
@@ -73,11 +78,11 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     }
 
     private fun initSeekBar(){
-        playBinding!!.seekBar.max= musicPlayer.duration
+        mPlayFragment!!.seekBar.max= musicPlayer.duration
         val handler = Handler()
         handler.postDelayed(object : Runnable{
             override fun run() {
-                playBinding!!.seekBar.progress = musicPlayer.currentPosition
+                mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
                 handler.postDelayed(this, 1000)
             }
 

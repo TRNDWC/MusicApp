@@ -1,23 +1,28 @@
 package com.example.baseproject.ui.home.hometab
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.baseproject.databinding.ParentLayoutBinding
+
 
 class ParentAdapter(private val ParentItemList: List<ParentItem>) :
     RecyclerView.Adapter<ParentAdapter.ParentViewHolder>() {
-    inner class ParentViewHolder(itemView: ParentLayoutBinding) :
-        RecyclerView.ViewHolder(itemView!!.root) {
-        var ParentItemTitle: TextView
-        val ChildRecyclerView: RecyclerView
+    interface RvItemClickListener {
+        fun onChildItemClick(parentPosition: Int, childPosition: Int)
+    }
+    private lateinit var rvItemClickListener: RvItemClickListener
+    fun setRvItemClickListener(rvItemClickListener: RvItemClickListener) {
+        this.rvItemClickListener = rvItemClickListener
+    }
+
+    inner class ParentViewHolder(itemView: ParentLayoutBinding, listener : RvItemClickListener ) :
+        RecyclerView.ViewHolder(itemView.root) {
+        var ParentItemTitle: TextView = itemView.parentTitle
+        val ChildRecyclerView: RecyclerView = itemView.childRcv
         init {
-            ParentItemTitle = itemView.parentTitle
-            ChildRecyclerView = itemView.childRcv
         }
     }
 
@@ -25,7 +30,7 @@ class ParentAdapter(private val ParentItemList: List<ParentItem>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParentViewHolder {
         val mParentItem : ParentLayoutBinding = ParentLayoutBinding.
         inflate(LayoutInflater.from(parent.context),parent,false)
-        return ParentViewHolder(mParentItem)
+        return ParentViewHolder(mParentItem, rvItemClickListener!!)
     }
 
     override fun getItemCount(): Int {
@@ -49,6 +54,12 @@ class ParentAdapter(private val ParentItemList: List<ParentItem>) :
             parent
                 .childItemList
         )
+        childItemAdapter.setOnItemClickListener(object : ChildAdapter.OnItemClickListener{
+            override fun onItemClick(childPosition: Int) {
+                rvItemClickListener?.onChildItemClick(holder.adapterPosition,childPosition)
+            }
+
+        })
         holder.ChildRecyclerView.layoutManager = layoutManager
         holder.ChildRecyclerView.adapter = childItemAdapter
         holder.ChildRecyclerView
