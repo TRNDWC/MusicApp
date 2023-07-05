@@ -53,8 +53,7 @@ class HomeTabFragment :
             override fun onChildItemClick(parentPosition: Int, childPosition: Int) {
 
                 val bundle = Bundle()
-                bundle.putString("title", getItem(myItem, parentPosition, childPosition)?.childItemTitle.toString())
-//                getItem(myItem, parentPosition, childPosition)?.childItemTitle.toString().toast(requireContext())
+                bundle.putString("title", getItem(myItem, parentPosition, childPosition)?.childItemTitle.toString()+"\n"+myItem[parentPosition].parentItemTitle.toString())
                 appNavigation.openHomeScreentoPlaylistScreen(bundle)
             }
 
