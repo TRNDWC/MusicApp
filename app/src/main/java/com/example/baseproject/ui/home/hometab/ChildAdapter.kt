@@ -8,21 +8,31 @@ import com.example.baseproject.databinding.ChildLayoutBinding
 
 class ChildAdapter(private val ChildItemList: List<ChildItem>) : RecyclerView.Adapter<ChildAdapter.ChildViewHolder>(){
 
+    private lateinit var myListener: OnItemClickListener
+    interface OnItemClickListener {
+        fun onItemClick(childPosition: Int)
+    }
 
-    inner class ChildViewHolder(itemView: ChildLayoutBinding) :
-        RecyclerView.ViewHolder(itemView!!.root) {
-        var ChildItemTitle: TextView
+    fun setOnItemClickListener(listener: OnItemClickListener){
+        myListener = listener
+    }
+
+    inner class ChildViewHolder(itemView: ChildLayoutBinding,
+                                listener: OnItemClickListener) :
+        RecyclerView.ViewHolder(itemView.root) {
+        var ChildItemTitle: TextView = itemView.childDes
 
         init {
-            ChildItemTitle = itemView.childDes
+            itemView.childItem.setOnClickListener{
+                listener.onItemClick(adapterPosition)
+            }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChildViewHolder {
         val mChildItem : ChildLayoutBinding = ChildLayoutBinding.
         inflate(LayoutInflater.from(parent.context),parent,false)
-        return ChildViewHolder(mChildItem)
+        return ChildViewHolder(mChildItem, myListener)
     }
 
     override fun getItemCount(): Int {

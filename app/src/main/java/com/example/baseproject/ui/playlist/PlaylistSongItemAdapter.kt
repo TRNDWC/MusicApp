@@ -3,6 +3,7 @@ package com.example.baseproject.ui.playlist
 import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.databinding.PlaylistSongItemBinding
@@ -16,9 +17,12 @@ class PlaylistSongItemAdapter(private val playlistSongItem: List<PlaylistSongIte
         myListener = listener
     }
 
-    inner class PlaylistSongItemViewHolder(mPlaylistSongItem: PlaylistSongItemBinding, listener: ItemClickNavigation) : RecyclerView.ViewHolder(mPlaylistSongItem.root){
+    inner class PlaylistSongItemViewHolder(mPlaylistSongItem: PlaylistSongItemBinding,
+                                           listener: ItemClickNavigation) :
+        RecyclerView.ViewHolder(mPlaylistSongItem.root){
         val songItemTitle: TextView = mPlaylistSongItem.songTitle
         val songItemArtist: TextView = mPlaylistSongItem.songArtist
+        val songImage : ImageView = mPlaylistSongItem.songImageView
 
         init {
             mPlaylistSongItem.playlistSongItem.setOnClickListener{
@@ -37,6 +41,7 @@ class PlaylistSongItemAdapter(private val playlistSongItem: List<PlaylistSongIte
         val item = playlistSongItem[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
+        holder.songImage.setImageResource(item.songImage)
     }
 
     override fun getItemCount(): Int {

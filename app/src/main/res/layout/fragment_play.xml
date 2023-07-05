@@ -33,6 +33,7 @@
             android:src="@drawable/ic_more"/>
 
         <ImageView
+            android:id="@+id/song_image"
             android:layout_width="378dp"
             android:layout_height="378dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -44,7 +45,7 @@
             android:src="@drawable/ic_launcher_foreground">
         </ImageView>
         <TextView
-            android:id="@+id/song_title"
+            android:id="@+id/song_des"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
