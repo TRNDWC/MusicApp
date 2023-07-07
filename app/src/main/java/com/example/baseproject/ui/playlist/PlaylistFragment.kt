@@ -1,71 +1,81 @@
 package com.example.baseproject.ui.playlist
 
+import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
-import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlaylistFragment :
     BaseFragment<FragmentPlaylistBinding, PlaylistViewModel>(R.layout.fragment_playlist) {
-
-    private var mPlaylistFragment: FragmentPlaylistBinding? = null
-
     @Inject
     lateinit var appNavigation: AppNavigation
+    private val viewModel: PlaylistViewModel by viewModels()
+    override fun getVM() = viewModel
+    val songList = songItemList1()
+    private val playlistAdapter = PlaylistSongItemAdapter(songList)
 
-    companion object {
-        fun newInstance() = PlaylistFragment()
+    override fun setOnClick() {
+        super.setOnClick()
+        playlistAdapter.onItemClick = {
+            val bundle = Bundle()
+            bundle.putString("title", it.songTitle)
+            bundle.putString("artist", it.artists)
+            bundle.putInt("song_image", it.songImage)
+            appNavigation.openPlaylistScreentoPlayScreen(bundle)
+        }
     }
 
-    private val viewModel: PlaylistViewModel by viewModels()
+    override fun bindingStateView() {
+        super.bindingStateView()
+        binding.playlistDescription.text = arguments?.getString("title")
+        binding.rcvPlaylistSong.adapter = playlistAdapter
+        binding.rcvPlaylistSong.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.searchView.setBackgroundColor(Color.WHITE)
 
-    override fun getVM() = viewModel
+        binding.searchView.setOnQueryTextListener(object : OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        mPlaylistFragment = FragmentPlaylistBinding.inflate(inflater, container, false)
-        mPlaylistFragment?.playlistDescription?.text = arguments?.getString("title").toString()
-        val rcvPlaylistSongItem: RecyclerView = mPlaylistFragment!!.rcvPlaylistSong
-        val layoutManager = LinearLayoutManager(
-            mPlaylistFragment!!.root.context,
-            LinearLayoutManager.VERTICAL,
-            false
-        )
-        val songList = songItemList()
-        val playlistAdapter = PlaylistSongItemAdapter(songList)
-
-        playlistAdapter.setOnItemClickListener(object : ItemClickNavigation {
-            override fun onItemClick(position: Int) {
-                val bundle = Bundle()
-                bundle.putString("title", songList[position].songTitle)
-                bundle.putString("artist", songList[position].artists)
-                bundle.putInt("song_image", songList[position].songImage)
-                appNavigation.openPlaylistScreentoPlayScreen(bundle)
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filter(newText)
+                return true
             }
         })
-
-        rcvPlaylistSongItem.layoutManager = layoutManager
-        rcvPlaylistSongItem.adapter = playlistAdapter
-
-        return mPlaylistFragment!!.root
     }
 
-    private fun songItemList(): MutableList<PlaylistSongItem> {
-        var songItemList: MutableList<PlaylistSongItem> = ArrayList()
+    private fun filter(newText: String?) {
+        if (newText != null) {
+            val filterList = ArrayList<PlaylistSongItem>()
+            for (i in songList){
+                if (convert(i.songTitle).lowercase(Locale.ROOT).contains(convert(newText).lowercase())){
+                    filterList.add(i)
+                }
+            }
+            if (filterList.isEmpty()){
+                val emptyList = ArrayList<PlaylistSongItem>()
+                playlistAdapter.setFilteredList(emptyList)
+            } else {
+                playlistAdapter.setFilteredList(filterList)
+            }
+        }
+    }
+
+    override fun bindingAction() {
+        super.bindingAction()
+    }
+    private fun songItemList1(): MutableList<PlaylistSongItem> {
+        val songItemList: MutableList<PlaylistSongItem> = ArrayList()
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
@@ -90,4 +100,22 @@ class PlaylistFragment :
         return songItemList
     }
 
+    fun convert(str: String): String {
+        var str = str
+        str = str.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
+        str = str.replace("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ".toRegex(), "e")
+        str = str.replace("ì|í|ị|ỉ|ĩ".toRegex(), "i")
+        str = str.replace("ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ".toRegex(), "o")
+        str = str.replace("ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ".toRegex(), "u")
+        str = str.replace("ỳ|ý|ỵ|ỷ|ỹ".toRegex(), "y")
+        str = str.replace("đ".toRegex(), "d")
+        str = str.replace("À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ".toRegex(), "A")
+        str = str.replace("È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ".toRegex(), "E")
+        str = str.replace("Ì|Í|Ị|Ỉ|Ĩ".toRegex(), "I")
+        str = str.replace("Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ".toRegex(), "O")
+        str = str.replace("Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ".toRegex(), "U")
+        str = str.replace("Ỳ|Ý|Ỵ|Ỷ|Ỹ".toRegex(), "Y")
+        str = str.replace("Đ".toRegex(), "D")
+        return str
+    }
 }
