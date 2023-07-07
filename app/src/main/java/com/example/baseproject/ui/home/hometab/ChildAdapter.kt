@@ -5,34 +5,21 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.databinding.ChildLayoutBinding
+import com.example.baseproject.ui.playlist.PlaylistSongItem
 
 class ChildAdapter(private val ChildItemList: List<ChildItem>) : RecyclerView.Adapter<ChildAdapter.ChildViewHolder>(){
 
-    private lateinit var myListener: OnItemClickListener
-    interface OnItemClickListener {
-        fun onItemClick(childPosition: Int)
-    }
+    var onItemClick : ((ChildItem) -> Unit )? = null
 
-    fun setOnItemClickListener(listener: OnItemClickListener){
-        myListener = listener
-    }
-
-    inner class ChildViewHolder(itemView: ChildLayoutBinding,
-                                listener: OnItemClickListener) :
+    inner class ChildViewHolder(itemView: ChildLayoutBinding) :
         RecyclerView.ViewHolder(itemView.root) {
         var ChildItemTitle: TextView = itemView.childDes
-
-        init {
-            itemView.childItem.setOnClickListener{
-                listener.onItemClick(adapterPosition)
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChildViewHolder {
         val mChildItem : ChildLayoutBinding = ChildLayoutBinding.
         inflate(LayoutInflater.from(parent.context),parent,false)
-        return ChildViewHolder(mChildItem, myListener)
+        return ChildViewHolder(mChildItem)
     }
 
     override fun getItemCount(): Int {
@@ -40,8 +27,10 @@ class ChildAdapter(private val ChildItemList: List<ChildItem>) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: ChildViewHolder, position: Int) {
-        val user =ChildItemList[position]
-        holder.ChildItemTitle.text=user.childItemTitle
+        val user = ChildItemList[position]
+        holder.itemView.setOnClickListener {
+            onItemClick?.invoke(user)
+        }
     }
 
 }

@@ -11,7 +11,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlayBinding
+import com.example.baseproject.ui.playlist.PlaylistSongItem
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
 
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
 
@@ -26,12 +28,12 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         savedInstanceState: Bundle?
     ): View? {
         mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
+
         val description: String = arguments?.getString("title").toString() +
                 "\n" + arguments?.getString("artist").toString()
         mPlayFragment!!.songDes.text = description
 
         musicPlayer = MediaPlayer.create(context, R.raw.querry_qnt)
-        mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
         mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
         mPlayFragment!!.seekBar.max = musicPlayer.duration
         mPlayFragment!!.seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener{
@@ -63,7 +65,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
         return mPlayFragment!!.root
     }
-    
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -91,8 +93,6 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     override fun onStop() {
         super.onStop()
-
-        musicPlayer.release()
-
+        musicPlayer.stop()
     }
 }
