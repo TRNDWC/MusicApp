@@ -25,8 +25,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.layout.fragment_search) {
 
-    private var mSearchFragment: FragmentSearchBinding? = null
-
     @Inject
     lateinit var appNavigation : AppNavigation
 
@@ -36,32 +34,27 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
 
     private val viewModel: SearchViewModel by viewModels()
     override fun getVM() = viewModel
+    private val categoryList = dummyCategoryList()
+    private val searchCategoryAdapter = CategoryAdapter(categoryList)
 
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mSearchFragment = FragmentSearchBinding.inflate(inflater, container, false)
-        val rcvSearchCategory: RecyclerView = mSearchFragment!!.rcvSearch
-        val layoutManager = GridLayoutManager(mSearchFragment!!.root.context, 2)
-
-        val searchCategoryAdapter = CategoryAdapter(dummyCategoryList())
-        searchCategoryAdapter.setOnItemClickListener(object : ItemClickNavigation{
-            override fun onItemClick(position: Int) {
-
-                appNavigation.openHomeScreentoPlaylistScreen()
-
-            }
-        })
-
-        rcvSearchCategory.adapter = searchCategoryAdapter
-        rcvSearchCategory.layoutManager = layoutManager
-
-
-        return mSearchFragment!!.root
+    override fun setOnClick() {
+        super.setOnClick()
+        searchCategoryAdapter.onItemClick = {
+            val bundle = Bundle()
+            bundle.putString("categoryTitle", it.categoryTitle)
+            appNavigation.openHomeScreentoPlaylistScreen(bundle)
+        }
     }
+
+    override fun bindingStateView() {
+        super.bindingStateView()
+        binding.rcvSearch.adapter = searchCategoryAdapter
+        binding.rcvSearch.layoutManager = GridLayoutManager(requireContext(), 2)
+    }
+
+
+
+
 
 
 

@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.databinding.ParentLayoutBinding
-import com.example.baseproject.ui.playlist.PlaylistSongItem
 
 
 class ParentAdapter(private val ParentItemList: List<ParentItem>) :

@@ -21,7 +21,7 @@ class HomeTabFragment :
     BaseFragment<FragmentHomeTabBinding, HomeTabViewModel>(R.layout.fragment_home_tab) {
 
     var mList = ParentItemList()
-    val parentAdapter = ParentAdapter(mList)
+    private val parentAdapter = ParentAdapter(mList)
     @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: HomeTabViewModel by viewModels()

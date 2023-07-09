@@ -21,7 +21,7 @@ class PlaylistFragment :
     lateinit var appNavigation: AppNavigation
     private val viewModel: PlaylistViewModel by viewModels()
     override fun getVM() = viewModel
-    val songList = songItemList1()
+    private val songList = songItemList1()
     private val playlistAdapter = PlaylistSongItemAdapter(songList)
 
     override fun setOnClick() {
@@ -100,7 +100,7 @@ class PlaylistFragment :
         return songItemList
     }
 
-    fun convert(str: String): String {
+    private fun convert(str: String): String {
         var str = str
         str = str.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
         str = str.replace("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ".toRegex(), "e")
