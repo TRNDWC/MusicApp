@@ -1,6 +1,9 @@
 package com.example.baseproject.ui.play
 
+import android.content.Context
+import android.content.Intent
 import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -8,10 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlayBinding
+import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.playlist.PlaylistSongItem
 import com.example.core.base.BaseFragment
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
 
@@ -20,14 +27,23 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     private val viewModel: PlayViewModel by viewModels()
     override fun getVM() = viewModel
     private lateinit var description: String
-
-
+    private lateinit var  playSongItem : PlaylistSongItem
+    private lateinit var applicationContext: Context
+    private lateinit var intent: Intent
+    private lateinit var bundle : Bundle
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
         musicPlayer = MediaPlayer.create(context, R.raw.querry_qnt)
+        playSongItem = requireArguments().getSerializable("songItem") as PlaylistSongItem
+        applicationContext = requireContext()
+
+        bundle = Bundle()
+        bundle.putSerializable("song_item", playSongItem)
+        intent = Intent(context, MusicService::class.java)
+        intent.putExtra("song_bundle", bundle)
         return mPlayFragment!!.root
     }
 
@@ -48,8 +64,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     override fun bindingStateView() {
         super.bindingStateView()
-        description = arguments?.getString("title").toString()+
-        "\n" + arguments?.getString("artist").toString()
+        description = "${playSongItem.songTitle}\n${playSongItem.artists}"
         mPlayFragment!!.songDes.text = description
         mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
         mPlayFragment!!.seekBar.max = musicPlayer.duration
@@ -71,12 +86,12 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     }
 
     private fun autoPlay(){
-        musicPlayer.start()
+        applicationContext.startService(intent)
         mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_pause)
 
     }
     private fun playSound() {
-        musicPlayer.start()
+        applicationContext.startService(intent)
     }
 
     private fun pauseSound() {
@@ -97,6 +112,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     override fun onStop() {
         super.onStop()
-        musicPlayer.stop()
+        val intent = Intent(requireContext(), MusicService::class.java)
+        applicationContext.stopService(intent)
     }
 }

@@ -9,7 +9,6 @@ import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject
@@ -28,9 +27,7 @@ class PlaylistFragment :
         super.setOnClick()
         playlistAdapter.onItemClick = {
             val bundle = Bundle()
-            bundle.putString("title", it.songTitle)
-            bundle.putString("artist", it.artists)
-            bundle.putInt("song_image", it.songImage)
+            bundle.putSerializable("songItem", it)
             appNavigation.openPlaylistScreentoPlayScreen(bundle)
         }
     }
@@ -80,29 +77,40 @@ class PlaylistFragment :
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Có ai hẹn hò cùng em chưa",
-                "Quân AP"
+                "Quân AP",
+                R.raw.co_ai_hen_ho_cung_em_chua_quan_ap
             )
         )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Đưa em về nhà",
-                "GreyD, Chillies"
+                "GreyD, Chillies",
+                R.raw.dua_em_ve_nha_greyd_chillies
             )
         )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Nếu lúc đó",
-                "TLinh"
+                "TLinh",
+                R.raw.neu_luc_do_tlinh
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Querry",
+                "QNT",
+                R.raw.querry_qnt
             )
         )
         return songItemList
     }
 
-    private fun convert(str: String): String {
+    private fun convert(str: String?): String {
         var str = str
-        str = str.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
+        str = str!!.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
         str = str.replace("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ".toRegex(), "e")
         str = str.replace("ì|í|ị|ỉ|ĩ".toRegex(), "i")
         str = str.replace("ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ".toRegex(), "o")
