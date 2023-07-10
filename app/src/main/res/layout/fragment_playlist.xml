@@ -1,85 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@color/black"
-        tools:context=".ui.playlist.PlaylistFragment">
+        android:transitionName="@string/song_title">
 
-        <LinearLayout
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:orientation="horizontal">
+            android:background="@drawable/gradient_playlist"
+            android:paddingTop="30dp">
 
-            <ImageButton
-                android:id="@+id/btn_playlist_back"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/ic_backarrow"/>
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/collapsingToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_10dp"
-                app:iconifiedByDefault="false"
-                app:queryBackground="@color/transparent">
-            </androidx.appcompat.widget.SearchView>
+                android:layout_height="400dp"
+                app:collapsedTitleGravity="center_horizontal"
+                app:collapsedTitleTextColor="@color/white"
+                app:contentScrim="@color/transparent"
+                app:expandedTitleTextColor="@color/white"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        </LinearLayout>
-        <ScrollView
+                <ImageView
+                    android:id="@+id/playlist_cover"
+                    android:layout_width="253dp"
+                    android:layout_height="253dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/spotify" />
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/materialToolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin">
+
+                    <ImageButton
+                        android:id="@+id/btn_playlist_back"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/ic_backarrow" />
+                </com.google.android.material.appbar.MaterialToolbar>
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#FF121212"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/playlist_image"
-                    android:layout_width="253dp"
-                    android:layout_height="253dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginVertical="@dimen/_10dp"
-                    android:background="@drawable/spotify" />
-                <TextView
-                    android:id="@+id/playlist_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginVertical="@dimen/_10dp"
-                    android:gravity="center"
-                    android:paddingHorizontal="18dp"
-                    android:paddingVertical="8dp"
-                    android:text="@string/tune_in_to_top_tracks_from_imagine_dragons_alan_walker_and_many_more"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_18"/>
 
-                <ImageButton
-                    android:id="@+id/imageButton2"
-                    android:layout_width="68dp"
-                    android:layout_height="68dp"
-                    android:background="@drawable/btn_green_play"
-                    android:src="@drawable/ic_green_play"
-                    android:layout_gravity="end"
-                    android:layout_marginHorizontal="20dp"/>
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_10dp"
+                    android:textSize="18sp"
+                    app:iconifiedByDefault="false"
+                    app:queryBackground="@color/transparent">
+
+                </androidx.appcompat.widget.SearchView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvPlaylistSong"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/_10dp"
                     android:layout_gravity="center_horizontal"
-                    android:textSize="18sp"
-                    />
+                    android:layout_marginTop="@dimen/_10dp"
+                    android:textSize="18sp" />
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_playlist_play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:src="@drawable/ic_green_play"
+            app:backgroundTint="@color/_4caf50"
+            app:layout_anchor="@id/collapsingToolbar"
+            app:layout_anchorGravity="end|bottom" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
