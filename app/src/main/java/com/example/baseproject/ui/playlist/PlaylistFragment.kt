@@ -2,7 +2,11 @@ package com.example.baseproject.ui.playlist
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.view.size
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
@@ -10,6 +14,9 @@ import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
 import com.example.core.utils.toast
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import javax.inject.Inject
@@ -23,6 +30,8 @@ class PlaylistFragment :
     override fun getVM() = viewModel
     val songList = songItemList1()
     private val playlistAdapter = PlaylistSongItemAdapter(songList)
+    private lateinit var materialToolbar: MaterialToolbar
+    private lateinit var actionButton : FloatingActionButton
 
     override fun setOnClick() {
         super.setOnClick()
@@ -37,10 +46,15 @@ class PlaylistFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-        binding.playlistDescription.text = arguments?.getString("title")
+        materialToolbar = binding.materialToolbar
+        materialToolbar.setTitle(arguments?.getString("title"))
+        actionButton = binding.btnPlaylistPlay
+
+        (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.rcvPlaylistSong.adapter = playlistAdapter
         binding.rcvPlaylistSong.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-        binding.searchView.setBackgroundColor(Color.WHITE)
+
+        binding.searchView.setBackgroundResource(R.color.color_btn)
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -70,12 +84,71 @@ class PlaylistFragment :
             }
         }
     }
-
-    override fun bindingAction() {
-        super.bindingAction()
-    }
     private fun songItemList1(): MutableList<PlaylistSongItem> {
         val songItemList: MutableList<PlaylistSongItem> = ArrayList()
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Có ai hẹn hò cùng em chưa",
+                "Quân AP"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Đưa em về nhà",
+                "GreyD, Chillies"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Nếu lúc đó",
+                "TLinh"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Có ai hẹn hò cùng em chưa",
+                "Quân AP"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Đưa em về nhà",
+                "GreyD, Chillies"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Nếu lúc đó",
+                "TLinh"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Có ai hẹn hò cùng em chưa",
+                "Quân AP"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Đưa em về nhà",
+                "GreyD, Chillies"
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                R.drawable.green_play_circle,
+                "Nếu lúc đó",
+                "TLinh"
+            )
+        )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
