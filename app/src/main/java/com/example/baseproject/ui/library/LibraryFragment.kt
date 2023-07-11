@@ -1,61 +1,50 @@
 package com.example.baseproject.ui.library
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
-import com.example.baseproject.databinding.FragmentHomeTabBinding
 import com.example.baseproject.databinding.FragmentLibraryBinding
-import com.example.baseproject.ui.home.hometab.ParentAdapter
+import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class LibraryFragment : BaseFragment<FragmentLibraryBinding, LibraryViewModel>(R.layout.fragment_library) {
-
-    private var mLibraryFragment: FragmentLibraryBinding? = null
-    companion object {
-        fun newInstance() = LibraryFragment()
-    }
+@AndroidEntryPoint
+class LibraryFragment :
+    BaseFragment<FragmentLibraryBinding, LibraryViewModel>(R.layout.fragment_library),
+    ItemClickNavigation {
 
     private val viewModel: LibraryViewModel by viewModels()
-    override fun getVM(): LibraryViewModel {
-        return viewModel
+
+    @Inject
+    lateinit var appNavigation: AppNavigation
+    override fun getVM(): LibraryViewModel = viewModel
+
+    private var playlistList = LibraryItemList()
+
+    override fun bindingStateView() {
+        super.bindingStateView()
+        val playlistList = LibraryItemList()
+        binding.libraryRcv.adapter = LibraryItemAdapter(playlistList, this)
+        binding.libraryRcv.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        mLibraryFragment = FragmentLibraryBinding.inflate(inflater, container, false)
-
-        val rcvUser : RecyclerView = mLibraryFragment!!.libraryRcv
-        val layoutManager = LinearLayoutManager(
-            mLibraryFragment!!.root.context , LinearLayoutManager.VERTICAL, false
-        )
-
-        val libraryAdapter = LibraryItemAdapter(
-            LibraryItemList()
-        )
-
-        rcvUser.adapter=libraryAdapter
-        rcvUser.layoutManager = layoutManager
-
-        return mLibraryFragment!!.root
-    }
-    private fun LibraryItemList(): MutableList<LibraryItem>
-    {
+    private fun LibraryItemList(): MutableList<LibraryItem> {
         val LibraryItemList: MutableList<LibraryItem> = ArrayList()
-        LibraryItemList.add(LibraryItem("Card 1"))
-        LibraryItemList.add(LibraryItem("Card 2"))
-        LibraryItemList.add(LibraryItem("Card 3"))
-        LibraryItemList.add(LibraryItem("Card 4"))
+        LibraryItemList.add(LibraryItem("1", "Card 1"))
+        LibraryItemList.add(LibraryItem("2", "Card 2"))
+        LibraryItemList.add(LibraryItem("3", "Card 3"))
+        LibraryItemList.add(LibraryItem("4", "Card 4"))
         return LibraryItemList
     }
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        viewModel = ViewModelProvider(this).get(LibraryViewModel::class.java)
-//        // TODO: Use the ViewModel
-//    }
 
+    override fun onItemClick(position: Int) {
+        val bundle = Bundle()
+        bundle.putParcelable("playlist", playlistList[position])
+        appNavigation.openLibraryToPlaylist(bundle)
+    }
 }
