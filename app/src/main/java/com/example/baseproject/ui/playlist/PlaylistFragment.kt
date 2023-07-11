@@ -42,7 +42,7 @@ class PlaylistFragment :
         })
         actionButton = binding.btnPlaylistPlay
         actionButton.setOnClickListener {
-            viewModel.add(PlaylistSongItem(R.drawable.green_play_circle,"1","1"))
+            viewModel.add(PlaylistSongItem(R.drawable.green_play_circle, "1", "1"))
             playlistAdapter.setFilteredList(viewModel.songList.value!!)
             "add".toast(requireContext())
         }
@@ -75,7 +75,7 @@ class PlaylistFragment :
         binding.rcvPlaylistSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
-        viewModel.songList.observe(viewLifecycleOwner){ newList ->
+        viewModel.songList.observe(viewLifecycleOwner) { newList ->
             playlistAdapter.setFilteredList(newList)
         }
     }
