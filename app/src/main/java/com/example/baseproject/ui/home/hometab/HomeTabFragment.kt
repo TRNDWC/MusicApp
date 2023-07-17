@@ -1,15 +1,11 @@
 package com.example.baseproject.ui.home.hometab
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
+import com.example.baseproject.data.AllSong
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
 import com.example.core.utils.toast
@@ -31,7 +27,7 @@ class HomeTabFragment :
         parentAdapter.onItemClick = {parentItem: ParentItem, childItem: ChildItem ->
             val bundle = Bundle()
             val title = parentItem.parentItemTitle+"\n"+childItem.childItemTitle
-            title.toast(requireContext())
+            AllSong.songs.size.toString().toast(requireContext())
             bundle.putString("title",title)
             appNavigation.openHomeScreentoPlaylistScreen(bundle)
         }

@@ -1,7 +1,6 @@
-package com.example.baseproject.ui.library;
+package com.example.baseproject.data;
 import android.os.Parcel
 import android.os.Parcelable
-import com.example.baseproject.ui.playlist.PlaylistSongItem
 
 class LibraryItem(val id: String?, val itemTitle: String?) : Parcelable {
     constructor(parcel: Parcel) : this(

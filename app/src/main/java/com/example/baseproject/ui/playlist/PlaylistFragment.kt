@@ -9,7 +9,8 @@ import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.navigation.ItemClickNavigation
-import com.example.baseproject.ui.library.LibraryItem
+import com.example.baseproject.data.LibraryItem
+import com.example.baseproject.data.PlaylistSongItem
 import com.example.core.base.BaseFragment
 import com.example.core.utils.toast
 import com.google.android.material.appbar.MaterialToolbar
@@ -42,9 +43,16 @@ class PlaylistFragment :
         })
         actionButton = binding.btnPlaylistPlay
         actionButton.setOnClickListener {
-            viewModel.add(PlaylistSongItem(R.drawable.green_play_circle, "1", "1"))
-            playlistAdapter.setFilteredList(viewModel.songList.value!!)
-            "add".toast(requireContext())
+            viewModel.addSong(
+                PlaylistSongItem(
+                    (0..20).random(),
+                    R.drawable.green_play_circle,
+                    (0..20).random().toString(),
+                    (0..20).random().toString()
+                )
+            )
+//            viewModel.clear()
+            "${viewModel.check()}}".toast(requireContext())
         }
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
@@ -69,14 +77,16 @@ class PlaylistFragment :
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
 
-        msongList = viewModel.songItemList()
+        viewModel.songList.value?.let {
+            msongList = it
+        }
         playlistAdapter.setFilteredList(msongList)
         binding.rcvPlaylistSong.adapter = playlistAdapter
         binding.rcvPlaylistSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
         viewModel.songList.observe(viewLifecycleOwner) { newList ->
-            playlistAdapter.setFilteredList(newList)
+            if (newList != null) playlistAdapter.setFilteredList(newList)
         }
     }
 }
