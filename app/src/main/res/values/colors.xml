@@ -10,4 +10,7 @@
     <color name="grey">#FF636363</color>
     <color name="spotifyGreen">#FF4CAF50</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="_4caf50">#4CAF50</color>
+    <drawable name="clr_normal">#00AAAAAA</drawable>
+    <drawable name="clr_pressed">#000000</drawable>
 </resources>

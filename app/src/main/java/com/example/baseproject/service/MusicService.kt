@@ -39,7 +39,7 @@ class MusicService : BaseService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("HoangDH", "onStartCommand")
         val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
-            .getSerializable("song_item") as PlaylistSongItem
+            .getParcelable("song_item")!!
         musicPlayer = MediaPlayer.create(this, songItem.resource)
 
         startMusic(songItem)

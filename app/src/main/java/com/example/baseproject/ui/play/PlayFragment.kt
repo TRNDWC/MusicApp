@@ -47,9 +47,9 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         Log.e("HoangDH", "initView")
-        playSongItem = requireArguments().getSerializable("songItem") as PlaylistSongItem
+        playSongItem = requireArguments().getParcelable("songItem")!!
         bundle = Bundle()
-        bundle.putSerializable("song_item", playSongItem)
+        bundle.putParcelable("song_item", playSongItem)
         intent = Intent(context, MusicService::class.java)
         intent.putExtra("song_bundle", bundle)
         context?.startService(intent)

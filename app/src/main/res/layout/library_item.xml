@@ -5,7 +5,8 @@
         android:layout_height="wrap_content"
         android:background="#00FFFFFF"
         android:orientation="horizontal"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:id="@+id/library_item">
         <ImageView
             android:layout_width="120dp"
             android:layout_height="120dp"
