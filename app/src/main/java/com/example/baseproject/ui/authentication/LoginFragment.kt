@@ -26,7 +26,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val mLogin : FragmentLoginBinding = FragmentLoginBinding.inflate(inflater, container, false)
         mLogin.loginTextView.setOnClickListener {
             appNavigation.openLogintoHomeScreen()

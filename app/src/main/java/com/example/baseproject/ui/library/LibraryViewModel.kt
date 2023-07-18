@@ -12,86 +12,35 @@ class LibraryViewModel : BaseViewModel() {
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Có ai hẹn hò cùng em chưa",
-                "Quân AP"
+                "Quân AP",
+                R.raw.co_ai_hen_ho_cung_em_chua_quan_ap
             )
         )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Đưa em về nhà",
-                "GreyD, Chillies"
+                "GreyD, Chillies",
+                R.raw.dua_em_ve_nha_greyd_chillies
             )
         )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
                 "Nếu lúc đó",
-                "TLinh"
+                "TLinh",
+                R.raw.neu_luc_do_tlinh
             )
         )
         songItemList.add(
             PlaylistSongItem(
                 R.drawable.green_play_circle,
-                "Có ai hẹn hò cùng em chưa",
-                "Quân AP"
+                "Query",
+                "QNT",
+                R.raw.querry_qnt
             )
         )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Đưa em về nhà",
-                "GreyD, Chillies"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Nếu lúc đó",
-                "TLinh"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Có ai hẹn hò cùng em chưa",
-                "Quân AP"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Đưa em về nhà",
-                "GreyD, Chillies"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Nếu lúc đó",
-                "TLinh"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Có ai hẹn hò cùng em chưa",
-                "Quân AP"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Đưa em về nhà",
-                "GreyD, Chillies"
-            )
-        )
-        songItemList.add(
-            PlaylistSongItem(
-                R.drawable.green_play_circle,
-                "Nếu lúc đó",
-                "TLinh"
-            )
-        )
+
         return songItemList
     }
 }
