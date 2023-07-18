@@ -1,118 +1,153 @@
 package com.example.baseproject.ui.play
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.media.MediaPlayer
-import android.os.Build
+import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.os.IBinder
+import android.util.Log
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlayBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.PlaylistSongItem
 import com.example.core.base.BaseFragment
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
 
-    private lateinit var musicPlayer: MediaPlayer
-    private var mPlayFragment: FragmentPlayBinding? = null
+    private var musicService: MusicService? = null
     private val viewModel: PlayViewModel by viewModels()
     override fun getVM() = viewModel
     private lateinit var description: String
-    private lateinit var  playSongItem : PlaylistSongItem
-    private lateinit var applicationContext: Context
+    private lateinit var playSongItem: PlaylistSongItem
     private lateinit var intent: Intent
-    private lateinit var bundle : Bundle
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mPlayFragment = FragmentPlayBinding.inflate(inflater, container, false)
-        musicPlayer = MediaPlayer.create(context, R.raw.querry_qnt)
-        playSongItem = requireArguments().getSerializable("songItem") as PlaylistSongItem
-        applicationContext = requireContext()
+    private lateinit var bundle: Bundle
+    val handler = Handler()
+    private val mServiceConnection : ServiceConnection = object : ServiceConnection{
 
+        override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
+            Log.e("HoangDH", "Service Connected")
+            val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
+            musicService = myBinder.getMyService()
+            isServiceConnected = true
+            initSeekBar()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceConnected = false
+        }
+
+    }
+    private var isServiceConnected : Boolean = false
+
+
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
+        Log.e("HoangDH", "initView")
+        playSongItem = requireArguments().getSerializable("songItem") as PlaylistSongItem
         bundle = Bundle()
         bundle.putSerializable("song_item", playSongItem)
         intent = Intent(context, MusicService::class.java)
         intent.putExtra("song_bundle", bundle)
-        return mPlayFragment!!.root
+        context?.startService(intent)
+        context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+        binding.btnPlay.setImageResource(R.drawable.ic_pause)
     }
 
     override fun setOnClick() {
         super.setOnClick()
-        autoPlay()
-        mPlayFragment!!.btnPlay.setOnClickListener {
-            if (!musicPlayer.isPlaying) {
+        Log.e("HoangDH", "setOnClick")
+        binding.btnPlay.setOnClickListener {
+            Log.e("HoangDH", "isPlaying is ${musicService!!.isPlaying()}")
+            if (!musicService!!.isPlaying()) {
                 playSound()
-                mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_pause)
-                initSeekBar()
+                binding.btnPlay.setImageResource(R.drawable.ic_pause)
             } else {
                 pauseSound()
-                mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_green_play)
+                binding.btnPlay.setImageResource(R.drawable.ic_green_play)
             }
+
         }
     }
 
     override fun bindingStateView() {
         super.bindingStateView()
         description = "${playSongItem.songTitle}\n${playSongItem.artists}"
-        mPlayFragment!!.songDes.text = description
-        mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
-        mPlayFragment!!.seekBar.max = musicPlayer.duration
-        mPlayFragment!!.seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    musicPlayer.seekTo(progress)
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-
-        })
-    }
-
-    private fun autoPlay(){
-        applicationContext.startService(intent)
-        mPlayFragment!!.btnPlay.setImageResource(R.drawable.ic_pause)
+        binding.songDes.text = description
+        Log.e("HoangDH", "bindingStateView")
 
     }
-    private fun playSound() {
-        applicationContext.startService(intent)
+    override fun onStart() {
+        Log.e("HoangDH", "onStart")
+        super.onStart()
+
+    }
+    override fun onResume() {
+        super.onResume()
+        Log.e("HoangDH", "onResume")
+
     }
 
-    private fun pauseSound() {
-        musicPlayer.pause()
-    }
+    override fun onPause() {
+        super.onPause()
+        Log.e("HoangDH", "onPause")
 
-    private fun initSeekBar() {
-        mPlayFragment!!.seekBar.max = musicPlayer.duration
-        val handler = Handler()
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                mPlayFragment!!.seekBar.progress = musicPlayer.currentPosition
-                handler.postDelayed(this, 1000)
-            }
-
-        }, 0)
     }
 
     override fun onStop() {
         super.onStop()
-        val intent = Intent(requireContext(), MusicService::class.java)
-        applicationContext.stopService(intent)
+        Log.e("HoangDH", "onStop")
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        handler.removeCallbacksAndMessages(null)
+        Log.e("HoangDH", "onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.e("HoangDH", "onDestroy")
+    }
+
+    private fun playSound() {
+        musicService!!.startMusic(playSongItem)
+    }
+
+    private fun pauseSound() {
+        musicService!!.pauseMusic()
+    }
+
+    private fun initSeekBar() {
+        Log.e("HoangDH", "initSeekBar")
+        binding.seekBar.progress = musicService!!.currentPosition()
+        binding.seekBar.max = musicService!!.duration()
+        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    musicService!!.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
+
+        binding.seekBar.max = musicService!!.duration()
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                binding.seekBar.progress = musicService!!.currentPosition()
+                handler.postDelayed(this, 0)
+            }
+        }, 0)
+    }
+
 }

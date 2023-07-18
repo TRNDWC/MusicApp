@@ -40,9 +40,10 @@ android {
 dependencies {
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
-
     implementation project(':libraries:core')
     implementation project(':features:Demo')
+
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
 
     //appcompat
     implementation libraries.appcompat
