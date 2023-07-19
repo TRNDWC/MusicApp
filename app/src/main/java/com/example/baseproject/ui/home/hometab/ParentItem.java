@@ -5,7 +5,7 @@ import java.util.List;
 public class ParentItem {
 
     // Declaration of the variables
-    private String ParentItemTitle;
+    private String itemTitle;
     private List<ChildItem> ChildItemList;
 
     // Constructor of the class
@@ -15,7 +15,7 @@ public class ParentItem {
             List<ChildItem> ChildItemList)
     {
 
-        this.ParentItemTitle = ParentItemTitle;
+        this.itemTitle = ParentItemTitle;
         this.ChildItemList = ChildItemList;
     }
 
@@ -23,13 +23,13 @@ public class ParentItem {
     // for each parameter
     public String getParentItemTitle()
     {
-        return ParentItemTitle;
+        return itemTitle;
     }
 
     public void setParentItemTitle(
             String parentItemTitle)
     {
-        ParentItemTitle = parentItemTitle;
+        itemTitle = parentItemTitle;
     }
 
     public List<ChildItem> getChildItemList()

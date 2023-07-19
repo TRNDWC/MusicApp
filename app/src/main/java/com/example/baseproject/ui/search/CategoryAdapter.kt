@@ -29,7 +29,9 @@ class CategoryAdapter(private val categoryList: List<SearchCategoryItem>) :
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val category = categoryList[position]
-        holder.categoryTitle.text = category.categoryTitle
+        holder.categoryTitle.text = category.itemTitle
+
+
         holder.itemView.setOnClickListener{
             onItemClick?.invoke(category)
         }

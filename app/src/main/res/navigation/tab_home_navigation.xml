@@ -7,5 +7,13 @@
     <fragment
         android:id="@+id/homeTabFragment"
         android:name="com.example.baseproject.ui.home.hometab.HomeTabFragment"
-        android:label="HomeTabFragment" />
+        android:label="HomeTabFragment" >
+        <action
+            android:id="@+id/action_homeTabFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
+        android:label="PlaylistFragment" />
 </navigation>

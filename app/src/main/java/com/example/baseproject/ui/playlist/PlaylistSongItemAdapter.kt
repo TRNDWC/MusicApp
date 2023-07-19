@@ -1,11 +1,11 @@
 package com.example.baseproject.ui.playlist
 
-import android.content.ClipData.Item
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.baseproject.data.PlaylistSongItem
 import com.example.baseproject.databinding.PlaylistSongItemBinding
 import com.example.baseproject.navigation.ItemClickNavigation
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
@@ -23,10 +24,11 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.layout.fragment_search) {
+class SearchFragment :
+    BaseFragment<FragmentSearchBinding, SearchViewModel>(R.layout.fragment_search) {
 
     @Inject
-    lateinit var appNavigation : AppNavigation
+    lateinit var appNavigation: AppNavigation
 
     companion object {
         fun newInstance() = SearchFragment()
@@ -41,8 +43,9 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         super.setOnClick()
         searchCategoryAdapter.onItemClick = {
             val bundle = Bundle()
-            bundle.putString("categoryTitle", it.categoryTitle)
-            appNavigation.openHomeScreentoPlaylistScreen(bundle)
+            bundle.putString("categoryTitle", it.itemTitle)
+            this.findNavController()
+                .navigate(R.id.action_searchFragment_to_playlistFragment, bundle)
         }
     }
 
@@ -51,11 +54,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         binding.rcvSearch.adapter = searchCategoryAdapter
         binding.rcvSearch.layoutManager = GridLayoutManager(requireContext(), 2)
     }
-
-
-
-
-
 
 
     private fun dummyCategoryList(): List<SearchCategoryItem> {
@@ -86,8 +84,6 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         itemList.add(item12)
         return itemList
     }
-
-
 
 
 }

@@ -2,9 +2,11 @@ package com.example.baseproject.ui.home.hometab
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
+import com.example.baseproject.data.AllSong
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
 import com.example.core.utils.toast
@@ -17,26 +19,30 @@ class HomeTabFragment :
 
     var mList = ParentItemList()
     private val parentAdapter = ParentAdapter(mList)
+
     @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: HomeTabViewModel by viewModels()
     override fun getVM() = viewModel
     override fun setOnClick() {
         super.setOnClick()
-        parentAdapter.onItemClick = {parentItem: ParentItem, childItem: ChildItem ->
+        parentAdapter.onItemClick = { parentItem: ParentItem, childItem: ChildItem ->
             val bundle = Bundle()
-            val title = parentItem.parentItemTitle+"\n"+childItem.childItemTitle
-            title.toast(requireContext())
-            bundle.putString("title",title)
-            appNavigation.openHomeScreentoPlaylistScreen(bundle)
+            val title = parentItem.parentItemTitle + "\n" + childItem.childItemTitle
+            AllSong.songs.size.toString().toast(requireContext())
+            bundle.putString("title", title)
+            this.findNavController()
+                .navigate(R.id.action_homeTabFragment_to_playlistFragment, bundle)
         }
     }
 
     override fun bindingStateView() {
         super.bindingStateView()
         binding.rcvFrg.adapter = parentAdapter
-        binding.rcvFrg.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL,
-            false)
+        binding.rcvFrg.layoutManager = LinearLayoutManager(
+            requireContext(), LinearLayoutManager.VERTICAL,
+            false
+        )
     }
 
     override fun bindingAction() {
