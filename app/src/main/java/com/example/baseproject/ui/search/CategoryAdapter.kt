@@ -11,9 +11,7 @@ import com.example.baseproject.navigation.ItemClickNavigation
 class CategoryAdapter(private val categoryList: List<SearchCategoryItem>) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
-    private lateinit var myListener: ItemClickNavigation
     var onItemClick: ((SearchCategoryItem) -> Unit)? = null
-
 
     inner class CategoryViewHolder(itemView: SearchCategoryBinding) :
         RecyclerView.ViewHolder(itemView.root) {

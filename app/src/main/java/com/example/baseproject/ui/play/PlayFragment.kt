@@ -11,9 +11,9 @@ import android.util.Log
 import android.widget.SeekBar
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
+import com.example.baseproject.data.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayBinding
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.playlist.PlaylistSongItem
 import com.example.core.base.BaseFragment
 
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
@@ -47,7 +47,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         Log.e("HoangDH", "initView")
-        playSongItem = requireArguments().getParcelable("songItem")!!
+        playSongItem = requireArguments().get("songItem") as PlaylistSongItem
         bundle = Bundle()
         bundle.putParcelable("song_item", playSongItem)
         intent = Intent(context, MusicService::class.java)

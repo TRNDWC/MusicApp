@@ -15,5 +15,13 @@
     <fragment
         android:id="@+id/playlistFragment"
         android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
-        android:label="PlaylistFragment" />
+        android:label="PlaylistFragment" >
+        <action
+            android:id="@+id/action_playlistFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.baseproject.ui.play.PlayFragment"
+        android:label="PlayFragment" />
 </navigation>

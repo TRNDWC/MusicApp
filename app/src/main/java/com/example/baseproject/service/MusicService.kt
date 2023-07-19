@@ -5,17 +5,15 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
-import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import android.widget.RemoteViews
-import android.widget.SeekBar
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
+import com.example.baseproject.data.PlaylistSongItem
 import com.example.baseproject.ui.play.PlayFragment
-import com.example.baseproject.ui.playlist.PlaylistSongItem
 import com.example.core.base.BaseService
-import timber.log.Timber
 
 
 class MusicService : BaseService() {
@@ -40,7 +38,7 @@ class MusicService : BaseService() {
         Log.e("HoangDH", "onStartCommand")
         val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
             .getParcelable("song_item")!!
-        musicPlayer = MediaPlayer.create(this, songItem.resource)
+        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
 
         startMusic(songItem)
         sendNotification(songItem)
