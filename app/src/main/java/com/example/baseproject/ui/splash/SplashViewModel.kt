@@ -1,10 +1,6 @@
 package com.example.baseproject.ui.splash
 
-import android.app.Activity
 import android.app.Application
-import android.os.Environment
-import android.provider.MediaStore
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.baseproject.R
@@ -14,12 +10,10 @@ import com.example.baseproject.data.SongDatabase
 import com.example.baseproject.data.SongRepository
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,7 +36,7 @@ class SplashViewModel @Inject constructor(data: DataRepository, application: App
                 R.drawable.green_play_circle,
                 items.songTitle,
                 items.artists,
-                R.raw.bat_tinh_yeu_len
+                items.resource
             )
             addSong(item)
         }
