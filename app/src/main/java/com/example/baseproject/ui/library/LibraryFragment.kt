@@ -46,6 +46,6 @@ class LibraryFragment :
     override fun onItemClick(position: Int) {
         val bundle = Bundle()
         bundle.putParcelable("playlist", playlistList[position])
-        this.findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment, bundle)
+        this.findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment3, bundle)
     }
 }

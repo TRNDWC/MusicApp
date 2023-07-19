@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.baseproject.R
@@ -11,7 +12,7 @@ import com.example.baseproject.databinding.ActivityMainBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.utils.PermissionsUtil
 import com.example.baseproject.utils.PermissionsUtil.requestPermissions
-import com.example.core.base.BaseActivityNotRequireViewModel
+import com.example.core.base.BaseActivity
 import com.example.core.pref.RxPreferences
 import com.example.core.utils.NetworkConnectionManager
 import com.example.core.utils.setLanguage
@@ -26,7 +27,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), DemoDialogListener {
+class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDialogListener {
 
     @Inject
     lateinit var appNavigation: AppNavigation
@@ -37,6 +38,8 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Dem
     @Inject
     lateinit var rxPreferences: RxPreferences
 
+    private val viewModel: MainViewModel by viewModels()
+    override fun getVM() = viewModel
     override val layoutId = R.layout.activity_main
     private val STORAGE_PERMISSION_ID = 0
 
@@ -46,6 +49,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Dem
         if (!checkStorePermission(STORAGE_PERMISSION_ID)) {
             showRequestPermission(STORAGE_PERMISSION_ID)
         }
+        
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host) as NavHostFragment
@@ -103,7 +107,7 @@ class MainActivity : BaseActivityNotRequireViewModel<ActivityMainBinding>(), Dem
             val len = permissions.size
             while (i < len) {
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    // TODO: 2/25/19 get song list here as user as accept the storage permisssion.
+                    viewModel.getSong()
                     return
                 }
                 i++
