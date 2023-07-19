@@ -28,11 +28,13 @@ class HomeTabFragment :
         super.setOnClick()
         parentAdapter.onItemClick = { parentItem: ParentItem, childItem: ChildItem ->
             val bundle = Bundle()
+
             val title = parentItem.parentItemTitle + "\n" + childItem.childItemTitle
             AllSong.songs.size.toString().toast(requireContext())
             bundle.putString("title", title)
             this.findNavController()
                 .navigate(R.id.action_homeTabFragment_to_playlistFragment, bundle)
+
         }
     }
 

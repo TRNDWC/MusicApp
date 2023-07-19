@@ -8,11 +8,19 @@
         android:name="com.example.baseproject.ui.search.SearchFragment"
         android:label="SearchFragment">
         <action
-            android:id="@+id/action_searchFragment_to_playlistFragment2"
-            app:destination="@id/playlistFragment2" />
+            android:id="@+id/action_searchFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
     </fragment>
     <fragment
-        android:id="@+id/playlistFragment2"
+        android:id="@+id/playlistFragment"
         android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
-        android:label="PlaylistFragment" />
+        android:label="PlaylistFragment" >
+        <action
+            android:id="@+id/action_playlistFragment_to_playFragment"
+            app:destination="@id/playFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playFragment"
+        android:name="com.example.baseproject.ui.play.PlayFragment"
+        android:label="PlayFragment" />
 </navigation>

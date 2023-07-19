@@ -32,9 +32,10 @@ class SearchFragment :
         super.setOnClick()
         searchCategoryAdapter.onItemClick = {
             val bundle = Bundle()
+
             bundle.putString("categoryTitle", it.itemTitle)
             this.findNavController()
-                .navigate(R.id.action_searchFragment_to_playlistFragment2, bundle)
+                .navigate(R.id.action_searchFragment_to_playlistFragment, bundle)
         }
     }
 

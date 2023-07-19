@@ -27,6 +27,10 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
         openScreen(R.id.action_signupFragment_to_homeFragment, bundle)
     }
 
+    override fun openPlayListScreenToPlayScreen(bundle: Bundle?) {
+        openScreen(R.id.action_playlistFragment_to_playFragment, bundle)
+    }
+
 
     override fun openDemoViewPager(bundle: Bundle?) {
         openScreen(R.id.action_splashFragment_to_loginFragment, bundle)

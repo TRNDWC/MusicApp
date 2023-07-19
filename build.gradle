@@ -4,6 +4,7 @@ buildscript {
         google()
         mavenCentral()
     }
+//    compile 'com.sothree.slidinguppanel:library:3.4.0'
     apply from: rootProject.file('dependencies.gradle')
     dependencies {
         classpath libraries.androidGradle
