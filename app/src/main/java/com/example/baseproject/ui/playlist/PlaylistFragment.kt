@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentPlaylistBinding
@@ -35,7 +36,6 @@ class PlaylistFragment :
             override fun onItemClick(position: Int) {
                 val bundle = Bundle()
              bundle.putParcelable("songItem", msongList[position])
-                appNavigation.openPlaylistScreentoPlayScreen(bundle)
             }
         })
         actionButton = binding.btnPlaylistPlay

@@ -7,5 +7,13 @@
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.baseproject.ui.library.LibraryFragment"
-        android:label="LibraryFragment" />
+        android:label="LibraryFragment" >
+        <action
+            android:id="@+id/action_libraryFragment_to_playlistFragment"
+            app:destination="@id/playlistFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playlistFragment"
+        android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
+        android:label="PlaylistFragment" />
 </navigation>

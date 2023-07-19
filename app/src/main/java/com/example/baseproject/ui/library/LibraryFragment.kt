@@ -2,6 +2,7 @@ package com.example.baseproject.ui.library
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentLibraryBinding
@@ -45,6 +46,6 @@ class LibraryFragment :
     override fun onItemClick(position: Int) {
         val bundle = Bundle()
         bundle.putParcelable("playlist", playlistList[position])
-        appNavigation.openLibraryToPlaylist(bundle)
+       this.findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment, bundle)
     }
 }

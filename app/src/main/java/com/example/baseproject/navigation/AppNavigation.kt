@@ -8,9 +8,7 @@ interface AppNavigation : BaseNavigator {
     fun openSplashToLogin(bundle: Bundle? = null)
     fun openLogintoHomeScreen(bundle: Bundle? = null)
     fun openLogintoSignUp(bundle: Bundle? = null)
-    fun openHomeScreentoPlaylistScreen(bundle: Bundle? = null)
-    fun openPlaylistScreentoPlayScreen(bundle: Bundle? = null)
     fun openSignUptoHome(bundle: Bundle? = null)
-    fun openLibraryToPlaylist(bundle: Bundle? = null)
+
 
 }

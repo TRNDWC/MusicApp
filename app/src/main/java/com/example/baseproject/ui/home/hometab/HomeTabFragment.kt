@@ -2,6 +2,7 @@ package com.example.baseproject.ui.home.hometab
 
 import android.os.Bundle
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
@@ -28,7 +29,7 @@ class HomeTabFragment :
             val title = parentItem.parentItemTitle+"\n"+childItem.childItemTitle
             title.toast(requireContext())
             bundle.putString("title",title)
-            appNavigation.openHomeScreentoPlaylistScreen(bundle)
+            this.findNavController().navigate(R.id.action_homeTabFragment_to_playlistFragment, bundle)
         }
     }
 

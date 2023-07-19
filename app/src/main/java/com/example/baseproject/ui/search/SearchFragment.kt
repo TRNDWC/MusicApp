@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
@@ -42,7 +43,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding, SearchViewModel>(R.la
         searchCategoryAdapter.onItemClick = {
             val bundle = Bundle()
             bundle.putString("categoryTitle", it.categoryTitle)
-            appNavigation.openHomeScreentoPlaylistScreen(bundle)
+            this.findNavController().navigate(R.id.action_searchFragment_to_playlistFragment, bundle)
         }
     }
 
