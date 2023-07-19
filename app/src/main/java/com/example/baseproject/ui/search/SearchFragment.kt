@@ -1,23 +1,12 @@
 package com.example.baseproject.ui.search
 
-import android.graphics.Color
-import android.os.Build
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentSearchBinding
 import com.example.baseproject.navigation.AppNavigation
-import com.example.baseproject.navigation.ItemClickNavigation
-import com.example.baseproject.ui.home.HomeViewModel
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,7 +36,6 @@ class SearchFragment :
             bundle.putString("categoryTitle", it.itemTitle)
             this.findNavController()
                 .navigate(R.id.action_searchFragment_to_playlistFragment, bundle)
-
         }
     }
 
