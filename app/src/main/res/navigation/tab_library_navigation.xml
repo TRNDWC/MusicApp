@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tab_library_navigation"
     app:startDestination="@id/libraryFragment">
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.baseproject.ui.library.LibraryFragment"
-        android:label="LibraryFragment" >
+        android:label="LibraryFragment">
         <action
-            android:id="@+id/action_libraryFragment_to_playlistFragment"
-            app:destination="@id/playlistFragment" />
+            android:id="@+id/action_libraryFragment_to_playlistFragment3"
+            app:destination="@id/playlistFragment3" />
     </fragment>
     <fragment
-        android:id="@+id/playlistFragment"
+        android:id="@+id/playlistFragment3"
         android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
         android:label="PlaylistFragment" />
 </navigation>
