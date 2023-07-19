@@ -1,22 +1,16 @@
-package com.example.baseproject.data
+package com.example.baseproject.ui.playlist
 
-import android.media.Image
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import java.io.Serializable
 
-@Entity(tableName = "song_data")
 data class PlaylistSongItem(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int,
     var songImage: Int,
     var songTitle: String?,
     var artists: String?,
-    var resource : Int
-):Parcelable {
+    var resource: Int
+    ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
         parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
@@ -25,7 +19,6 @@ data class PlaylistSongItem(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
         parcel.writeInt(songImage)
         parcel.writeString(songTitle)
         parcel.writeString(artists)

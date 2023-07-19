@@ -41,7 +41,8 @@ class SplashViewModel @Inject constructor(data: DataRepository, application: App
                 0,
                 R.drawable.green_play_circle,
                 items.songTitle,
-                items.artists
+                items.artists,
+                R.raw.bat_tinh_yeu_len
             )
             addSong(item)
         }

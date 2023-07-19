@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.R
 import com.example.baseproject.data.AllSong
 import com.example.baseproject.data.PlaylistSongItem
 import com.example.baseproject.data.SongDatabase
@@ -37,11 +38,9 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-
-
-    fun convert(stri: String): String {
-        var str = stri
-        str = str.replace("[àáạảãâầấậẩẫăằắặẳẵ]".toRegex(), "a")
+    fun convert(str: String?): String {
+        var str = str
+        str = str!!.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
         str = str.replace("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ".toRegex(), "e")
         str = str.replace("ì|í|ị|ỉ|ĩ".toRegex(), "i")
         str = str.replace("ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ".toRegex(), "o")
@@ -76,5 +75,46 @@ class PlaylistViewModel @Inject constructor(
             }
         }
         return songList.value!!.toList()
+    }
+
+    fun songItemList(): MutableList<PlaylistSongItem> {
+        val songItemList = mutableListOf<PlaylistSongItem>()
+        songItemList.add(
+            PlaylistSongItem(
+                0,
+                R.drawable.green_play_circle,
+                "Có ai hẹn hò cùng em chưa",
+                "Quân AP",
+                R.raw.co_ai_hen_ho_cung_em_chua_quan_ap
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                0,
+                R.drawable.green_play_circle,
+                "Đưa em về nhà",
+                "GreyD, Chillies",
+                R.raw.dua_em_ve_nha_greyd_chillies
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                0,
+                R.drawable.green_play_circle,
+                "Nếu lúc đó",
+                "TLinh",
+                R.raw.neu_luc_do_tlinh
+            )
+        )
+        songItemList.add(
+            PlaylistSongItem(
+                0,
+                R.drawable.green_play_circle,
+                "Querry",
+                "QNT",
+                R.raw.querry_qnt
+            )
+        )
+        return songItemList
     }
 }

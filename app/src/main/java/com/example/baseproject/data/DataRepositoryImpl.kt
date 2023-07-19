@@ -48,7 +48,7 @@ class DataRepositoryImpl @Inject constructor() : DataRepository {
                 val path = c.getString(0)
                 val name = c.getString(1)
                 val artist = c.getString(2)
-                val audioModel = PlaylistSongItem(0, R.drawable.green_play_circle, name, artist)
+                val audioModel = PlaylistSongItem(0, R.drawable.green_play_circle, name, artist,R.raw.bat_tinh_yeu_len)
                 Log.d("Name :$name", "1`23456789")
                 Log.d("Path :$path", " Artist :$artist")
                 tempAudioList.add(audioModel)

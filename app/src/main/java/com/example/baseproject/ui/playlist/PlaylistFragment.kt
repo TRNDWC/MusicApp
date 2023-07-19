@@ -35,12 +35,24 @@ class PlaylistFragment :
         playlistAdapter.setOnItemClickListener(object : ItemClickNavigation {
             override fun onItemClick(position: Int) {
                 val bundle = Bundle()
-                bundle.putString("title", msongList[position].songTitle)
-                bundle.putString("artist", msongList[position].artists)
-                bundle.putInt("song_image", msongList[position].songImage)
+                bundle.putParcelable("songItem", msongList[position])
             }
         })
         actionButton = binding.btnPlaylistPlay
+//        actionButton.setOnClickListener {
+//            viewModel.add(
+//                PlaylistSongItem(
+//                    0,
+//                    R.drawable.green_play_circle,
+//                    "1",
+//                    "1",
+//                    R.raw.querry_qnt
+//                )
+//            )
+//            playlistAdapter.setFilteredList(viewModel.songList.value!!)
+//            "add".toast(requireContext())
+//        }
+
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
