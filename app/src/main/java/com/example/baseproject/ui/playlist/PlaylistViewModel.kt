@@ -37,18 +37,6 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun clear() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.clearData()
-        }
-    }
-
-    fun check(): Int {
-        repository.getAllSong.value?.let {
-            return it.size
-        }
-        return 0
-    }
 
 
     fun convert(stri: String): String {

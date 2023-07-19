@@ -21,5 +21,6 @@
     <string name="library_music">Library</string>
     <string name="add_artist">Add artist</string>
     <string name="add_playlist">Add playlist</string>
+    <string name="playlist">playlist</string>
 
 </resources>

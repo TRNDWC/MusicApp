@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "song_data")
 data class PlaylistSongItem(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    var id: Int,
     var songImage: Int,
     var songTitle: String,
     var artists: String,

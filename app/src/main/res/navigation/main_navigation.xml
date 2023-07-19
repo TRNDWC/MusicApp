@@ -35,11 +35,7 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.baseproject.ui.home.HomeFragment"
-        android:label="HomeFragment" >
-        <action
-            android:id="@+id/action_homeFragment_to_playlistFragment2"
-            app:destination="@id/playlistFragment2" />
-    </fragment>
+        android:label="HomeFragment" />
     <fragment
         android:id="@+id/signupFragment"
         android:name="com.example.baseproject.ui.authentication.signupFragment"
@@ -51,17 +47,5 @@
             app:popUpToInclusive="true"
             app:popUpTo="@id/loginFragment"/>
     </fragment>
-    <fragment
-        android:id="@+id/playlistFragment2"
-        android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
-        android:label="PlaylistFragment" >
-        <action
-            android:id="@+id/action_playlistFragment2_to_playFragment"
-            app:destination="@id/playFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/playFragment"
-        android:name="com.example.baseproject.ui.play.PlayFragment"
-        android:label="PlayFragment" />
 
 </navigation>

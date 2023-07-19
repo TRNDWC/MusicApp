@@ -27,18 +27,6 @@ class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
         openScreen(R.id.action_signupFragment_to_homeFragment, bundle)
     }
 
-    override fun openLibraryToPlaylist(bundle: Bundle?) {
-        openScreen(R.id.action_homeFragment_to_playlistFragment2,bundle)
-    }
-
-    override fun openHomeScreentoPlaylistScreen(bundle: Bundle?) {
-        openScreen(R.id.action_homeFragment_to_playlistFragment2,bundle)
-    }
-
-    override fun openPlaylistScreentoPlayScreen(bundle: Bundle?) {
-        openScreen(R.id.action_playlistFragment2_to_playFragment,bundle)
-    }
-
 
     override fun openDemoViewPager(bundle: Bundle?) {
         openScreen(R.id.action_splashFragment_to_loginFragment, bundle)

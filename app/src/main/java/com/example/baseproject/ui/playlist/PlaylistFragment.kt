@@ -38,22 +38,9 @@ class PlaylistFragment :
                 bundle.putString("title", msongList[position].songTitle)
                 bundle.putString("artist", msongList[position].artists)
                 bundle.putInt("song_image", msongList[position].songImage)
-                appNavigation.openPlaylistScreentoPlayScreen(bundle)
             }
         })
         actionButton = binding.btnPlaylistPlay
-        actionButton.setOnClickListener {
-            viewModel.addSong(
-                PlaylistSongItem(
-                    (0..20).random(),
-                    R.drawable.green_play_circle,
-                    (0..20).random().toString(),
-                    (0..20).random().toString()
-                )
-            )
-//            viewModel.clear()
-            "${viewModel.check()}}".toast(requireContext())
-        }
 
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
