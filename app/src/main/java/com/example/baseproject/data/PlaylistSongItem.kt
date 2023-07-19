@@ -1,6 +1,5 @@
 package com.example.baseproject.data
 
-import android.media.Image
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
@@ -13,14 +12,14 @@ data class PlaylistSongItem(
     var songImage: Int,
     var songTitle: String?,
     var artists: String?,
-    var resource : Int
-):Parcelable {
+    var resource: String?
+) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readInt()
+        parcel.readString()
     ) {
     }
 
@@ -29,7 +28,7 @@ data class PlaylistSongItem(
         parcel.writeInt(songImage)
         parcel.writeString(songTitle)
         parcel.writeString(artists)
-        parcel.writeInt(resource)
+        parcel.writeString(resource)
     }
 
     override fun describeContents(): Int {
