@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.databinding.ChildLayoutBinding
-import com.example.baseproject.ui.playlist.PlaylistSongItem
 
 class ChildAdapter(private val ChildItemList: List<ChildItem>) : RecyclerView.Adapter<ChildAdapter.ChildViewHolder>(){
 
