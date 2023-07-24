@@ -19,11 +19,11 @@
 
             <ImageButton
                 android:id="@+id/avatar_btn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="15dp"
-                android:src="@drawable/ic_launcher_foreground"></ImageButton>
+                android:src="@drawable/ic_launcher_foreground" />
 
             <TextView
                 android:layout_width="0dp"
@@ -33,14 +33,14 @@
                 android:text="@string/library_music"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                android:textStyle="bold"></TextView>
+                android:textStyle="bold" />
 
             <ImageView
-                android:id="@+id/search_lib"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:id="@+id/add_item"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_marginStart="15dp"
-                android:src="@drawable/ic_search"></ImageView>
+                android:src="@drawable/baseline_add_24" />
         </LinearLayout>
 
 
@@ -58,7 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/_135dp"
-                    tools:listitem="@layout/parent_layout"></androidx.recyclerview.widget.RecyclerView>
+                    tools:listitem="@layout/parent_layout" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

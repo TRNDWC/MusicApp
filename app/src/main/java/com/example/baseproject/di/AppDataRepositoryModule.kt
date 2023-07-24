@@ -1,9 +1,7 @@
 package com.example.baseproject.di
 
-import androidx.appcompat.app.AppCompatActivity
-import com.example.baseproject.data.DataRepository
-import com.example.baseproject.data.DataRepositoryImpl
-import dagger.Binds
+import com.example.baseproject.data.datarepo.DataRepository
+import com.example.baseproject.data.datarepo.DataRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +11,5 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class AppDataRepositoryModule {
     @Provides
-    fun provideDataRepository() : DataRepository = DataRepositoryImpl()
+    fun provideDataRepository(): DataRepository = DataRepositoryImpl()
 }

@@ -11,8 +11,6 @@ android {
     defaultConfig {
         minSdk versions.minSdk
         targetSdk versions.targetSdk
-        versionCode versions.versionCode
-        versionName versions.versionName
     }
 
     buildTypes {
@@ -36,6 +34,7 @@ android {
     kotlinOptions {
         jvmTarget = versions.java.toString()
     }
+    namespace 'com.example.setting'
 
 }
 

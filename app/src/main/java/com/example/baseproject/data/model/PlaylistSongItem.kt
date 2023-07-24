@@ -1,4 +1,4 @@
-package com.example.baseproject.data
+package com.example.baseproject.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -9,14 +9,14 @@ import androidx.room.PrimaryKey
 data class PlaylistSongItem(
     @PrimaryKey(autoGenerate = true)
     var songId: Int,
-    var songImage: Int,
+    var songImage: String?,
     var songTitle: String?,
     var artists: String?,
     var resource: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
@@ -24,7 +24,7 @@ data class PlaylistSongItem(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(songId)
-        parcel.writeInt(songImage)
+        parcel.writeString(songImage)
         parcel.writeString(songTitle)
         parcel.writeString(artists)
         parcel.writeString(resource)

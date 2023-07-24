@@ -1,11 +1,11 @@
 package com.example.baseproject.ui.library
 
 import android.os.Bundle
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
-import com.example.baseproject.data.LibraryItem
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.FragmentLibraryBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.navigation.ItemClickNavigation
@@ -18,26 +18,36 @@ class LibraryFragment :
     BaseFragment<FragmentLibraryBinding, LibraryViewModel>(R.layout.fragment_library),
     ItemClickNavigation {
 
-    private val viewModel: LibraryViewModel by viewModels()
-
     @Inject
     lateinit var appNavigation: AppNavigation
+    private val viewModel: LibraryViewModel by activityViewModels()
     override fun getVM(): LibraryViewModel = viewModel
-
     private var playlistList = listOf<LibraryItem>()
+    override fun setOnClick() {
+        super.setOnClick()
+        binding.addItem.setOnClickListener {
+            AddPlaylistDialog().show(requireActivity().supportFragmentManager, "add_playlist")
+        }
+    }
 
     override fun bindingStateView() {
         super.bindingStateView()
 
         viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
-            if (newList != null) {
-                if (newList.isEmpty()) viewModel.addPlaylist(LibraryItem(0, "All Yours Songs", "1"))
-                binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
-                playlistList = newList
-            }
+            if (newList.isEmpty()) viewModel.addPlaylist(LibraryItem(0, "All Yours Songs", "1"))
+            binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
+            playlistList = newList
         }
-        binding.libraryRcv.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
+            if (newList != "") {
+                viewModel.addPlaylist(LibraryItem(0, newList.toString(), "1"))
+                viewModel.set()
+            }
+
+            binding.libraryRcv.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        }
     }
 
     override fun onItemClick(position: Int) {

@@ -1,13 +1,15 @@
-package com.example.baseproject.data
+package com.example.baseproject.data.songrepo
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
+import com.example.baseproject.data.model.PlaylistSongItem
 
 @Dao
 interface SongDao {
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSong(song: PlaylistSongItem)
 
     @Query("SELECT * FROM song_data ORDER BY songTitle ASC")

@@ -7,8 +7,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
-import com.example.baseproject.data.LibraryItem
-import com.example.baseproject.data.PlaylistSongItem
+import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment

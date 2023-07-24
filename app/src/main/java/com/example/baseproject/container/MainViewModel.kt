@@ -2,10 +2,10 @@ package com.example.baseproject.container
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.example.baseproject.data.DataRepository
-import com.example.baseproject.data.PlaylistSongItem
-import com.example.baseproject.data.SongDatabase
-import com.example.baseproject.data.SongRepository
+import com.example.baseproject.data.datarepo.DataRepository
+import com.example.baseproject.data.model.PlaylistSongItem
+import com.example.baseproject.data.songrepo.SongDatabase
+import com.example.baseproject.data.songrepo.SongRepository
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
