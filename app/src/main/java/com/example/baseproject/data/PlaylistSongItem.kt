@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "song_data")
 data class PlaylistSongItem(
     @PrimaryKey(autoGenerate = true)
-    var id: Int,
+    var songId: Int,
     var songImage: Int,
     var songTitle: String?,
     var artists: String?,
@@ -20,11 +20,10 @@ data class PlaylistSongItem(
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
+        parcel.writeInt(songId)
         parcel.writeInt(songImage)
         parcel.writeString(songTitle)
         parcel.writeString(artists)

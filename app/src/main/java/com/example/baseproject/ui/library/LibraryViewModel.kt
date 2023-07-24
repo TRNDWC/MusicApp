@@ -1,47 +1,33 @@
 package com.example.baseproject.ui.library
 
+import android.app.Application
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.LibraryItem
+import com.example.baseproject.data.PlaylistDatabase
+import com.example.baseproject.data.PlaylistRepository
 import com.example.core.base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LibraryViewModel : BaseViewModel() {
-//    fun songItemList(): List<PlaylistSongItem> {
-//        val songItemList = mutableListOf<PlaylistSongItem>()
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Có ai hẹn hò cùng em chưa",
-//                "Quân AP",
-//                R.raw.co_ai_hen_ho_cung_em_chua_quan_ap
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Đưa em về nhà",
-//                "GreyD, Chillies",
-//                R.raw.dua_em_ve_nha_greyd_chillies
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Nếu lúc đó",
-//                "TLinh",
-//                R.raw.neu_luc_do_tlinh
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Query",
-//                "QNT",
-//                R.raw.querry_qnt
-//            )
-//        )
-//
-//        return songItemList
-//    }
+@HiltViewModel
+class LibraryViewModel @Inject constructor(
+    application: Application
+) : BaseViewModel() {
+    val playlistList: LiveData<List<LibraryItem>>
+    private val repository: PlaylistRepository
+
+    init {
+        val playlistDao = PlaylistDatabase.getDatabase(application).playlistDao()
+        repository = PlaylistRepository(playlistDao)
+        playlistList = repository.getAllPlaylist
+    }
+
+    fun addPlaylist(item: LibraryItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addPlaylist(item)
+        }
+    }
 }

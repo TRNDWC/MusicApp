@@ -1,17 +1,28 @@
-package com.example.baseproject.data;
+package com.example.baseproject.data
+
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-class LibraryItem(val id: String?, val itemTitle: String?) : Parcelable {
+@Entity(tableName = "playlist_data")
+class LibraryItem(
+    @PrimaryKey(autoGenerate = true)
+    val playlistId: Int,
+    val playlistTitle: String?,
+    val playlistImage: String?
+) :
+    Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString()
-    ) {
-    }
+    )
 
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(id)
-        parcel.writeString(itemTitle)
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeInt(playlistId)
+        dest.writeString(playlistTitle)
+        dest.writeString(playlistImage)
     }
 
     override fun describeContents(): Int {
@@ -28,3 +39,4 @@ class LibraryItem(val id: String?, val itemTitle: String?) : Parcelable {
         }
     }
 }
+

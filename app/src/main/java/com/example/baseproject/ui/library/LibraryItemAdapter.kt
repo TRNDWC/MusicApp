@@ -23,6 +23,7 @@ class LibraryItemAdapter(
     ) :
         RecyclerView.ViewHolder(mLibraryItem.root) {
         var libraryItemTitle = mLibraryItem.libraryTitle
+
         init {
             mLibraryItem.libraryItem.setOnClickListener {
                 onItemClickListener.onItemClick(adapterPosition)
@@ -42,6 +43,6 @@ class LibraryItemAdapter(
 
     override fun onBindViewHolder(holder: LibraryItemViewHolder, position: Int) {
         val item = libraryItemList[position]
-        holder.libraryItemTitle.text = item.itemTitle
+        holder.libraryItemTitle.text = item.playlistTitle
     }
 }
