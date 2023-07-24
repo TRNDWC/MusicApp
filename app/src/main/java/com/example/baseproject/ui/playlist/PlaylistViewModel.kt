@@ -1,6 +1,7 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.PlaylistSongItem
@@ -25,6 +26,7 @@ class PlaylistViewModel @Inject constructor(
         val songDao = SongDatabase.getDatabase(application).songDao()
         repository = SongRepository(songDao)
         songList = repository.getAllSong
+        Log.d("trndwcs", songList.value?.size.toString())
     }
 
     fun addSong(item: PlaylistSongItem) {
@@ -71,45 +73,4 @@ class PlaylistViewModel @Inject constructor(
         }
         return songList.value!!.toList()
     }
-
-//    fun songItemList(): MutableList<PlaylistSongItem> {
-//        val songItemList = mutableListOf<PlaylistSongItem>()
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Có ai hẹn hò cùng em chưa",
-//                "Quân AP",
-//                R.raw.co_ai_hen_ho_cung_em_chua_quan_ap
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Đưa em về nhà",
-//                "GreyD, Chillies",
-//                R.raw.dua_em_ve_nha_greyd_chillies
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Nếu lúc đó",
-//                "TLinh",
-//                R.raw.neu_luc_do_tlinh
-//            )
-//        )
-//        songItemList.add(
-//            PlaylistSongItem(
-//                0,
-//                R.drawable.green_play_circle,
-//                "Querry",
-//                "QNT",
-//                R.raw.querry_qnt
-//            )
-//        )
-//        return songItemList
-//    }
 }

@@ -3,16 +3,14 @@ package com.example.baseproject.ui.playlist
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
-import com.example.baseproject.databinding.FragmentPlaylistBinding
-import com.example.baseproject.navigation.AppNavigation
-import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.baseproject.data.LibraryItem
 import com.example.baseproject.data.PlaylistSongItem
+import com.example.baseproject.databinding.FragmentPlaylistBinding
+import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -38,22 +36,6 @@ class PlaylistFragment :
             bundle.putParcelable("songItem", it)
             this.findNavController().navigate(R.id.action_playlistFragment_to_playFragment, bundle)
         }
-        actionButton = binding.btnPlaylistPlay
-//        actionButton.setOnClickListener {
-//            viewModel.add(
-//                PlaylistSongItem(
-//                    0,
-//                    R.drawable.green_play_circle,
-//                    "1",
-//                    "1",
-//                    R.raw.querry_qnt
-//                )
-//            )
-//            playlistAdapter.setFilteredList(viewModel.songList.value!!)
-//            "add".toast(requireContext())
-//        }
-
-
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -72,13 +54,9 @@ class PlaylistFragment :
         actionButton = binding.btnPlaylistPlay
         val item = arguments?.getParcelable<LibraryItem>("playlist")
 
-        materialToolbar.setTitle(item?.itemTitle)
+        materialToolbar.setTitle(item?.playlistTitle)
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
-
-        viewModel.songList.value?.let {
-            mSongList = it
-        }
         playlistAdapter.setFilteredList(mSongList)
         binding.rcvPlaylistSong.adapter = playlistAdapter
         binding.rcvPlaylistSong.layoutManager =

@@ -21,7 +21,7 @@ class SplashViewModel @Inject constructor(data: DataRepository, application: App
 
     init {
         viewModelScope.launch {
-            delay(5000)
+            delay(1000)
             actionSPlash.value = SplashActionState.Finish
         }
     }

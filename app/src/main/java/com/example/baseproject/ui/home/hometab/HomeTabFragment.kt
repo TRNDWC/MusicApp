@@ -6,10 +6,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
-import com.example.baseproject.data.AllSong
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -30,7 +28,6 @@ class HomeTabFragment :
             val bundle = Bundle()
 
             val title = parentItem.parentItemTitle + "\n" + childItem.childItemTitle
-            AllSong.songs.size.toString().toast(requireContext())
             bundle.putString("title", title)
             this.findNavController()
                 .navigate(R.id.action_homeTabFragment_to_playlistFragment, bundle)

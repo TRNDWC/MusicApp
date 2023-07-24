@@ -24,30 +24,25 @@ class LibraryFragment :
     lateinit var appNavigation: AppNavigation
     override fun getVM(): LibraryViewModel = viewModel
 
-    private var playlistList = LibraryItemList()
+    private var playlistList = listOf<LibraryItem>()
 
     override fun bindingStateView() {
         super.bindingStateView()
-        val playlistList = LibraryItemList()
-        binding.libraryRcv.adapter = LibraryItemAdapter(playlistList, this)
+
+        viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
+            if (newList != null) {
+                if (newList.isEmpty()) viewModel.addPlaylist(LibraryItem(0, "All Yours Songs", "1"))
+                binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
+                playlistList = newList
+            }
+        }
         binding.libraryRcv.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-    }
-
-    private fun LibraryItemList(): MutableList<LibraryItem> {
-        val LibraryItemList: MutableList<LibraryItem> = ArrayList()
-        LibraryItemList.add(LibraryItem("1", "Card 1"))
-        LibraryItemList.add(LibraryItem("2", "Card 2"))
-        LibraryItemList.add(LibraryItem("3", "Card 3"))
-        LibraryItemList.add(LibraryItem("4", "Card 4"))
-        return LibraryItemList
     }
 
     override fun onItemClick(position: Int) {
         val bundle = Bundle()
         bundle.putParcelable("playlist", playlistList[position])
-
         this.findNavController().navigate(R.id.action_libraryFragment_to_playlistFragment, bundle)
-
     }
 }
