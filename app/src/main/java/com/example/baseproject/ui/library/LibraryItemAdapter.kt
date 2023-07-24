@@ -3,7 +3,7 @@ package com.example.baseproject.ui.library
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.baseproject.data.LibraryItem
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.LibraryItemBinding
 import com.example.baseproject.navigation.ItemClickNavigation
 

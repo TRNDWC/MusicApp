@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
-import com.example.baseproject.data.PlaylistSongItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.ui.play.PlayFragment
 import com.example.core.base.BaseService
 
@@ -20,8 +20,9 @@ class MusicService : BaseService() {
 
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
+
     inner class MyBinder : Binder() {
-        fun getMyService() : MusicService = this@MusicService
+        fun getMyService(): MusicService = this@MusicService
     }
 
     override fun onCreate() {
@@ -50,10 +51,12 @@ class MusicService : BaseService() {
         Log.e("HoangDH", "onUnbind")
         return super.onUnbind(intent)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         musicPlayer.stop()
     }
+
     fun startMusic(songItem: PlaylistSongItem) {
         Log.e("HoangDH", "startMusic")
         musicPlayer.start()
@@ -65,19 +68,19 @@ class MusicService : BaseService() {
     }
 
 
-    fun isPlaying() : Boolean {
+    fun isPlaying(): Boolean {
         return musicPlayer.isPlaying
     }
 
-    fun currentPosition() : Int {
+    fun currentPosition(): Int {
         return musicPlayer.currentPosition
     }
 
-    fun duration() : Int {
+    fun duration(): Int {
         return musicPlayer.duration
     }
 
-    fun seekTo(progress : Int) {
+    fun seekTo(progress: Int) {
         musicPlayer.seekTo(progress)
     }
 
@@ -94,7 +97,7 @@ class MusicService : BaseService() {
         val remoteView = RemoteViews(packageName, R.layout.custom_notification).apply {
             setTextViewText(R.id.song_title, songItem.songTitle)
             setTextViewText(R.id.song_artist, songItem.artists)
-            setImageViewResource(R.id.song_image, songItem.songImage)
+            setImageViewUri(R.id.song_image, songItem.songImage?.toUri())
         }
 
         val notification =

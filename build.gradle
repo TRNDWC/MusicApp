@@ -7,7 +7,7 @@ buildscript {
 //    compile 'com.sothree.slidinguppanel:library:3.4.0'
     apply from: rootProject.file('dependencies.gradle')
     dependencies {
-        classpath libraries.androidGradle
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath libraries.kotlinGradle
         classpath libraries.hiltGradle
     }

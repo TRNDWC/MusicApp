@@ -2,7 +2,6 @@ package com.example.baseproject.ui.splash
 
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
-import com.example.baseproject.data.DataRepository
 import com.example.baseproject.databinding.FragmentSplashBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.core.base.BaseFragment
@@ -11,7 +10,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SplashFragment:
+class SplashFragment :
     BaseFragment<FragmentSplashBinding, SplashViewModel>(R.layout.fragment_splash) {
 
     @Inject
