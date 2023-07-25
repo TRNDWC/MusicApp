@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.widget.SeekBar
+import androidx.fragment.app.viewModels
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayBinding
