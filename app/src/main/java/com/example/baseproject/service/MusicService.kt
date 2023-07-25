@@ -97,7 +97,7 @@ class MusicService : BaseService() {
         val remoteView = RemoteViews(packageName, R.layout.custom_notification).apply {
             setTextViewText(R.id.song_title, songItem.songTitle)
             setTextViewText(R.id.song_artist, songItem.artists)
-            setImageViewUri(R.id.song_image, songItem.songImage?.toUri())
+//            setImageViewUri(R.id.song_image, songItem.songImage?.toUri())
         }
 
         val notification =
