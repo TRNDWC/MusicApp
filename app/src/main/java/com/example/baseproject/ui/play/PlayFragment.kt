@@ -9,7 +9,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.widget.SeekBar
-import androidx.fragment.app.viewModels
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayBinding
@@ -26,7 +25,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
     val handler = Handler()
-    private val mServiceConnection : ServiceConnection = object : ServiceConnection{
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
             Log.e("HoangDH", "Service Connected")
@@ -41,7 +40,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         }
 
     }
-    private var isServiceConnected : Boolean = false
+    private var isServiceConnected: Boolean = false
 
 
     override fun initView(savedInstanceState: Bundle?) {
@@ -80,11 +79,13 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         Log.e("HoangDH", "bindingStateView")
 
     }
+
     override fun onStart() {
         Log.e("HoangDH", "onStart")
         super.onStart()
 
     }
+
     override fun onResume() {
         super.onResume()
         Log.e("HoangDH", "onResume")

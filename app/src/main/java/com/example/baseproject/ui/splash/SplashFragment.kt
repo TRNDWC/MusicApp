@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class SplashFragment:
+class SplashFragment :
     BaseFragment<FragmentSplashBinding, SplashViewModel>(R.layout.fragment_splash) {
 
     @Inject

@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="@color/spotifyGreen"
             android:padding="@dimen/_10dp"
-            android:text="@string/creat"
+            android:text="@string/create"
             android:textSize="@dimen/text_size_14" />
 
     </LinearLayout>

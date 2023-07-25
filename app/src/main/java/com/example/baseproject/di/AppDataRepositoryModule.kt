@@ -11,5 +11,5 @@ import dagger.hilt.android.components.ViewModelComponent
 @InstallIn(ViewModelComponent::class)
 class AppDataRepositoryModule {
     @Provides
-    fun provideDataRepository() : DataRepository = DataRepositoryImpl()
+    fun provideDataRepository(): DataRepository = DataRepositoryImpl()
 }

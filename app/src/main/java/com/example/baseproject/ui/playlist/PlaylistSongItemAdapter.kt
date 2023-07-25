@@ -12,7 +12,7 @@ import com.example.baseproject.databinding.PlaylistSongItemBinding
 class PlaylistSongItemAdapter(private var playlistSongItem: List<PlaylistSongItem>) :
     RecyclerView.Adapter<PlaylistSongItemAdapter.PlaylistSongItemViewHolder>() {
 
-    var onItemClick : ((PlaylistSongItem) -> Unit)? = null
+    var onItemClick: ((PlaylistSongItem) -> Unit)? = null
 
 
     fun setFilteredList(mList: List<PlaylistSongItem>) {
@@ -41,9 +41,9 @@ class PlaylistSongItemAdapter(private var playlistSongItem: List<PlaylistSongIte
         val item = playlistSongItem[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
-        holder.songImage.setImageURI(item.resource?.toUri())
+        holder.songImage.setImageURI(item.songImage?.toUri())
 
-        holder.itemView.setOnClickListener{
+        holder.itemView.setOnClickListener {
             onItemClick?.invoke(item)
         }
     }
