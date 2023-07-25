@@ -17,7 +17,7 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     application: Application
 ) : BaseViewModel() {
-    val playlistList: LiveData<List<LibraryItem>>
+    var playlistList: LiveData<List<LibraryItem>>
     private val repository: PlaylistRepository
 
     init {
@@ -29,6 +29,7 @@ class LibraryViewModel @Inject constructor(
     fun addPlaylist(item: LibraryItem) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addPlaylist(item)
+            playlistList = repository.getAllPlaylist
         }
     }
 

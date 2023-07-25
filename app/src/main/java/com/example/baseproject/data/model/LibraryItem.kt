@@ -39,4 +39,3 @@ class LibraryItem(
         }
     }
 }
-

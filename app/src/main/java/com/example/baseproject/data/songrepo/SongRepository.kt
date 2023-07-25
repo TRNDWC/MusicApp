@@ -2,6 +2,7 @@ package com.example.baseproject.data.songrepo
 
 import androidx.lifecycle.LiveData
 import com.example.baseproject.data.model.PlaylistSongItem
+import com.example.baseproject.data.songrepo.SongDao
 
 class SongRepository(private val songDao: SongDao) {
 
