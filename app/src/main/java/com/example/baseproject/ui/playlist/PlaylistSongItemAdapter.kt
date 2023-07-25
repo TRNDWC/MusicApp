@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import com.example.baseproject.data.PlaylistSongItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.PlaylistSongItemBinding
-import com.example.baseproject.navigation.ItemClickNavigation
 
 class PlaylistSongItemAdapter(private var playlistSongItem: List<PlaylistSongItem>) :
     RecyclerView.Adapter<PlaylistSongItemAdapter.PlaylistSongItemViewHolder>() {
@@ -41,7 +41,7 @@ class PlaylistSongItemAdapter(private var playlistSongItem: List<PlaylistSongIte
         val item = playlistSongItem[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
-        holder.songImage.setImageResource(item.songImage)
+        holder.songImage.setImageURI(item.resource?.toUri())
 
         holder.itemView.setOnClickListener{
             onItemClick?.invoke(item)

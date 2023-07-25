@@ -2,10 +2,11 @@ package com.example.baseproject.ui.library
 
 import android.app.Application
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.baseproject.data.LibraryItem
-import com.example.baseproject.data.PlaylistDatabase
-import com.example.baseproject.data.PlaylistRepository
+import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.playlistrepo.PlaylistDatabase
+import com.example.baseproject.data.playlistrepo.PlaylistRepository
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,7 @@ import javax.inject.Inject
 class LibraryViewModel @Inject constructor(
     application: Application
 ) : BaseViewModel() {
-    val playlistList: LiveData<List<LibraryItem>>
+    var playlistList: LiveData<List<LibraryItem>>
     private val repository: PlaylistRepository
 
     init {
@@ -28,6 +29,18 @@ class LibraryViewModel @Inject constructor(
     fun addPlaylist(item: LibraryItem) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addPlaylist(item)
+            playlistList = repository.getAllPlaylist
         }
+    }
+
+    private val _newPlaylist = MutableLiveData<String>("")
+    val newPlaylist: LiveData<String> = _newPlaylist
+
+    fun creatPl(title: String) {
+        _newPlaylist.value = title
+    }
+
+    fun set() {
+        _newPlaylist.value = ""
     }
 }

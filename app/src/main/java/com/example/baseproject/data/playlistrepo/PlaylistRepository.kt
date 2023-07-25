@@ -1,6 +1,8 @@
-package com.example.baseproject.data
+package com.example.baseproject.data.playlistrepo
 
 import androidx.lifecycle.LiveData
+import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.playlistrepo.PlaylistDao
 
 class PlaylistRepository(private val playlistDao: PlaylistDao) {
     

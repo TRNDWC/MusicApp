@@ -1,11 +1,12 @@
-package com.example.baseproject.data
+package com.example.baseproject.data.datarepo
 
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
-import com.example.baseproject.R
+import com.example.baseproject.data.model.PlaylistSongItem
 import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class DataRepositoryImpl @Inject constructor() : DataRepository {
 
     override fun getSong(context: Context): List<PlaylistSongItem> {
+        val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
         val musicList = mutableListOf<PlaylistSongItem>()
         val musicResolver: ContentResolver = context.contentResolver
         val musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
@@ -31,13 +33,13 @@ class DataRepositoryImpl @Inject constructor() : DataRepository {
                 val thisTitle = musicCursor.getString(titleColumn)
                 val thisArtist = musicCursor.getString(artistColumn)
                 val thisSongLink = Uri.parse(musicCursor.getString(songLink))
-//                val some = musicCursor.getLong(albumID)
-//                val uri = ContentUris.withAppendedId(sArtworkUri, some)
+                val some = musicCursor.getLong(albumID)
+                val uri = ContentUris.withAppendedId(sArtworkUri, some)
                 if (thisSongLink.toString().endsWith(".mp3"))
                     musicList.add(
                         PlaylistSongItem(
                             thisId,
-                            R.drawable.green_play_circle,
+                            uri.toString(),
                             thisTitle,
                             thisArtist,
                             thisSongLink.toString()

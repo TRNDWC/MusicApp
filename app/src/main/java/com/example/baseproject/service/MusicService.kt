@@ -11,7 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
-import com.example.baseproject.data.PlaylistSongItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.ui.play.PlayFragment
 import com.example.core.base.BaseService
 
@@ -94,7 +94,7 @@ class MusicService : BaseService() {
         val remoteView = RemoteViews(packageName, R.layout.custom_notification).apply {
             setTextViewText(R.id.song_title, songItem.songTitle)
             setTextViewText(R.id.song_artist, songItem.artists)
-            setImageViewResource(R.id.song_image, songItem.songImage)
+            setImageViewUri(R.id.song_image, songItem.resource?.toUri())
         }
 
         val notification =

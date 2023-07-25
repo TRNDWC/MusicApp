@@ -1,4 +1,4 @@
-package com.example.baseproject.data
+package com.example.baseproject.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -39,4 +39,3 @@ class LibraryItem(
         }
     }
 }
-
