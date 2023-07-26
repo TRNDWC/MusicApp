@@ -9,46 +9,57 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.PlaylistSongItemBinding
 
-class PlaylistSongItemAdapter(private var playlistSongItem: List<PlaylistSongItem>) :
+interface OnItemClickListener {
+    fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding)
+}
+
+class PlaylistSongItemAdapter(
+    private var mSongList: List<PlaylistSongItem>,
+    private val onItemClickListener: OnItemClickListener
+) :
     RecyclerView.Adapter<PlaylistSongItemAdapter.PlaylistSongItemViewHolder>() {
 
-    var onItemClick: ((PlaylistSongItem) -> Unit)? = null
-
-
     fun setFilteredList(mList: List<PlaylistSongItem>) {
-        this.playlistSongItem = mList
+        this.mSongList = mList
         notifyDataSetChanged()
     }
 
     inner class PlaylistSongItemViewHolder(
-        mPlaylistSongItem: PlaylistSongItemBinding
+        mPlaylistSongItem: PlaylistSongItemBinding,
+        onItemClickListener: OnItemClickListener
     ) :
         RecyclerView.ViewHolder(mPlaylistSongItem.root) {
         val songItemTitle: TextView = mPlaylistSongItem.songTitle
         val songItemArtist: TextView = mPlaylistSongItem.songArtist
         val songImage: ImageView = mPlaylistSongItem.songImageView
 
+        init {
+            mPlaylistSongItem.apply {
+                playlistSongItem.setOnClickListener {
+                    onItemClickListener.onItemClicked(
+                        mSongList[adapterPosition],
+                        mPlaylistSongItem
+                    )
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistSongItemViewHolder {
         val mPlaylistSongItem: PlaylistSongItemBinding = PlaylistSongItemBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return PlaylistSongItemViewHolder(mPlaylistSongItem)
+        return PlaylistSongItemViewHolder(mPlaylistSongItem, onItemClickListener)
     }
 
     override fun onBindViewHolder(holder: PlaylistSongItemViewHolder, position: Int) {
-        val item = playlistSongItem[position]
+        val item = mSongList[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
         holder.songImage.setImageURI(item.songImage?.toUri())
-
-        holder.itemView.setOnClickListener {
-            onItemClick?.invoke(item)
-        }
     }
 
     override fun getItemCount(): Int {
-        return playlistSongItem.size
+        return mSongList.size
     }
 }

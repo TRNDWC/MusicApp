@@ -24,9 +24,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickListener {
     private lateinit var dialogBinding: AddSongLayoutBinding
-    private val viewModel: PlaylistViewModel by viewModels({requireParentFragment()})
+    private val viewModel: PlaylistViewModel by viewModels({ requireParentFragment() })
     private lateinit var songDialogAdapter: SongDiaLogAdapter
-    private lateinit var songList : List<PlaylistSongItem>
+    private lateinit var songList: List<PlaylistSongItem>
     private val playlistId = playlistId
     fun getVM() = viewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +67,7 @@ class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickL
 
         viewModel.addSongList.observe(viewLifecycleOwner) { newList ->
             songList = newList
-            songDialogAdapter = SongDiaLogAdapter(songList,this)
+            songDialogAdapter = SongDiaLogAdapter(songList, this)
             dialogBinding.rcvListSong.adapter = songDialogAdapter
             dialogBinding.rcvListSong.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -77,13 +77,12 @@ class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickL
     }
 
     override fun onItemClicked(position: Int, view: DialogSongItemBinding) {
-        Log.d("trndwcs","clicked")
+        Log.d("trndwcs", "clicked")
     }
 
-    override fun onAddClicked(position: Int, view: DialogSongItemBinding) {
-        viewModel.addSongtoPlaylist(songList[position].songId, playlistId)
+    override fun onAddClicked(songId: Int, view: DialogSongItemBinding) {
+        viewModel.addSongtoPlaylist(songId, playlistId)
         viewModel.getSong(playlistId)
-        "${position}clicked".toast(requireContext())
     }
 
     private fun searchAction() {
@@ -91,8 +90,9 @@ class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickL
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
-                songDialogAdapter.setFilteredList(viewModel.filter(newText,songList))
+                songDialogAdapter.setFilteredList(viewModel.filter(newText, songList))
                 return true
             }
         })
