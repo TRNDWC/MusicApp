@@ -36,7 +36,9 @@ class PlaylistFragment :
 
         playlistAdapter.onItemClick = {
             val bundle = Bundle()
-            bundle.putParcelable("songItem", it)
+            bundle.putInt("position", viewModel.songList.value!!.indexOf(it))
+            bundle.putParcelableArrayList("list_song",
+                viewModel.songList.value?.let { it1 -> ArrayList(it1) })
             this.findNavController().navigate(R.id.action_playlistFragment_to_playFragment, bundle)
         }
 
@@ -54,9 +56,9 @@ class PlaylistFragment :
         super.bindingStateView()
         val item = arguments?.getParcelable<LibraryItem>("playlist")
         item?.let { viewModel.getSong(it.playlistId) }
-
         // material tool bar
         materialToolbar = binding.materialToolbar
+
         materialToolbar.title = item?.playlistTitle
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
