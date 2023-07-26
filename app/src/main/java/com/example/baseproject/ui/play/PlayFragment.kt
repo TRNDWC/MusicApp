@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -56,8 +57,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         Log.e("HoangDH", "initView")
         songList = requireArguments().getParcelableArrayList("list_song")!!
         playSongPosition = requireArguments().getInt("position")
-        Log.e("HoangDH", "${songList.size}")
-        Log.e("HoangDH", "${playSongPosition}")
+
         prepareBundle(playSongPosition)
         context?.startService(intent)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -79,7 +79,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         }
 
         binding.btnNext.setOnClickListener {
-            when (playSongPosition < songList.size) {
+            when (playSongPosition < songList.size-1) {
                 true -> ++playSongPosition
                 false -> playSongPosition = 0
             }
@@ -191,6 +191,8 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     private fun prepareBundle(songPosition: Int) {
         Log.e("HoangDH", "prepareBundle")
+        Log.e("HoangDH", "${songList.size}")
+        Log.e("HoangDH", "${playSongPosition}")
         bundle = Bundle()
         bundle.putParcelable("song_item", songList[songPosition])
         intent = Intent(context, MusicService::class.java)
