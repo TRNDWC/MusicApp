@@ -85,9 +85,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
             }
             prepareBundle(playSongPosition)
             setSongDescription()
-            context?.startService(intent)
-            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-            binding.btnPlay.setImageResource(R.drawable.ic_pause)
+            startMusicService()
         }
 
         binding.btnPre.setOnClickListener {
@@ -97,9 +95,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
             }
             prepareBundle(playSongPosition)
             setSongDescription()
-            context?.startService(intent)
-            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-            binding.btnPlay.setImageResource(R.drawable.ic_pause)
+            startMusicService()
         }
     }
 
@@ -185,6 +181,12 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
                 handler.postDelayed(this, 0)
             }
         }, 0)
+    }
+
+    private fun startMusicService(){
+        context?.startService(intent)
+        context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+        binding.btnPlay.setImageResource(R.drawable.ic_pause)
     }
 
     private fun prepareBundle(songPosition: Int) {
