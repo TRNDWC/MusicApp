@@ -5,7 +5,9 @@ import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.playlistrepo.PlaylistDao
 
 class PlaylistRepository(private val playlistDao: PlaylistDao) {
-    val getAllPlaylist: LiveData<List<LibraryItem>> = playlistDao.listAllPlaylist()
+    suspend fun getAllPlaylist() : List<LibraryItem>{
+        return playlistDao.listAllPlaylist()
+    }
     suspend fun addPlaylist(item: LibraryItem) {
         playlistDao.addPlaylist(item)
     }

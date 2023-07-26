@@ -34,7 +34,6 @@ class LibraryFragment :
         super.bindingStateView()
 
         viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
-            if (newList.isEmpty()) viewModel.addPlaylist(LibraryItem(0, "All Yours Songs", "1"))
             binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
             playlistList = newList
         }
