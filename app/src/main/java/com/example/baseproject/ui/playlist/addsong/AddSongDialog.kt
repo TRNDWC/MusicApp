@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.databinding.AddSongLayoutBinding
+import com.example.baseproject.databinding.AddSongDialogBinding
 import com.example.baseproject.databinding.DialogSongItemBinding
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.core.utils.toast
@@ -23,7 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
 class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickListener {
-    private lateinit var dialogBinding: AddSongLayoutBinding
+    private lateinit var dialogBinding: AddSongDialogBinding
     private val viewModel: PlaylistViewModel by viewModels({ requireParentFragment() })
     private lateinit var songDialogAdapter: SongDiaLogAdapter
     private lateinit var songList: List<PlaylistSongItem>
@@ -61,7 +61,7 @@ class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickL
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dialogBinding = AddSongLayoutBinding.inflate(inflater, container, false)
+        dialogBinding = AddSongDialogBinding.inflate(inflater, container, false)
         dialogBinding.searchView.setBackgroundResource(R.color.color_btn)
         viewModel.listAll()
 

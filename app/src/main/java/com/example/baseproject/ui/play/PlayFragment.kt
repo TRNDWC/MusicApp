@@ -4,26 +4,28 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.SeekBar
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayBinding
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import jp.wasabeef.blurry.Blurry
+
 
 @AndroidEntryPoint
 class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
 
     private var musicService: MusicService? = null
-
     private val viewModel: PlayViewModel by viewModels()
 
 
@@ -106,14 +108,24 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
     override fun bindingStateView() {
         super.bindingStateView()
         setSongDescription()
+
         Log.e("HoangDH", "bindingStateView")
     }
 
-    private fun setSongDescription(){
+    private fun setSongDescription() {
         viewModel.songDescription.value = "${songList[playSongPosition].songTitle}\n${
             songList[playSongPosition].artists
         }"
         binding.songDes.text = viewModel.songDescription.value
+        binding.songImage.setImageURI(songList[playSongPosition].songImage?.toUri())
+//        binding.playBg.setBackgroundColor(Color.BLUE)
+//        Blurry.with(context)
+//            .radius(10)
+//            .sampling(8)
+//            .color(Color.argb(66, 255, 255, 0))
+//            .async()
+//            .animate(500)
+//            .onto(binding.playBg as ViewGroup)
     }
 
     override fun onStart() {

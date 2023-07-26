@@ -26,7 +26,7 @@ class LibraryFragment :
     override fun setOnClick() {
         super.setOnClick()
         binding.addItem.setOnClickListener {
-            AddPlaylistDialog().show(requireActivity().supportFragmentManager, "add_playlist")
+            CustomPlaylistDialog().show(requireActivity().supportFragmentManager, "add_playlist")
         }
     }
 
