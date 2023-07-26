@@ -13,7 +13,6 @@ plugins {
 
 android {
     compileSdk versions.compileSdk
-
     defaultConfig {
         applicationId "com.project.demo"
         minSdk versions.minSdk
@@ -55,7 +54,7 @@ dependencies {
     implementation project(':features:Demo')
 
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
-
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     //appcompat
     implementation libraries.appcompat
     implementation libraries.fragment

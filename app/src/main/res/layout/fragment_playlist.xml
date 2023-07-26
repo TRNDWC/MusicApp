@@ -38,7 +38,8 @@
                     android:id="@+id/materialToolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:layout_collapseMode="pin"></com.google.android.material.appbar.MaterialToolbar>
+                    app:layout_collapseMode="pin" />
+
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +53,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_50dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/_135dp">
 
                 <androidx.appcompat.widget.SearchView
                     android:id="@+id/searchView"
@@ -69,8 +71,42 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="@dimen/_10dp"
-                    android:paddingBottom="@dimen/_135dp"
                     android:textSize="18sp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/add_song"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_margin="@dimen/_10dp"
+                    android:background="#00000000">
+
+                    <ImageView
+                        android:id="@+id/song_image_view"
+                        android:layout_width="60dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/ic_add_song"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+
+                    <TextView
+                        android:id="@+id/song_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_to_this_playlist"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.02"
+                        app:layout_constraintStart_toEndOf="@id/song_image_view"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.5" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

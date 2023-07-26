@@ -1,12 +1,16 @@
 package com.example.baseproject.service
 
+import android.R.attr.data
 import android.app.PendingIntent
 import android.content.Intent
 import android.media.MediaPlayer
+import android.media.session.MediaSession
+import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
+import android.provider.MediaStore
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
@@ -20,6 +24,7 @@ class MusicService : BaseService() {
 
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
+    private lateinit var mediaSession : MediaSessionCompat
 
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
@@ -27,6 +32,7 @@ class MusicService : BaseService() {
 
     override fun onCreate() {
         super.onCreate()
+        mediaSession = MediaSessionCompat(this,"PlayerAudio")
         Log.e("HoangDH", "onCreate")
     }
 
@@ -40,7 +46,6 @@ class MusicService : BaseService() {
         val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
             .getParcelable("song_item")!!
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
-
         startMusic(songItem)
         sendNotification(songItem)
         return START_NOT_STICKY
@@ -94,17 +99,24 @@ class MusicService : BaseService() {
                 PendingIntent.FLAG_IMMUTABLE
             )
 
-        val remoteView = RemoteViews(packageName, R.layout.custom_notification).apply {
-            setTextViewText(R.id.song_title, songItem.songTitle)
-            setTextViewText(R.id.song_artist, songItem.artists)
-//            setImageViewUri(R.id.song_image, songItem.songImage?.toUri())
-        }
+        val picture = MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
+
 
         val notification =
-            NotificationCompat.Builder(this, CHANNEL_ID).setSmallIcon(R.drawable.ic_notification)
+            NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.spotify)
+                .setLargeIcon(picture)
+                .setContentTitle(songItem.songTitle)
+                .setContentText(songItem.artists)
+                .addAction(R.drawable.ic_pre,"Previous",null)
+                .addAction(R.drawable.ic_play,"Play",null)
+                .addAction(R.drawable.ic_next,"Next",null)
+                .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-                .setCustomContentView(remoteView).build()
+                .setOnlyAlertOnce(true)
+                .build()
         startForeground(1, notification)
     }
 
