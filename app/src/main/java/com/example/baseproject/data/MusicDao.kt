@@ -25,7 +25,6 @@ interface MusicDao {
     suspend fun addPlaylist(playlist: LibraryItem)
     @Query("SELECT * FROM playlist_data ORDER BY playlistTitle ASC")
     suspend fun listAllPlaylist(): List<LibraryItem>
-
     //Music
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)

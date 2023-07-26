@@ -1,12 +1,15 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.PlaylistSongItem
+import com.example.baseproject.data.relation.SongPlaylistCrossRef
+import com.example.baseproject.databinding.ParentLayoutBindingImpl
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +37,14 @@ class PlaylistViewModel @Inject constructor(
             _songList.postValue(data.songs)
         }
     }
+
+    fun addSongtoPlaylist(songId : Int, playlistId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId,playlistId))
+            getSong(playlistId)
+        }
+    }
+
 
 
     private val _addSongList = MutableLiveData<List<PlaylistSongItem>>()
@@ -66,10 +77,10 @@ class PlaylistViewModel @Inject constructor(
         return str
     }
 
-    fun filter(newText: String?): List<PlaylistSongItem> {
+    fun filter(newText: String?, list : List<PlaylistSongItem>): List<PlaylistSongItem> {
         val filterList = ArrayList<PlaylistSongItem>()
         if (newText != null) {
-            songList.value?.forEach {
+            list.forEach {
                 if (convert(it.songTitle).lowercase(Locale.ROOT)
                         .contains(convert(newText).lowercase())
                 ) {
@@ -83,6 +94,6 @@ class PlaylistViewModel @Inject constructor(
                 return filterList
             }
         }
-        return songList.value!!.toList()
+        return filterList
     }
 }

@@ -9,12 +9,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.AddSongLayoutBinding
 import com.example.baseproject.databinding.DialogSongItemBinding
-import com.example.baseproject.ui.playlist.PlaylistSongItemAdapter
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.core.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -22,24 +22,16 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
-class AddSongDialog : BottomSheetDialogFragment(), OnItemClickListener {
+class AddSongDialog(playlistId: Int) : BottomSheetDialogFragment(), OnItemClickListener {
     private lateinit var dialogBinding: AddSongLayoutBinding
-    private val viewModel: PlaylistViewModel by activityViewModels()
-    private lateinit var playlistAdapter: SongDiaLogAdapter
+    private val viewModel: PlaylistViewModel by viewModels({requireParentFragment()})
+    private lateinit var songDialogAdapter: SongDiaLogAdapter
     private lateinit var songList : List<PlaylistSongItem>
+    private val playlistId = playlistId
     fun getVM() = viewModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialogBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                playlistAdapter.setFilteredList(viewModel.filter(newText))
-                return true
-            }
-        })
+        searchAction()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -71,11 +63,12 @@ class AddSongDialog : BottomSheetDialogFragment(), OnItemClickListener {
     ): View? {
         dialogBinding = AddSongLayoutBinding.inflate(inflater, container, false)
         dialogBinding.searchView.setBackgroundResource(R.color.color_btn)
+        viewModel.listAll()
 
         viewModel.addSongList.observe(viewLifecycleOwner) { newList ->
             songList = newList
-            playlistAdapter = SongDiaLogAdapter(songList,this)
-            dialogBinding.rcvListSong.adapter = playlistAdapter
+            songDialogAdapter = SongDiaLogAdapter(songList,this)
+            dialogBinding.rcvListSong.adapter = songDialogAdapter
             dialogBinding.rcvListSong.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
@@ -88,7 +81,20 @@ class AddSongDialog : BottomSheetDialogFragment(), OnItemClickListener {
     }
 
     override fun onAddClicked(position: Int, view: DialogSongItemBinding) {
-//        viewModel.addSong(songList[position])
+        viewModel.addSongtoPlaylist(songList[position].songId, playlistId)
+        viewModel.getSong(playlistId)
         "${position}clicked".toast(requireContext())
+    }
+
+    private fun searchAction() {
+        dialogBinding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                songDialogAdapter.setFilteredList(viewModel.filter(newText,songList))
+                return true
+            }
+        })
     }
 }
