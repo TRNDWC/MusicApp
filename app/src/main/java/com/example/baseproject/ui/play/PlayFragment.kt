@@ -24,11 +24,10 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     private var musicService: MusicService? = null
 
-    private val playViewModel: PlayViewModel by viewModels()
+    private val viewModel: PlayViewModel by viewModels()
 
 
-    override fun getVM() = playViewModel
-    private lateinit var description: String
+    override fun getVM() = viewModel
     private var playSongPosition: Int = 0
     private lateinit var songList: List<PlaylistSongItem>
     private lateinit var intent: Intent
@@ -59,7 +58,6 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         playSongPosition = requireArguments().getInt("position")
         Log.e("HoangDH", "${songList.size}")
         Log.e("HoangDH", "${playSongPosition}")
-
         prepareBundle(playSongPosition)
         context?.startService(intent)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -86,17 +84,19 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
                 false -> playSongPosition = 0
             }
             prepareBundle(playSongPosition)
+            setSongDescription()
             context?.startService(intent)
             context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             binding.btnPlay.setImageResource(R.drawable.ic_pause)
         }
 
         binding.btnPre.setOnClickListener {
-            when (playSongPosition > songList.size) {
+            when (playSongPosition > 0) {
                 true -> --playSongPosition
                 false -> playSongPosition = songList.size - 1
             }
             prepareBundle(playSongPosition)
+            setSongDescription()
             context?.startService(intent)
             context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             binding.btnPlay.setImageResource(R.drawable.ic_pause)
@@ -105,12 +105,15 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
 
     override fun bindingStateView() {
         super.bindingStateView()
-        description = "${songList.get(playSongPosition).songTitle}\n${
+        setSongDescription()
+        Log.e("HoangDH", "bindingStateView")
+    }
+
+    private fun setSongDescription(){
+        viewModel.songDescription.value = "${songList[playSongPosition].songTitle}\n${
             songList[playSongPosition].artists
         }"
-        binding.songDes.text = description
-        Log.e("HoangDH", "bindingStateView")
-
+        binding.songDes.text = viewModel.songDescription.value
     }
 
     override fun onStart() {

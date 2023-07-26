@@ -6,10 +6,7 @@ import com.example.core.base.BaseViewModel
 
 
 class PlayViewModel  : BaseViewModel() {
-    private val songDescription : MutableLiveData<String>
-
-
-
-
-
+    val songDescription : MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
 }
