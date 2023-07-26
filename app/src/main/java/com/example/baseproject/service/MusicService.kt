@@ -46,7 +46,6 @@ class MusicService : BaseService() {
         val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
             .getParcelable("song_item")!!
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
-
         startMusic(songItem)
         sendNotification(songItem)
         return START_NOT_STICKY
@@ -99,7 +98,9 @@ class MusicService : BaseService() {
                 intent,
                 PendingIntent.FLAG_IMMUTABLE
             )
+
         val picture = MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
+
 
         val notification =
             NotificationCompat.Builder(this, CHANNEL_ID)
@@ -112,7 +113,7 @@ class MusicService : BaseService() {
                 .addAction(R.drawable.ic_next,"Next",null)
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(mediaSession.sessionToken))
-                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setOnlyAlertOnce(true)
                 .build()

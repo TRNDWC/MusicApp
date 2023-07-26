@@ -3,7 +3,6 @@ package com.example.baseproject.ui.playlist
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +13,7 @@ import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -36,7 +33,9 @@ class PlaylistFragment :
 
         playlistAdapter.onItemClick = {
             val bundle = Bundle()
-            bundle.putParcelable("songItem", it)
+            bundle.putInt("position", viewModel.songList.value!!.indexOf(it))
+            bundle.putParcelableArrayList("list_song",
+                viewModel.songList.value?.let { it1 -> ArrayList(it1) })
             this.findNavController().navigate(R.id.action_playlistFragment_to_playFragment, bundle)
         }
 
@@ -57,6 +56,7 @@ class PlaylistFragment :
 
         // material tool bar
         materialToolbar = binding.materialToolbar
+
         materialToolbar.title = item?.playlistTitle
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
