@@ -13,5 +13,5 @@ interface PlaylistDao {
     suspend fun addPlaylist(playlist: LibraryItem)
 
     @Query("SELECT * FROM playlist_data ORDER BY playlistTitle ASC")
-    fun listAllPlaylist(): LiveData<List<LibraryItem>>
+    suspend fun listAllPlaylist(): List<LibraryItem>
 }

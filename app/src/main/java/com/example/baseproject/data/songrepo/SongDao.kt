@@ -13,7 +13,7 @@ interface SongDao {
     suspend fun addSong(song: PlaylistSongItem)
 
     @Query("SELECT * FROM song_data ORDER BY songTitle ASC")
-    fun listAllSong(): LiveData<List<PlaylistSongItem>>
+    suspend fun listAllSong(): List<PlaylistSongItem>
 
     @Query("DELETE FROM song_data")
     suspend fun clearData()

@@ -11,6 +11,7 @@ import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.core.base.BaseFragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -27,10 +28,10 @@ class PlaylistFragment :
     private var mSongList = listOf<PlaylistSongItem>()
     private var playlistAdapter = PlaylistSongItemAdapter(mSongList)
     private lateinit var materialToolbar: MaterialToolbar
-    private lateinit var actionButton: FloatingActionButton
 
     override fun setOnClick() {
         super.setOnClick()
+
         playlistAdapter.onItemClick = {
             val bundle = Bundle()
             bundle.putInt("position", viewModel.songList.value!!.indexOf(it))
@@ -38,28 +39,28 @@ class PlaylistFragment :
                 viewModel.songList.value?.let { it1 -> ArrayList(it1) })
             this.findNavController().navigate(R.id.action_playlistFragment_to_playFragment, bundle)
         }
-        binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
 
-            override fun onQueryTextChange(newText: String?): Boolean {
-                playlistAdapter.setFilteredList(viewModel.filter(newText))
-                return true
-            }
-        })
+        searchAction()
+
+        binding.addSong.setOnClickListener {
+            AddSongDialog().show(requireActivity().supportFragmentManager, "add_song")
+        }
     }
 
     override fun bindingStateView() {
         super.bindingStateView()
-        materialToolbar = binding.materialToolbar
-        actionButton = binding.btnPlaylistPlay
         val item = arguments?.getParcelable<LibraryItem>("playlist")
+        // material tool bar
+        materialToolbar = binding.materialToolbar
 
         materialToolbar.title = item?.playlistTitle
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
-        playlistAdapter.setFilteredList(mSongList)
+        recyclerviewAction()
+    }
+
+    private fun recyclerviewAction() {
+        playlistAdapter = PlaylistSongItemAdapter(mSongList)
         binding.rcvPlaylistSong.adapter = playlistAdapter
         binding.rcvPlaylistSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -67,5 +68,16 @@ class PlaylistFragment :
         viewModel.songList.observe(viewLifecycleOwner) { newList ->
             if (newList != null) playlistAdapter.setFilteredList(newList)
         }
+    }
+    private fun searchAction() {
+        binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                playlistAdapter.setFilteredList(viewModel.filter(newText))
+                return true
+            }
+        })
     }
 }

@@ -2,6 +2,8 @@ package com.example.baseproject.container
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.MusicDatabase
+import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.datarepo.DataRepository
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.songrepo.SongDatabase
@@ -18,8 +20,8 @@ class MainViewModel @Inject constructor(data: DataRepository, application: Appli
 
     val mData = data
     val mApplication = application
-    val songDao = SongDatabase.getDatabase(mApplication).songDao()
-    val repository = SongRepository(songDao)
+    val musicDao = MusicDatabase.getDatabase(mApplication).musicDao()
+    val repository = MusicRepository(musicDao)
     fun getSong() {
         val songData = mData.getSong(mApplication)
         for (items in songData) {
@@ -30,12 +32,6 @@ class MainViewModel @Inject constructor(data: DataRepository, application: Appli
     fun addSong(item: PlaylistSongItem) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addSong(item)
-        }
-    }
-
-    fun clear() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.clearData()
         }
     }
 }
