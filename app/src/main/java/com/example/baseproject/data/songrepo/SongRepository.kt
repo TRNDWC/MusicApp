@@ -6,7 +6,9 @@ import com.example.baseproject.data.songrepo.SongDao
 
 class SongRepository(private val songDao: SongDao) {
 
-    val getAllSong: LiveData<List<PlaylistSongItem>> = songDao.listAllSong()
+    suspend fun getAllSong() : List<PlaylistSongItem>{
+        return songDao.listAllSong()
+    }
     suspend fun addSong(item: PlaylistSongItem) {
         songDao.addSong(item)
     }

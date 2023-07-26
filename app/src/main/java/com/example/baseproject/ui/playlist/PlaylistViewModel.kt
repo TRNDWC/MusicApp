@@ -1,12 +1,12 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.MusicDatabase
+import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.data.songrepo.SongDatabase
-import com.example.baseproject.data.songrepo.SongRepository
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,21 +19,33 @@ import javax.inject.Inject
 class PlaylistViewModel @Inject constructor(
     application: Application
 ) : BaseViewModel() {
-    val songList: LiveData<List<PlaylistSongItem>>
-    private val repository: SongRepository
-
+    private val repository: MusicRepository
     init {
-        val songDao = SongDatabase.getDatabase(application).songDao()
-        repository = SongRepository(songDao)
-        songList = repository.getAllSong
-        Log.d("trndwcs", songList.value?.size.toString())
+        val musicDao = MusicDatabase.getDatabase(application).musicDao()
+        repository = MusicRepository(musicDao)
     }
 
-    fun addSong(item: PlaylistSongItem) {
+    private val _songList = MutableLiveData<List<PlaylistSongItem>>()
+    val songList: LiveData<List<PlaylistSongItem>> = _songList
+
+    fun getSong(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addSong(item)
+            val data = repository.getSongsOfPlaylist(id)
+            _songList.postValue(data.songs)
         }
     }
+
+
+    private val _addSongList = MutableLiveData<List<PlaylistSongItem>>()
+    val addSongList: LiveData<List<PlaylistSongItem>> = _addSongList
+
+    fun listAll(){
+        viewModelScope.launch (Dispatchers.IO){
+            val data = repository.getAllSong()
+            _addSongList.postValue(data)
+        }
+    }
+
 
     fun convert(str: String?): String {
         var str = str
