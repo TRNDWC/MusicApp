@@ -53,7 +53,6 @@ class PlaylistFragment :
         super.bindingStateView()
         val item = arguments?.getParcelable<LibraryItem>("playlist")
         item?.let { viewModel.getSong(it.playlistId) }
-
         // material tool bar
         materialToolbar = binding.materialToolbar
 
