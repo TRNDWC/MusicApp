@@ -37,12 +37,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
-            Log.e("HoangDH", "Service Connected")
+            Log.e("HoangDH", "Service Connected from HOME")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
             musicService = myBinder.getMyService()
             musicService!!.songLiveData.observe(viewLifecycleOwner) {
                 bindingBottomMusicPlayer(it)
             }
+
             isServiceConnected = true
         }
 
@@ -68,6 +69,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
     }
 
+    private fun setOnClickAfterServiceInit(){
+        binding.playBtn.setOnClickListener {
+            if (!musicService!!.isPlaying()) {
+                playSound()
+                binding.playBtn.setImageResource(R.drawable.ic_pause)
+            } else {
+                pauseSound()
+                binding.playBtn.setImageResource(R.drawable.ic_green_play)
+            }
+        }
+    }
 
 
     private fun setupBottomNavigationBar() {
@@ -80,42 +92,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override fun getVM() = viewModel
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Timber.tag("VietBH").d("A   " + "onAttach")
+
+    private fun playSound() {
+        musicService!!.startMusic(musicService!!.songList[musicService!!.songPosition])
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Timber.tag("VietBH").d("A   " + "onCreate")
+    private fun pauseSound() {
+        musicService!!.pauseMusic()
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        Timber.tag("VietBH").d("A   " + "onCreateView")
-        return super.onCreateView(inflater, container, savedInstanceState)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Timber.tag("VietBH").d("A   " + "onViewCreated")
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onStart() {
-        Timber.tag("VietBH").d("A   " + "onStart")
-        super.onStart()
-    }
-
-    override fun onResume() {
-        Timber.tag("VietBH").d("A   " + "onResume")
-        super.onResume()
-
-    }
-
     private fun bindingBottomMusicPlayer(songItem: PlaylistSongItem) {
+        setOnClickAfterServiceInit()
+        binding.playBtn.setImageResource(R.drawable.ic_pause)
         binding.songImage.setImageURI(songItem.songImage!!.toUri())
         binding.songTitle.text = songItem.songTitle
         binding.songArtist.text = songItem.artists
