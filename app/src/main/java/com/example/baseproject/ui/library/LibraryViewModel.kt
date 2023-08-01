@@ -29,7 +29,7 @@ class LibraryViewModel @Inject constructor(
         getPlaylists()
     }
 
-    fun getPlaylists() {
+    private fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
             _playlistList.postValue(repository.getAllPlaylist())
         }

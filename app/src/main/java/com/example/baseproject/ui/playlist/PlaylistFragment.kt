@@ -1,10 +1,15 @@
 package com.example.baseproject.ui.playlist
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
@@ -12,13 +17,13 @@ import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlaylistBinding
 import com.example.baseproject.databinding.PlaylistSongItemBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
-import com.example.baseproject.ui.playlist.addsong.SongDiaLogAdapter
 import com.example.core.base.BaseFragment
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.FieldPosition
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PlaylistFragment :
@@ -27,10 +32,33 @@ class PlaylistFragment :
     @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: PlaylistViewModel by viewModels()
+
     override fun getVM() = viewModel
-    private lateinit var mSongList :List<PlaylistSongItem>
-    private lateinit var playlistAdapter : PlaylistSongItemAdapter
+    private var musicService: MusicService? = null
+    private lateinit var mSongList: List<PlaylistSongItem>
+    private lateinit var playlistAdapter: PlaylistSongItemAdapter
     private lateinit var materialToolbar: MaterialToolbar
+    private var isServiceConnected: Boolean = false
+    private lateinit var intent: Intent
+    private lateinit var bundle: Bundle
+    private var firstInit: Boolean = false
+    private var previousClickedSong: PlaylistSongItem =
+        PlaylistSongItem(songId = 0, songImage = "", songTitle = "", artists = "", resource = "")
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
+
+        override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
+            Log.e("HoangDH", "Service Connected")
+            val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
+            musicService = myBinder.getMyService()
+            isServiceConnected = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isServiceConnected = false
+        }
+
+    }
+
 
     override fun setOnClick() {
         super.setOnClick()
@@ -53,6 +81,13 @@ class PlaylistFragment :
         materialToolbar.title = item?.playlistTitle
         (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
         binding.searchView.setBackgroundResource(R.color.color_btn)
+    }
+
+    private fun prepareBundle(item: PlaylistSongItem) {
+        bundle = Bundle()
+        bundle.putParcelable("song_item", item)
+        intent = Intent(context, MusicService::class.java)
+        intent.putExtra("song_bundle", bundle)
     }
 
     private fun recyclerviewAction() {
@@ -79,10 +114,23 @@ class PlaylistFragment :
     }
 
     override fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding) {
-        val bundle = Bundle()
-        bundle.putInt("position", viewModel.songList.value!!.indexOf(item))
-        bundle.putParcelableArrayList("list_song",
-            viewModel.songList.value?.let { it1 -> ArrayList(it1) })
-        this.findNavController().navigate(R.id.action_playlistFragment_to_playFragment, bundle)
+        Log.e("HoangDH", "itemClicked")
+        prepareBundle(item)
+        Log.e("HoangDH", "$previousClickedSong")
+
+        if (!firstInit) {
+            context?.startService(intent)
+            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            firstInit = true
+            previousClickedSong = item
+            Log.e("HoangDH", "$firstInit")
+        } else if (previousClickedSong != item) {
+            context?.stopService(intent)
+            context?.unbindService(mServiceConnection)
+            context?.startService(intent)
+            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            previousClickedSong = item
+        }
+
     }
 }

@@ -4,29 +4,26 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.icu.lang.UCharacter.GraphemeClusterBreak.L
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.util.Log
 import android.widget.SeekBar
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.databinding.FragmentPlayBinding
+import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
+class PlayFragment : BaseFragment<FragmentPlayDialogBinding, PlayViewModel>(R.layout.fragment_play_dialog) {
 
     private var musicService: MusicService? = null
 
     private val viewModel: PlayViewModel by viewModels()
-
 
     override fun getVM() = viewModel
     private var playSongPosition: Int = 0
@@ -79,7 +76,7 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         }
 
         binding.btnNext.setOnClickListener {
-            when (playSongPosition < songList.size-1) {
+            when (playSongPosition < songList.size - 1) {
                 true -> ++playSongPosition
                 false -> playSongPosition = 0
             }
@@ -105,11 +102,12 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         Log.e("HoangDH", "bindingStateView")
     }
 
-    private fun setSongDescription(){
+    private fun setSongDescription() {
         viewModel.songDescription.value = "${songList[playSongPosition].songTitle}\n${
             songList[playSongPosition].artists
         }"
         binding.songDes.text = viewModel.songDescription.value
+        binding.songImage.setImageURI(songList[playSongPosition].songImage?.toUri())
     }
 
     override fun onStart() {
@@ -183,16 +181,17 @@ class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.f
         }, 0)
     }
 
-    private fun startMusicService(){
+    private fun startMusicService() {
+        // stop previous song
+        context?.stopService(intent)
+        context?.unbindService(mServiceConnection)
+        //start next song
         context?.startService(intent)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         binding.btnPlay.setImageResource(R.drawable.ic_pause)
     }
 
     private fun prepareBundle(songPosition: Int) {
-        Log.e("HoangDH", "prepareBundle")
-        Log.e("HoangDH", "${songList.size}")
-        Log.e("HoangDH", "${playSongPosition}")
         bundle = Bundle()
         bundle.putParcelable("song_item", songList[songPosition])
         intent = Intent(context, MusicService::class.java)
