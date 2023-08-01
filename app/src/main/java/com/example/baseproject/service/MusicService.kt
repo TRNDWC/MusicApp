@@ -13,6 +13,8 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -25,6 +27,10 @@ class MusicService : BaseService() {
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
     private lateinit var mediaSession : MediaSessionCompat
+    private lateinit var songItem: PlaylistSongItem
+
+    private val _songLiveData = MutableLiveData<PlaylistSongItem>()
+    val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
 
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
@@ -43,9 +49,10 @@ class MusicService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("HoangDH", "onStartCommand")
-        val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
+        songItem = intent!!.getBundleExtra("song_bundle")!!
             .getParcelable("song_item")!!
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+        _songLiveData.postValue(songItem)
         startMusic(songItem)
         sendNotification(songItem)
         return START_NOT_STICKY
@@ -61,6 +68,8 @@ class MusicService : BaseService() {
         super.onDestroy()
         musicPlayer.stop()
     }
+
+    fun getPlayingSong() : PlaylistSongItem = songItem
 
     fun startMusic(songItem: PlaylistSongItem) {
         Log.e("HoangDH", "startMusic")

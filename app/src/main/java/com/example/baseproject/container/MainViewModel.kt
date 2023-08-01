@@ -6,8 +6,6 @@ import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.datarepo.DataRepository
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.data.songrepo.SongDatabase
-import com.example.baseproject.data.songrepo.SongRepository
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +16,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(data: DataRepository, application: Application) :
     BaseViewModel() {
 
-    val mData = data
-    val mApplication = application
-    val musicDao = MusicDatabase.getDatabase(mApplication).musicDao()
-    val repository = MusicRepository(musicDao)
+    private val mData = data
+    private val mApplication = application
+    private val musicDao = MusicDatabase.getDatabase(mApplication).musicDao()
+    private val repository = MusicRepository(musicDao)
     fun getSong() {
         val songData = mData.getSong(mApplication)
         for (items in songData) {

@@ -11,8 +11,8 @@ import dagger.hilt.android.scopes.ActivityScoped
 import javax.inject.Inject
 
 
-@ActivityScoped
-class DataRepositoryImpl @Inject constructor() : DataRepository {
+
+class DataRepositoryImpl : DataRepository {
 
     override fun getSong(context: Context): List<PlaylistSongItem> {
         val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
