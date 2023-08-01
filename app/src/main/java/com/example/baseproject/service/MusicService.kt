@@ -52,7 +52,6 @@ class MusicService : BaseService() {
 
         songList = bundle.getParcelableArrayList("song_list")!!
         songPosition = bundle.getInt("song_position")
-        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         _songLiveData.postValue(songItem)
         startMusic(songItem)
         sendNotification(songItem)
@@ -72,7 +71,17 @@ class MusicService : BaseService() {
 
     fun startMusic(songItem: PlaylistSongItem) {
         Log.e("HoangDH", "startMusic")
+        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         musicPlayer.start()
+        musicPlayer.setOnCompletionListener {
+            if(songPosition < songList.size - 1) {
+                songPosition++
+                val nextSong = songList[songPosition]
+                _songLiveData.postValue(nextSong)
+                sendNotification(nextSong)
+                startMusic(nextSong)
+            }
+        }
     }
 
     fun pauseMusic() {

@@ -40,7 +40,9 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
             musicService = myBinder.getMyService()
             isServiceConnected = true
             initSeekBar()
-            bindingPlayerView(musicService.songList[musicService.songPosition])
+            musicService.songLiveData.observe(viewLifecycleOwner) {
+                bindingPlayerView(it)
+            }
             setOnClick()
         }
 

@@ -65,7 +65,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     override fun setOnClick() {
         super.setOnClick()
         binding.bottomMusicPlayer.setOnClickListener {
-            PlayFragmentDialog().show(requireActivity().supportFragmentManager, "play_screen")
+            PlayFragmentDialog().show(childFragmentManager, "play_screen")
         }
     }
 
