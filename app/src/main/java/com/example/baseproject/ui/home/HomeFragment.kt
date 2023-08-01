@@ -19,6 +19,7 @@ import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -60,10 +61,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
     }
 
-    override fun bindingStateView() {
-        super.bindingStateView()
-
+    override fun setOnClick() {
+        super.setOnClick()
+        binding.bottomMusicPlayer.setOnClickListener {
+            PlayFragmentDialog().show(requireActivity().supportFragmentManager, "play_screen")
+        }
     }
+
+
 
     private fun setupBottomNavigationBar() {
         val navHostFragment = childFragmentManager.findFragmentById(

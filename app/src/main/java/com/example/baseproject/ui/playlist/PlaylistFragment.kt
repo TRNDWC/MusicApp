@@ -85,6 +85,10 @@ class PlaylistFragment :
 
     private fun prepareBundle(item: PlaylistSongItem) {
         bundle = Bundle()
+        val position = viewModel.songList.value!!.indexOf(item)
+        bundle.putInt("song_position", position)
+        bundle.putParcelableArrayList("song_list",
+            viewModel.songList.value?.let { it1 -> ArrayList(it1) })
         bundle.putParcelable("song_item", item)
         intent = Intent(context, MusicService::class.java)
         intent.putExtra("song_bundle", bundle)
@@ -114,6 +118,7 @@ class PlaylistFragment :
     }
 
     override fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding) {
+
         Log.e("HoangDH", "itemClicked")
         prepareBundle(item)
         Log.e("HoangDH", "$previousClickedSong")
@@ -131,6 +136,7 @@ class PlaylistFragment :
             context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             previousClickedSong = item
         }
+
 
     }
 }
