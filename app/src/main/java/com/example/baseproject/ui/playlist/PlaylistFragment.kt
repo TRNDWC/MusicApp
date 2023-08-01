@@ -47,7 +47,7 @@ class PlaylistFragment :
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
-            Log.e("HoangDH", "Service Connected")
+            Log.e("HoangDH", "Service Connected from PlayList")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
             musicService = myBinder.getMyService()
             isServiceConnected = true
@@ -124,16 +124,16 @@ class PlaylistFragment :
         Log.e("HoangDH", "$previousClickedSong")
 
         if (!firstInit) {
-            context?.startService(intent)
-            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            requireActivity().startService(intent)
+            requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             firstInit = true
             previousClickedSong = item
             Log.e("HoangDH", "$firstInit")
         } else if (previousClickedSong != item) {
-            context?.stopService(intent)
-            context?.unbindService(mServiceConnection)
-            context?.startService(intent)
-            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            requireActivity().stopService(intent)
+            requireActivity().unbindService(mServiceConnection)
+            requireActivity().startService(intent)
+            requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             previousClickedSong = item
         }
 
