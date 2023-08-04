@@ -40,7 +40,7 @@ class LibraryFragment :
 
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {
-                viewModel.addPlaylist(LibraryItem(0, newList.toString(), "1"))
+                viewModel.addPlaylist(LibraryItem(0, newList.toString(), R.drawable.playlist_default.toString()))
                 viewModel.set()
             }
 
