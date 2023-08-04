@@ -1,11 +1,8 @@
 package com.example.baseproject.service
 
-import android.R.attr.data
 import android.app.PendingIntent
 import android.content.Intent
 import android.media.MediaPlayer
-import android.media.session.MediaSession
-import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import android.provider.MediaStore
@@ -13,10 +10,12 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.ui.play.PlayFragment
+import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.core.base.BaseService
 
 
@@ -25,7 +24,12 @@ class MusicService : BaseService() {
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
     private lateinit var mediaSession : MediaSessionCompat
+    private lateinit var songItem: PlaylistSongItem
 
+    private val _songLiveData = MutableLiveData<PlaylistSongItem>()
+    val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
+    lateinit var songList: List<PlaylistSongItem>
+    var songPosition : Int = 0
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
     }
@@ -43,9 +47,12 @@ class MusicService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("HoangDH", "onStartCommand")
-        val songItem: PlaylistSongItem = intent!!.getBundleExtra("song_bundle")!!
-            .getParcelable("song_item")!!
-        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+        val bundle = intent!!.getBundleExtra("song_bundle")
+        songItem = bundle!!.getParcelable("song_item")!!
+
+        songList = bundle.getParcelableArrayList("song_list")!!
+        songPosition = bundle.getInt("song_position")
+        _songLiveData.postValue(songItem)
         startMusic(songItem)
         sendNotification(songItem)
         return START_NOT_STICKY
@@ -64,7 +71,17 @@ class MusicService : BaseService() {
 
     fun startMusic(songItem: PlaylistSongItem) {
         Log.e("HoangDH", "startMusic")
+        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         musicPlayer.start()
+        musicPlayer.setOnCompletionListener {
+            if(songPosition < songList.size - 1) {
+                songPosition++
+                val nextSong = songList[songPosition]
+                _songLiveData.postValue(nextSong)
+                sendNotification(nextSong)
+                startMusic(nextSong)
+            }
+        }
     }
 
     fun pauseMusic() {
@@ -90,7 +107,7 @@ class MusicService : BaseService() {
     }
 
     private fun sendNotification(songItem: PlaylistSongItem) {
-        val intent = Intent(this, PlayFragment::class.java)
+        val intent = Intent(this, PlayFragmentDialog::class.java)
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(
                 applicationContext,

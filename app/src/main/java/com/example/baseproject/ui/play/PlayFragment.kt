@@ -12,18 +12,16 @@ import android.widget.SeekBar
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.example.baseproject.R
-import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.databinding.FragmentPlayBinding
+import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.home.customplaylist.CustomPLaylistDialog
-import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 
 @AndroidEntryPoint
-class PlayFragment : BaseFragment<FragmentPlayBinding, PlayViewModel>(R.layout.fragment_play) {
+class PlayFragment : BaseFragment<FragmentPlayDialogBinding, PlayViewModel>(R.layout.fragment_play_dialog) {
 
     private var musicService: MusicService? = null
     private val viewModel: PlayViewModel by viewModels()
