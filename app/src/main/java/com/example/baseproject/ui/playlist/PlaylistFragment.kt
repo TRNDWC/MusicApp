@@ -15,6 +15,7 @@ import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.baseproject.ui.playlist.addsong.SongDiaLogAdapter
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.FieldPosition
@@ -28,8 +29,8 @@ class PlaylistFragment :
     lateinit var appNavigation: AppNavigation
     private val viewModel: PlaylistViewModel by viewModels()
     override fun getVM() = viewModel
-    private lateinit var mSongList :List<PlaylistSongItem>
-    private lateinit var playlistAdapter : PlaylistSongItemAdapter
+    private lateinit var mSongList: List<PlaylistSongItem>
+    private lateinit var playlistAdapter: PlaylistSongItemAdapter
     private lateinit var materialToolbar: MaterialToolbar
 
     override fun setOnClick() {
@@ -37,6 +38,7 @@ class PlaylistFragment :
         recyclerviewAction()
         searchAction()
         binding.addSong.setOnClickListener {
+            viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
                 childFragmentManager,
                 "add_song"
@@ -60,9 +62,9 @@ class PlaylistFragment :
             mSongList = newList
             playlistAdapter = PlaylistSongItemAdapter(mSongList, this)
             binding.rcvPlaylistSong.adapter = playlistAdapter
-            binding.rcvPlaylistSong.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+        binding.rcvPlaylistSong.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     private fun searchAction() {

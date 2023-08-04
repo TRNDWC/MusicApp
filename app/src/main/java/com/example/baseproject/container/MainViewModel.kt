@@ -18,10 +18,10 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(data: DataRepository, application: Application) :
     BaseViewModel() {
 
-    val mData = data
-    val mApplication = application
-    val musicDao = MusicDatabase.getDatabase(mApplication).musicDao()
-    val repository = MusicRepository(musicDao)
+    private val mData = data
+    private val mApplication = application
+    private val musicDao = MusicDatabase.getDatabase(mApplication).musicDao()
+    private val repository = MusicRepository(musicDao)
     fun getSong() {
         val songData = mData.getSong(mApplication)
         for (items in songData) {

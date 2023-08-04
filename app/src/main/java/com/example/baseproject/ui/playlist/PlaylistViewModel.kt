@@ -5,15 +5,29 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.R
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.databinding.ParentLayoutBindingImpl
 import com.example.core.base.BaseViewModel
+import com.example.core.utils.SingleLiveEvent
+import com.example.core.utils.toast
+import com.example.setting.model.HomePageItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.text.FieldPosition
 import java.util.Locale
 import javax.inject.Inject
 
@@ -23,6 +37,7 @@ class PlaylistViewModel @Inject constructor(
     application: Application
 ) : BaseViewModel() {
     private val repository: MusicRepository
+
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
@@ -38,25 +53,49 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun addSongtoPlaylist(songId : Int, playlistId: Int){
+    fun addSongtoPlaylist(songId: Int, playlistId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId,playlistId))
-            getSong(playlistId)
+            repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, playlistId))
         }
     }
 
+    private val _addSongList = MutableStateFlow<List<PlaylistSongItem>>(listOf())
+    val addSongList = _addSongList
 
-
-    private val _addSongList = MutableLiveData<List<PlaylistSongItem>>()
-    val addSongList: LiveData<List<PlaylistSongItem>> = _addSongList
-
-    fun listAll(){
-        viewModelScope.launch (Dispatchers.IO){
-            val data = repository.getAllSong()
-            _addSongList.postValue(data)
-        }
+    fun listAll() {
+        repository.getAllSong()
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                isLoading.value = true
+            }.onCompletion {
+                isLoading.value = false
+            }.onEach {
+                _addSongList.value = addDialogFilter(it)
+            }.catch {
+                messageError.value = it.message
+            }.launchIn(viewModelScope)
     }
 
+//    fun remove(position: Int) {
+//        viewModelScope.launch(Dispatchers.IO) {
+//            _addSongList.postValue(_addSongList.value?.toMutableList()?.apply {
+//                removeAt(position)
+//            }?.toList())
+//        }
+//    }
+
+    fun addDialogFilter(list: List<PlaylistSongItem>): List<PlaylistSongItem> {
+        val data = mutableListOf<Int>()
+        songList.value?.forEach {
+            data.add(it.songId)
+        }
+        val result = mutableListOf<PlaylistSongItem>()
+        list.forEach {
+            if (!data.contains(it.songId))
+                result.add(it)
+        }
+        return result
+    }
 
     fun convert(str: String?): String {
         var str = str
@@ -77,7 +116,7 @@ class PlaylistViewModel @Inject constructor(
         return str
     }
 
-    fun filter(newText: String?, list : List<PlaylistSongItem>): List<PlaylistSongItem> {
+    fun filter(newText: String?, list: List<PlaylistSongItem>): List<PlaylistSongItem> {
         val filterList = ArrayList<PlaylistSongItem>()
         if (newText != null) {
             list.forEach {

@@ -1,33 +1,27 @@
-package com.example.baseproject.ui.home.addplaylist
+package com.example.baseproject.ui.library
 
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.fragment.app.viewModels
-import com.example.baseproject.data.model.LibraryItem
-import com.example.baseproject.databinding.CustomPlaylistDialogBinding
-import com.example.baseproject.databinding.DialogSongItemBinding
-import com.example.baseproject.ui.home.HomeViewModel
-import com.example.baseproject.ui.playlist.addsong.OnItemClickListener
+import androidx.fragment.app.activityViewModels
+import com.example.baseproject.databinding.AddPlaylistLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
-class CustomPlaylistDialog(songId: Int) : BottomSheetDialogFragment(), OnItemClickListener {
-    private lateinit var dialogBinding: CustomPlaylistDialogBinding
-    private val viewModel: HomeViewModel by viewModels({ requireParentFragment() })
-    private lateinit var playlistDialogAdapter: PlaylistDiaLogAdapter
-    private lateinit var playlistList: List<LibraryItem>
-    private val songId = songId
+class AddPlaylistDialog : BottomSheetDialogFragment() {
+    private lateinit var dialogBinding: AddPlaylistLayoutBinding
+    private val viewModel: LibraryViewModel by activityViewModels()
     fun getVM() = viewModel
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        dialogBinding.addBtn.setOnClickListener {
+            createAction()
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -52,20 +46,17 @@ class CustomPlaylistDialog(songId: Int) : BottomSheetDialogFragment(), OnItemCli
         bottomSheet.layoutParams = layoutParams
     }
 
+    private fun createAction() {
+        viewModel.creatPl(dialogBinding.playlistName.text.toString())
+        dismiss()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        dialogBinding = CustomPlaylistDialogBinding.inflate(inflater, container, false)
+        dialogBinding = AddPlaylistLayoutBinding.inflate(inflater, container, false)
         return dialogBinding.root
-    }
-
-    override fun onItemClicked(position: Int, view: DialogSongItemBinding) {
-        Log.d("trndwcs", "clicked")
-    }
-
-    override fun onAddClicked(itemId: Int, view: DialogSongItemBinding) {
-        TODO("Not yet implemented")
     }
 }
