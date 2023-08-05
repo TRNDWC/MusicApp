@@ -59,7 +59,6 @@ class PlaylistFragment :
 
     }
 
-
     override fun setOnClick() {
         super.setOnClick()
         recyclerviewAction()

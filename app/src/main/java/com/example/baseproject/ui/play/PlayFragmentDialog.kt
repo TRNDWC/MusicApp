@@ -31,6 +31,8 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
     private var isServiceConnected: Boolean = false
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
+    private var isPlaying: Boolean = false
+    private var isLooping: Boolean = false
     val handler = Handler()
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
@@ -42,6 +44,14 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
             initSeekBar()
             musicService.songLiveData.observe(viewLifecycleOwner) {
                 bindingPlayerView(it)
+            }
+            musicService.songIsPlaying.observe(viewLifecycleOwner){
+                isPlaying = it
+                if (isPlaying) {
+                    dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
+                } else {
+                    dialogBinding.btnPlay.setImageResource(R.drawable.ic_green_play)
+                }
             }
             setOnClick()
         }
@@ -65,6 +75,7 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
                 behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+
         return dialog
     }
 
@@ -83,12 +94,29 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
         val intent = Intent(context, MusicService::class.java)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
+        dialogBinding.btnDown.setOnClickListener {
+            dialog!!.dismiss()
+        }
+        dialogBinding.btnRepeat.setOnClickListener {
+            isLooping = when(isLooping){
+                true -> {
+                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+                    false
+                }
+                false -> {
+                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
+                    true
+                }
+            }
+            musicService.repeatMusic(isLooping)
+
+        }
         return dialogBinding.root
     }
 
     private fun setOnClick(){
         dialogBinding.btnPlay.setOnClickListener {
-            if (!musicService.isPlaying()) {
+            if (!isPlaying) {
                 playSound()
                 dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
             } else {
@@ -117,7 +145,7 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
     }
 
     private fun playSound() {
-        musicService.startMusic(musicService.songList[musicService.songPosition])
+        musicService.startMusic()
     }
 
     private fun pauseSound() {
@@ -151,12 +179,12 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
 
     private fun initSeekBar() {
         Log.e("HoangDH", "initSeekBar")
-        dialogBinding.seekBar.progress = musicService!!.currentPosition()
-        dialogBinding.seekBar.max = musicService!!.duration()
+        dialogBinding.seekBar.progress = musicService.currentPosition()
+        dialogBinding.seekBar.max = musicService.duration()
         dialogBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
-                    musicService!!.seekTo(progress)
+                    musicService.seekTo(progress)
                 }
             }
 
@@ -167,11 +195,11 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
             }
         })
 
-        dialogBinding.seekBar.max = musicService!!.duration()
+        dialogBinding.seekBar.max = musicService.duration()
 
         handler.postDelayed(object : Runnable {
             override fun run() {
-                dialogBinding.seekBar.progress = musicService!!.currentPosition()
+                dialogBinding.seekBar.progress = musicService.currentPosition()
                 handler.postDelayed(this, 0)
             }
         }, 0)

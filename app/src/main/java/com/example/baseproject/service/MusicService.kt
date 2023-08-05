@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
@@ -12,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.NavDeepLinkBuilder
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -23,20 +25,30 @@ class MusicService : BaseService() {
 
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
-    private lateinit var mediaSession : MediaSessionCompat
+    private lateinit var mediaSession: MediaSessionCompat
     private lateinit var songItem: PlaylistSongItem
+    private var isLooping: Boolean = false
 
     private val _songLiveData = MutableLiveData<PlaylistSongItem>()
     val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
+    private val _songIsPlaying: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>(false)
+    }
+    val songIsPlaying: LiveData<Boolean> = _songIsPlaying
     lateinit var songList: List<PlaylistSongItem>
-    var songPosition : Int = 0
+    var songPosition: Int = 0
+
+    companion object {
+        const val NEED_OPEN_DIALOG = "need_open_dialog"
+    }
+
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
     }
 
     override fun onCreate() {
         super.onCreate()
-        mediaSession = MediaSessionCompat(this,"PlayerAudio")
+        mediaSession = MediaSessionCompat(this, "PlayerAudio")
         Log.e("HoangDH", "onCreate")
     }
 
@@ -53,7 +65,8 @@ class MusicService : BaseService() {
         songList = bundle.getParcelableArrayList("song_list")!!
         songPosition = bundle.getInt("song_position")
         _songLiveData.postValue(songItem)
-        startMusic(songItem)
+        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+        startMusic()
         sendNotification(songItem)
         return START_NOT_STICKY
     }
@@ -69,29 +82,56 @@ class MusicService : BaseService() {
         musicPlayer.stop()
     }
 
-    fun startMusic(songItem: PlaylistSongItem) {
+    fun startMusic() {
         Log.e("HoangDH", "startMusic")
-        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         musicPlayer.start()
-        musicPlayer.setOnCompletionListener {
-            if(songPosition < songList.size - 1) {
-                songPosition++
-                val nextSong = songList[songPosition]
-                _songLiveData.postValue(nextSong)
-                sendNotification(nextSong)
-                startMusic(nextSong)
+        _songIsPlaying.postValue(true)
+        if (isLooping) {
+            if (songPosition < songList.size - 1) {
+                musicPlayer.setOnCompletionListener {
+                    songPosition++
+                    val nextSong = songList[songPosition]
+                    _songLiveData.postValue(nextSong)
+                    sendNotification(nextSong)
+                    autoPlayNextSong(nextSong)
+                }
+            } else {
+                musicPlayer.setOnCompletionListener {
+                    songPosition = 0
+                    val nextSong = songList[songPosition]
+                    _songLiveData.postValue(nextSong)
+                    sendNotification(nextSong)
+                    autoPlayNextSong(nextSong)
+                }
             }
         }
+        else{
+            if (songPosition < songList.size - 1) {
+                musicPlayer.setOnCompletionListener {
+                    songPosition++
+                    val nextSong = songList[songPosition]
+                    _songLiveData.postValue(nextSong)
+                    sendNotification(nextSong)
+                    autoPlayNextSong(nextSong)
+                }
+            }
+        }
+    }
+
+    fun repeatMusic(looping: Boolean) {
+        isLooping = looping
+        Log.e("HoangDH", "$isLooping")
+    }
+
+    private fun autoPlayNextSong(songItem: PlaylistSongItem) {
+        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+        startMusic()
     }
 
     fun pauseMusic() {
         Log.e("HoangDH", "pauseMusic")
         musicPlayer.pause()
-    }
-
-
-    fun isPlaying(): Boolean {
-        return musicPlayer.isPlaying
+        _songIsPlaying.postValue(false)
     }
 
     fun currentPosition(): Int {
@@ -108,15 +148,20 @@ class MusicService : BaseService() {
 
     private fun sendNotification(songItem: PlaylistSongItem) {
         val intent = Intent(this, PlayFragmentDialog::class.java)
-        val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(
-                applicationContext,
-                0,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
+        val pendingIntent = NavDeepLinkBuilder(this)
+            .setGraph(R.navigation.main_navigation)
+            .setDestination(R.id.homeFragment)
+            .setArguments(
+                Bundle().apply {
+                    putBoolean(NEED_OPEN_DIALOG, true)
+                }
             )
+            .createPendingIntent()
 
-        val picture = MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
+
+
+        val picture =
+            MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
 
         val notification =
@@ -125,11 +170,14 @@ class MusicService : BaseService() {
                 .setLargeIcon(picture)
                 .setContentTitle(songItem.songTitle)
                 .setContentText(songItem.artists)
-                .addAction(R.drawable.ic_pre,"Previous",null)
-                .addAction(R.drawable.ic_play,"Play",null)
-                .addAction(R.drawable.ic_next,"Next",null)
-                .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                    .setMediaSession(mediaSession.sessionToken))
+                .addAction(R.drawable.ic_pre, "Previous", null)
+                .addAction(R.drawable.ic_play, "Play", null)
+                .addAction(R.drawable.ic_next, "Next", null)
+                .setStyle(
+                    androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(1)
+//                        .setMediaSession(mediaSession.sessionToken)
+                )
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setOnlyAlertOnce(true)
