@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.ComponentName
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
@@ -16,22 +17,38 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.net.toUri
+import androidx.datastore.dataStore
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.withStarted
 import com.example.baseproject.R
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
-import com.example.core.base.BaseFragment
+import com.example.baseproject.ui.home.customplaylist.CustomPLaylistDialog
+import com.example.baseproject.ui.playlist.PlaylistViewModel
+import com.example.core.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
-class PlayFragmentDialog : BottomSheetDialogFragment() {
+class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private lateinit var dialogBinding: FragmentPlayDialogBinding
-    private lateinit var musicService : MusicService
+    private lateinit var musicService: MusicService
     private var isServiceConnected: Boolean = false
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
+    private var data: List<LibraryItem>? = null
     val handler = Handler()
+    private val viewModel: PlaylistViewModel by activityViewModels()
+    fun getVM() = viewModel
+
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
@@ -49,13 +66,11 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceConnected = false
         }
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireContext(), theme)
         dialog.setOnShowListener {
-
             val bottomSheetDialog = it as BottomSheetDialog
             val parentLayout =
                 bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -75,10 +90,9 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        viewModel.getAllPlaylists()
         dialogBinding = FragmentPlayDialogBinding.inflate(inflater, container, false)
         val intent = Intent(context, MusicService::class.java)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
@@ -86,7 +100,12 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
         return dialogBinding.root
     }
 
-    private fun setOnClick(){
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.getAllPlaylists()
+    }
+
+    private fun setOnClick() {
         dialogBinding.btnPlay.setOnClickListener {
             if (!musicService.isPlaying()) {
                 playSound()
@@ -97,7 +116,7 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
             }
         }
         dialogBinding.btnNext.setOnClickListener {
-            when(musicService.songPosition < musicService.songList.size - 1){
+            when (musicService.songPosition < musicService.songList.size - 1) {
                 true -> musicService.songPosition++
                 false -> musicService.songPosition = 0
             }
@@ -106,13 +125,35 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
             startMusicService()
         }
         dialogBinding.btnPre.setOnClickListener {
-            when(musicService.songPosition > 0){
+            when (musicService.songPosition > 0) {
                 true -> musicService.songPosition--
                 false -> musicService.songPosition = musicService.songList.size - 1
             }
             prepareBundle()
             bindingPlayerView(musicService.songList[musicService.songPosition])
             startMusicService()
+        }
+
+        dialogBinding.btnFav.setOnClickListener {
+            viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+
+            viewModel.playlists.observe(viewLifecycleOwner) {
+                data = it
+            }
+
+            data?.let {
+                CustomPLaylistDialog(
+                    data!!.toMutableList(),
+                    musicService.songList[musicService.songPosition].songId
+                ).show(
+                    childFragmentManager,
+                    "custom playlist"
+                )
+            }
+        }
+
+        dialogBinding.btnDown.setOnClickListener {
+            this.dismiss()
         }
     }
 
@@ -125,7 +166,7 @@ class PlayFragmentDialog : BottomSheetDialogFragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun bindingPlayerView(song : PlaylistSongItem){
+    private fun bindingPlayerView(song: PlaylistSongItem) {
         dialogBinding.songImage.setImageURI(song.songImage!!.toUri())
         dialogBinding.songDes.text = "${song.songTitle}\n${song.artists}"
     }

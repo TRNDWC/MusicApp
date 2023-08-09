@@ -14,12 +14,13 @@ import com.example.baseproject.databinding.DialogPlaylistItemBinding
 
 
 interface OnItemClickListener {
-    fun onItemClicked(view: DialogPlaylistItemBinding)
+    fun onItemClicked(playlistId: Int, view: DialogPlaylistItemBinding)
+
 }
 
 class PlaylistDialogAdapter(
-    private val mPlaylistList: List<LibraryItem>,
-    private val tPlaylistList: List<Int>,
+    private val mPlaylistList: MutableList<LibraryItem>,
+    private val cPlaylistList: MutableList<Int>,
     private val onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<PlaylistDialogAdapter.PlaylistViewHolder>() {
@@ -34,7 +35,10 @@ class PlaylistDialogAdapter(
         init {
             mItem.apply {
                 btnAction.setOnClickListener {
-                    onItemClickListener.onItemClicked(mItem)
+                    onItemClickListener.onItemClicked(
+                        mPlaylistList[adapterPosition].playlistId,
+                        mItem
+                    )
                 }
             }
             mItem.btnAction.text = null
@@ -47,7 +51,8 @@ class PlaylistDialogAdapter(
     override fun onBindViewHolder(holder: PlaylistViewHolder, position: Int) {
         val item = mPlaylistList[position]
         holder.playlistTitle.text = item.playlistTitle
-        holder.customBtn.isChecked = item.playlistId in tPlaylistList
+        holder.customBtn.isChecked = item.playlistId in cPlaylistList
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {

@@ -23,20 +23,21 @@ class MusicService : BaseService() {
 
     private lateinit var musicPlayer: MediaPlayer
     private var binder = MyBinder()
-    private lateinit var mediaSession : MediaSessionCompat
+    private lateinit var mediaSession: MediaSessionCompat
     private lateinit var songItem: PlaylistSongItem
 
     private val _songLiveData = MutableLiveData<PlaylistSongItem>()
     val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
     lateinit var songList: List<PlaylistSongItem>
-    var songPosition : Int = 0
+    var songPosition: Int = 0
+
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
     }
 
     override fun onCreate() {
         super.onCreate()
-        mediaSession = MediaSessionCompat(this,"PlayerAudio")
+        mediaSession = MediaSessionCompat(this, "PlayerAudio")
         Log.e("HoangDH", "onCreate")
     }
 
@@ -74,7 +75,7 @@ class MusicService : BaseService() {
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         musicPlayer.start()
         musicPlayer.setOnCompletionListener {
-            if(songPosition < songList.size - 1) {
+            if (songPosition < songList.size - 1) {
                 songPosition++
                 val nextSong = songList[songPosition]
                 _songLiveData.postValue(nextSong)
@@ -116,7 +117,8 @@ class MusicService : BaseService() {
                 PendingIntent.FLAG_IMMUTABLE
             )
 
-        val picture = MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
+        val picture =
+            MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
 
         val notification =
@@ -125,9 +127,9 @@ class MusicService : BaseService() {
                 .setLargeIcon(picture)
                 .setContentTitle(songItem.songTitle)
                 .setContentText(songItem.artists)
-                .addAction(R.drawable.ic_pre,"Previous",null)
-                .addAction(R.drawable.ic_play,"Play",null)
-                .addAction(R.drawable.ic_next,"Next",null)
+                .addAction(R.drawable.ic_pre, "Previous", null)
+                .addAction(R.drawable.ic_play, "Play", null)
+                .addAction(R.drawable.ic_next, "Next", null)
 //                .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
 //                    .setMediaSession(mediaSession.sessionToken))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
