@@ -22,7 +22,7 @@ class SplashFragment :
         super.bindingAction()
         viewModel.actionSPlash.observe(viewLifecycleOwner)
         {
-            appNavigation.openSplashToLogin()
+            appNavigation.openSplashToStartScreen()
         }
     }
 

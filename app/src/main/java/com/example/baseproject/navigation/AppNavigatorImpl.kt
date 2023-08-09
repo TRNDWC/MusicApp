@@ -11,24 +11,32 @@ import javax.inject.Inject
 class AppNavigatorImpl @Inject constructor() : BaseNavigatorImpl(),
     AppNavigation, DemoNavigation {
 
-    override fun openSplashToLogin(bundle: Bundle?) {
-        openScreen(R.id.action_splashFragment_to_loginFragment, bundle)
+    override fun openSplashToStartScreen(bundle: Bundle?) {
+        openScreen(R.id.action_splashFragment_to_startFragment, bundle)
     }
 
     override fun openLogintoHomeScreen(bundle: Bundle?) {
         openScreen(R.id.action_loginFragment_to_homeFragment, bundle)
     }
 
-    override fun openLogintoSignUp(bundle: Bundle?) {
-        openScreen(R.id.action_loginFragment_to_signupFragment, bundle)
+    override fun openStartToSignUp(bundle: Bundle?) {
+        openScreen(R.id.action_startFragment_to_signupFragment, bundle)
+    }
+
+    override fun openStartToLogin(bundle: Bundle?) {
+        openScreen(R.id.action_startFragment_to_loginFragment, bundle)
     }
 
     override fun openSignUptoHome(bundle: Bundle?) {
         openScreen(R.id.action_signupFragment_to_homeFragment, bundle)
     }
 
-    override fun openPlayListScreenToPlayScreen(bundle: Bundle?) {
-        openScreen(R.id.action_playlistFragment_to_playFragment, bundle)
+    override fun openStartToHome(bundle: Bundle?) {
+        openScreen(R.id.action_startFragment_to_homeFragment, bundle)
+    }
+
+    override fun openSignUptoLogin(bundle: Bundle?) {
+        openScreen(R.id.action_signupFragment_to_loginFragment, bundle)
     }
 
 

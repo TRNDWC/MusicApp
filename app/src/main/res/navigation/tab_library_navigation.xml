@@ -16,11 +16,11 @@
         android:name="com.example.baseproject.ui.playlist.PlaylistFragment"
         android:label="PlaylistFragment" >
         <action
-            android:id="@+id/action_playlistFragment_to_playFragment"
-            app:destination="@id/playFragment" />
+            android:id="@+id/action_playlistFragment_to_playFragmentDialog2"
+            app:destination="@id/playFragmentDialog" />
     </fragment>
-    <fragment
-        android:id="@+id/playFragment"
-        android:name="com.example.baseproject.ui.play.PlayFragment"
-        android:label="PlayFragment" />
+    <dialog
+        android:id="@+id/playFragmentDialog"
+        android:name="com.example.baseproject.ui.play.PlayFragmentDialog"
+        android:label="PlayFragmentDialog" />
 </navigation>

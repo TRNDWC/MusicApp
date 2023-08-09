@@ -2,7 +2,6 @@ package com.example.baseproject.ui.playlist
 
 import android.app.Application
 import android.util.Log
-import androidx.datastore.dataStore
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -15,6 +14,7 @@ import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -56,9 +56,11 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
+
     // hiển thị các bài hát để thêm vào playlist hiện tại
 
     val addSongList = MutableLiveData<List<PlaylistSongItem>>()
+
 
     fun listAll() {
         repository.getAllSong()
@@ -68,6 +70,7 @@ class PlaylistViewModel @Inject constructor(
             }.onCompletion {
                 isLoading.value = false
             }.onEach {
+
                 addSongList.value = addDialogFilter(it)
             }.catch {
                 messageError.value = it.message
@@ -133,6 +136,7 @@ class PlaylistViewModel @Inject constructor(
     val playlistId = MutableLiveData<Int>()
     fun set(id: Int) {
         playlistId.value = id
+
     }
 
     // lấy dữ liệu về các playlist

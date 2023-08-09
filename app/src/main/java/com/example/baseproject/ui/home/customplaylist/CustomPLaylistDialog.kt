@@ -3,7 +3,6 @@ package com.example.baseproject.ui.home.customplaylist
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,7 @@ import com.example.core.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
 
 class CustomPLaylistDialog(
     allPlaylist: MutableList<LibraryItem>,
@@ -35,6 +35,7 @@ class CustomPLaylistDialog(
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireContext(), theme)
         dialog.setOnShowListener {
+
             val bottomSheetDialog = it as BottomSheetDialog
             val parentLayout =
                 bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
@@ -59,6 +60,7 @@ class CustomPLaylistDialog(
         savedInstanceState: Bundle?
     ): View? {
         dialogBinding = CustomPlaylistDialogBinding.inflate(inflater, container, false)
+
 
         viewModel.tPlaylistListId.observe(viewLifecycleOwner) {
             cPlaylistList = it.toMutableList()
@@ -93,5 +95,6 @@ class CustomPLaylistDialog(
             cPlaylistList.add(playlistId)
         else if (!view.btnAction.isChecked && playlistId in cPlaylistList)
             cPlaylistList.remove(playlistId)
+
     }
 }

@@ -5,33 +5,136 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentSignupBinding
+import com.example.baseproject.extension.validate
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
+import com.example.core.pref.RxPreferences
+import com.example.core.utils.toast
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class signupFragment : BaseFragment<FragmentSignupBinding, SignupViewModel>(R.layout.fragment_signup) {
-
-    companion object {
-        fun newInstance() = signupFragment()
-    }
+class signupFragment :
+    BaseFragment<FragmentSignupBinding, SignupViewModel>(R.layout.fragment_signup) {
 
     @Inject
     lateinit var appNavigation: AppNavigation
+    @Inject
+    lateinit var rxPreferences: RxPreferences
     private val viewModel: SignupViewModel by viewModels()
     override fun getVM() = viewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val mSignup : FragmentSignupBinding = FragmentSignupBinding.inflate(inflater, container, false)
-        mSignup.buttonNext.setOnClickListener {
-            appNavigation.openSignUptoHome()
+    override fun setOnClick() {
+        super.setOnClick()
+        binding.apply {
+            btnSignUp.setOnClickListener {
+                val email = editTextTextEmailAddress.text.toString().trim()
+                val password = editTextTextPassword.text.toString().trim()
+                val userName = editTextTextUserName.text.toString().trim()
+                viewModel.signUp(email, password, userName)
+            }
+            lifecycleScope.launch {
+                rxPreferences.setEmail(editTextTextEmailAddress.text.toString().trim())
+            }
         }
-        return mSignup.root
+    }
+
+    override fun bindingAction() {
+        super.bindingAction()
+        viewModel.apply {
+            signUpResponse.observe(viewLifecycleOwner){response ->
+                when(response){
+                    is Response.Loading -> {}
+                    is Response.Success ->{
+                        getString(R.string.string_sign_in_successfully).toast(requireContext())
+                        appNavigation.openSignUptoLogin()
+                    }
+                    is Response.Failure -> {
+                        when(response.e){
+                            is FirebaseAuthUserCollisionException -> {
+                                getString(R.string.email_already_exists).toast(requireContext())
+                            }
+                            is FirebaseNetworkException -> {
+                                getString(R.string.no_internet_connection).toast(requireContext())
+                            }
+                            else -> {
+                                getString(R.string.sign_up_failed).toast(requireContext())
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
+    override fun bindingStateView() {
+        super.bindingStateView()
+        viewModel.apply {
+            signUpResponse.observe(viewLifecycleOwner){response ->
+                when(response){
+                    is Response.Loading -> {
+                       binding.editTextTextPassword.isEnabled = false
+                        binding.editTextTextEmailAddress.isEnabled = false
+                        binding.editTextTextUserName.isEnabled = false
+                        binding.ProgressBar.visibility = View.VISIBLE
+                    }
+                    is Response.Failure -> {
+                        binding.editTextTextPassword.isEnabled = true
+                        binding.editTextTextEmailAddress.isEnabled = true
+                        binding.editTextTextUserName.isEnabled = true
+                        binding.ProgressBar.visibility = View.GONE
+                    }
+                    is Response.Success -> {
+                        binding.editTextTextPassword.isEnabled = true
+                        binding.editTextTextEmailAddress.isEnabled = true
+                        binding.editTextTextUserName.isEnabled = true
+                        binding.ProgressBar.visibility = View.GONE
+                    }
+                }
+                validator.observe(viewLifecycleOwner){validator ->
+                    binding.btnSignUp.isEnabled = validator
+                }
+            }
+        }
+
+        binding.apply {
+            editTextTextEmailAddress.validate { email ->
+                if (email.isEmpty()) {
+                    editTextTextEmailAddress.error = getString(R.string.do_not_leave_this_field_blank)
+                } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    editTextTextEmailAddress.error = getString(R.string.invalid_email_address)
+                } else {
+                    editTextTextEmailAddress.error = null
+                    viewModel.setValidState(isValidEmail = true)
+                }
+            }
+            editTextTextPassword.validate { password ->
+                if (password.isEmpty()) {
+                    editTextTextPassword.error = getString(R.string.do_not_leave_this_field_blank)
+                } else if (password.length < 8) {
+                    editTextTextPassword.error = getString(R.string.password_must_be_at_least_8_characters)
+                } else {
+                    editTextTextPassword.error = null
+                    viewModel.setValidState(isValidPassword = true)
+                }
+            }
+            editTextTextUserName.validate { username ->
+                if (username.isEmpty()) {
+                    editTextTextUserName.error = getString(R.string.do_not_leave_this_field_blank)
+                }  else {
+                    editTextTextUserName.error = null
+                    viewModel.setValidState(isValidUserName = true)
+                }
+            }
+        }
+
     }
 }

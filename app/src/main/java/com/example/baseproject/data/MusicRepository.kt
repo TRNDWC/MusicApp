@@ -43,6 +43,10 @@ class MusicRepository(private val musicDao: MusicDao) {
         }
     }
 
+    suspend fun getPLaylistSize(id: Int): Int {
+        return musicDao.getSongsofPlaylist(id).songs.size
+    }
+
     suspend fun addSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef) {
         musicDao.addSongPlaylistCrossRef(crossRef)
     }

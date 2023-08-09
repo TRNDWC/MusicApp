@@ -34,6 +34,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private var musicService: MusicService? = null
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var intent: Intent
+    private var isPlaying: Boolean = false
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
@@ -43,6 +44,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             musicService!!.songLiveData.observe(viewLifecycleOwner) {
                 bindingBottomMusicPlayer(it)
             }
+
+            musicService!!.songIsPlaying.observe(viewLifecycleOwner){
+                isPlaying = it
+                if (isPlaying) {
+                    binding.playBtn.setImageResource(R.drawable.ic_pause)
+                } else {
+                    binding.playBtn.setImageResource(R.drawable.ic_green_play)
+                }
+            }
+
             isServiceConnected = true
         }
 
@@ -59,6 +70,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         setupBottomNavigationBar()
         intent = Intent(context, MusicService::class.java)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+
+        val needOpenDialog = arguments?.getBoolean(
+            MusicService.NEED_OPEN_DIALOG, false)
+
+        if(needOpenDialog != null && needOpenDialog){
+            PlayFragmentDialog().show(childFragmentManager, "play_screen")
+        }
     }
 
     override fun setOnClick() {
@@ -71,7 +89,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private fun setOnClickAfterServiceInit() {
         binding.playBtn.setOnClickListener {
-            if (!musicService!!.isPlaying()) {
+            if (!isPlaying) {
                 playSound()
                 binding.playBtn.setImageResource(R.drawable.ic_pause)
             } else {
@@ -94,7 +112,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
 
     private fun playSound() {
-        musicService!!.startMusic(musicService!!.songList[musicService!!.songPosition])
+        musicService!!.startMusic()
     }
 
     private fun pauseSound() {
