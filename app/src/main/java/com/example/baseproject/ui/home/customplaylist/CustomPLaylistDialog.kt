@@ -67,6 +67,7 @@ class CustomPLaylistDialog(
                 PlaylistDialogAdapter(playlistList.toMutableList(), cPlaylistList, this)
             dialogBinding.rcvListPlaylist.adapter = playlistDiaLogAdapter
         }
+
         dialogBinding.rcvListPlaylist.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
 
