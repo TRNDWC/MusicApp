@@ -1,6 +1,6 @@
-package com.example.baseproject.ui.play
+package com.example.baseproject.service
 
-object Action {
+object MusicAction {
     const val ACTION_PLAY = "play song"
     const val ACTION_PAUSE = "pause song"
     const val ACTION_NEXT = "next song"

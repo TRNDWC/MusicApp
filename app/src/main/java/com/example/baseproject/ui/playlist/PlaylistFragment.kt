@@ -20,6 +20,7 @@ import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -64,6 +65,7 @@ class PlaylistFragment :
         recyclerviewAction()
         searchAction()
         binding.addSong.setOnClickListener {
+            viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
                 childFragmentManager,
                 "add_song"
@@ -98,9 +100,9 @@ class PlaylistFragment :
             mSongList = newList
             playlistAdapter = PlaylistSongItemAdapter(mSongList, this)
             binding.rcvPlaylistSong.adapter = playlistAdapter
-            binding.rcvPlaylistSong.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+        binding.rcvPlaylistSong.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     private fun searchAction() {

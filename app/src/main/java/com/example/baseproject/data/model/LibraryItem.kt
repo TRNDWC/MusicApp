@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "playlist_data")
-class LibraryItem(
+data class LibraryItem(
     @PrimaryKey(autoGenerate = true)
     val playlistId: Int,
     val playlistTitle: String?,

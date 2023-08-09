@@ -1,6 +1,7 @@
 package com.example.baseproject.service
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
@@ -59,15 +60,17 @@ class MusicService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("HoangDH", "onStartCommand")
-        val bundle = intent!!.getBundleExtra("song_bundle")
+        val bundle = intent?.getBundleExtra("song_bundle")
         songItem = bundle!!.getParcelable("song_item")!!
-
         songList = bundle.getParcelableArrayList("song_list")!!
         songPosition = bundle.getInt("song_position")
         _songLiveData.postValue(songItem)
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         startMusic()
         sendNotification(songItem)
+
+//        val musicAction = intent.action
+//        handleMusicAction(musicAction!!)
         return START_NOT_STICKY
     }
 
@@ -104,8 +107,7 @@ class MusicService : BaseService() {
                     autoPlayNextSong(nextSong)
                 }
             }
-        }
-        else{
+        } else {
             if (songPosition < songList.size - 1) {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
@@ -159,7 +161,6 @@ class MusicService : BaseService() {
             .createPendingIntent()
 
 
-
         val picture =
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
@@ -170,6 +171,7 @@ class MusicService : BaseService() {
                 .setLargeIcon(picture)
                 .setContentTitle(songItem.songTitle)
                 .setContentText(songItem.artists)
+
                 .addAction(R.drawable.ic_pre, "Previous", null)
                 .addAction(R.drawable.ic_play, "Play", null)
                 .addAction(R.drawable.ic_next, "Next", null)
@@ -178,11 +180,52 @@ class MusicService : BaseService() {
                         .setShowActionsInCompactView(1)
 //                        .setMediaSession(mediaSession.sessionToken)
                 )
+
+
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setOnlyAlertOnce(true)
                 .build()
         startForeground(1, notification)
+    }
+
+    private fun handleMusicAction(action: String) {
+        when (action) {
+            MusicAction.ACTION_PLAY -> {
+                startMusic()
+            }
+
+            MusicAction.ACTION_PAUSE -> {
+                pauseMusic()
+            }
+
+            MusicAction.ACTION_NEXT -> {
+                if (songPosition < songList.size - 1) {
+                    songPosition++
+                    val nextSong = songList[songPosition]
+                    _songLiveData.postValue(nextSong)
+                    sendNotification(nextSong)
+                    autoPlayNextSong(nextSong)
+                }
+            }
+
+            MusicAction.ACTION_PREVIOUS -> {
+                if (songPosition > 0) {
+                    songPosition--
+                    val nextSong = songList[songPosition]
+                    _songLiveData.postValue(nextSong)
+                    sendNotification(nextSong)
+                    autoPlayNextSong(nextSong)
+                }
+            }
+        }
+    }
+
+    private fun getPendingIntent(context: Context, action: String): PendingIntent {
+        val intent = Intent(this, MyReceiver::class.java)
+        Log.e("HoangDH", "getPendingIntent")
+        intent.action = action
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
 }

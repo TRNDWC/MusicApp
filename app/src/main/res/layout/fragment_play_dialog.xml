@@ -4,10 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+
         android:id="@+id/play_fragment_dialog"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
+
         tools:context=".ui.play.PlayFragment">
 
         <ImageView
@@ -44,7 +46,11 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+
             app:layout_constraintVertical_bias="0.224" />
+
+
+
 
         <TextView
             android:id="@+id/song_des"
@@ -65,7 +71,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
-            android:src="@drawable/ic_favorite"
+
+
+            android:src="@drawable/ic_oke"
+
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"

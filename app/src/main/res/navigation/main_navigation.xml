@@ -16,8 +16,8 @@
             app:popUpToInclusive="true"
             app:popUpTo="@id/splashFragment"/>
         <action
-            android:id="@+id/action_splashFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_splashFragment_to_startFragment"
+            app:destination="@id/startFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -27,7 +27,7 @@
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@id/loginFragment"/>
+            app:popUpTo="@id/splashFragment"/>
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
@@ -45,7 +45,26 @@
             android:id="@+id/action_signupFragment_to_homeFragment"
             app:destination="@id/homeFragment"
             app:popUpToInclusive="true"
-            app:popUpTo="@id/loginFragment"/>
+            app:popUpTo="@id/splashFragment"/>
+        <action
+            android:id="@+id/action_signupFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.example.baseproject.ui.authentication.StartFragment"
+        android:label="StartFragment" >
+        <action
+            android:id="@+id/action_startFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_startFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpToInclusive="true"
+            app:popUpTo="@id/splashFragment"/>
     </fragment>
 
 </navigation>
