@@ -1,6 +1,7 @@
 package com.example.baseproject.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -38,4 +39,7 @@ interface MusicDao {
     @Transaction
     @Query("SELECT * FROM song_data WHERE songId = :songId")
     suspend fun getPlaylistsOfSong(songId: Int): SongWithPlaylists
+
+    @Delete
+    suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)
 }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
@@ -23,11 +24,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
-
 class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
     OnItemClickListener {
     private lateinit var dialogBinding: AddSongDialogBinding
-    private val viewModel: PlaylistViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: PlaylistViewModel by activityViewModels()
     private lateinit var songDialogAdapter: SongDiaLogAdapter
     private lateinit var songList: List<PlaylistSongItem>
     fun getVM() = viewModel
@@ -70,14 +70,15 @@ class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
         dialogBinding = AddSongDialogBinding.inflate(inflater, container, false)
         dialogBinding.searchView.setBackgroundResource(R.color.color_btn)
 
-        lifecycleScope.launch {
-            withStarted {}
-            viewModel.addSongList.collect { newList ->
-                songList = newList
-                songDialogAdapter = SongDiaLogAdapter(songList.toMutableList(), this@AddSongDialog)
-                dialogBinding.rcvListSong.adapter = songDialogAdapter
+        viewModel.addSongList.observe(viewLifecycleOwner) { newList ->
+            songList = newList
+            songList.forEach{
+                it.songTitle?.let { it1 -> Log.d("add songs", it1) }
             }
+            songDialogAdapter = SongDiaLogAdapter(songList.toMutableList(), this@AddSongDialog)
+            dialogBinding.rcvListSong.adapter = songDialogAdapter
         }
+
         dialogBinding.rcvListSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         return dialogBinding.root
