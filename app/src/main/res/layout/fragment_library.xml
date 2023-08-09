@@ -59,6 +59,9 @@
                     android:layout_height="match_parent"
                     android:paddingBottom="@dimen/_135dp"
                     tools:listitem="@layout/parent_layout" />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_135dp" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -7,6 +7,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -17,11 +21,9 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.net.toUri
-import androidx.datastore.dataStore
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.withStarted
+import androidx.palette.graphics.Palette
+import androidx.palette.graphics.Palette.Swatch
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -29,14 +31,12 @@ import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.home.customplaylist.CustomPLaylistDialog
 import com.example.baseproject.ui.playlist.PlaylistViewModel
-import com.example.core.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
+import java.io.InputStream
+import java.util.Collections
+
 
 class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private lateinit var dialogBinding: FragmentPlayDialogBinding
@@ -169,6 +169,43 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private fun bindingPlayerView(song: PlaylistSongItem) {
         dialogBinding.songImage.setImageURI(song.songImage!!.toUri())
         dialogBinding.songDes.text = "${song.songTitle}\n${song.artists}"
+        val `is`: InputStream? =
+            requireActivity().contentResolver.openInputStream(song.songImage!!.toUri())
+        val bitmap = BitmapFactory.decodeStream(`is`)
+        `is`?.close()
+        dialogBinding.playBg.background = getDominantColor(bitmap)
+        dialogBinding.playBg
+    }
+
+    private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
+        val swatchesTemp = Palette.from(bitmap!!).generate().swatches
+        val swatches: List<Swatch> = ArrayList(swatchesTemp)
+        Collections.sort(
+            swatches
+        ) { swatch1, swatch2 -> swatch2.population - swatch1.population }
+        val gd: GradientDrawable
+        when (swatches.size) {
+            0 ->
+                gd = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(Color.BLACK, Color.BLACK)
+                )
+
+            1 ->
+                gd = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(swatches[0].rgb, Color.BLACK)
+                )
+
+            else ->
+                gd = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(swatches[1].rgb, swatches[0].rgb)
+                )
+
+        }
+        gd.cornerRadius = 0f
+        return gd
     }
 
     private fun prepareBundle() {
