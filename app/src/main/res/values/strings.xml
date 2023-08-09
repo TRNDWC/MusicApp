@@ -11,7 +11,6 @@
     <string name="sign_up">Sign up</string>
     <string name="signIn">Sign In</string>
     <string name="millions_of_songs">Millions of songs\nFree on Spotify</string>
-
     <string name="sign_up_free">Sign up free</string>
     <string name="continue_with_google">Continue with Google</string>
     <string name="log_in">Log in</string>
@@ -44,5 +43,7 @@
     <string name="password_is_incorrect">Password is incorrect</string>
     <string name="email_or_password_is_empty">Email or password is empty</string>
     <string name="profile">Profile</string>
+    <string name="done">done</string>
+
 
 </resources>

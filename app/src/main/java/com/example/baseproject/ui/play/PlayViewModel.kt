@@ -23,21 +23,4 @@ class PlayViewModel @Inject constructor(
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
     }
-
-    val songDescription: MutableLiveData<String> by lazy {
-        MutableLiveData<String>()
-    }
-    private val _tPlaylistList = MutableLiveData<List<Int>>()
-
-    val tPlaylistList: LiveData<List<Int>> = _tPlaylistList
-    fun getPlaylistOfSong(id: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.getPlaylistsOfSong(id).playlists
-            val list = mutableListOf<Int>()
-            data.forEach { it ->
-                list.add(it.playlistId)
-            }
-            _tPlaylistList.postValue(list)
-        }
-    }
 }

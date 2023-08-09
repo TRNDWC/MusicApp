@@ -44,6 +44,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             musicService!!.songLiveData.observe(viewLifecycleOwner) {
                 bindingBottomMusicPlayer(it)
             }
+
             musicService!!.songIsPlaying.observe(viewLifecycleOwner){
                 isPlaying = it
                 if (isPlaying) {
@@ -85,7 +86,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         }
     }
 
-    private fun setOnClickAfterServiceInit(){
+
+    private fun setOnClickAfterServiceInit() {
         binding.playBtn.setOnClickListener {
             if (!isPlaying) {
                 playSound()
@@ -116,6 +118,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private fun pauseSound() {
         musicService!!.pauseMusic()
     }
+
     private fun bindingBottomMusicPlayer(songItem: PlaylistSongItem) {
         setOnClickAfterServiceInit()
         binding.playBtn.setImageResource(R.drawable.ic_pause)

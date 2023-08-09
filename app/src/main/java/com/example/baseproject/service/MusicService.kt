@@ -39,9 +39,11 @@ class MusicService : BaseService() {
     lateinit var songList: List<PlaylistSongItem>
     var songPosition: Int = 0
 
+
     companion object {
         const val NEED_OPEN_DIALOG = "need_open_dialog"
     }
+
 
     inner class MyBinder : Binder() {
         fun getMyService(): MusicService = this@MusicService
@@ -88,6 +90,7 @@ class MusicService : BaseService() {
     fun startMusic() {
         Log.e("HoangDH", "startMusic")
         musicPlayer.start()
+
         _songIsPlaying.postValue(true)
         if (isLooping) {
             if (songPosition < songList.size - 1) {
@@ -125,7 +128,7 @@ class MusicService : BaseService() {
         Log.e("HoangDH", "$isLooping")
     }
 
-    private fun autoPlayNextSong(songItem: PlaylistSongItem) {
+    fun autoPlayNextSong(songItem: PlaylistSongItem) {
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         startMusic()
     }
@@ -160,7 +163,6 @@ class MusicService : BaseService() {
             )
             .createPendingIntent()
 
-
         val picture =
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
@@ -171,6 +173,7 @@ class MusicService : BaseService() {
                 .setLargeIcon(picture)
                 .setContentTitle(songItem.songTitle)
                 .setContentText(songItem.artists)
+
 
                 .addAction(R.drawable.ic_pre, "Previous", null)
                 .addAction(R.drawable.ic_play, "Play", null)

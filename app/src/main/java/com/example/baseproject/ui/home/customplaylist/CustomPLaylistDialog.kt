@@ -1,32 +1,37 @@
 package com.example.baseproject.ui.home.customplaylist
 
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.CustomPlaylistDialogBinding
 import com.example.baseproject.databinding.DialogPlaylistItemBinding
-import com.example.baseproject.ui.home.HomeViewModel
+import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.core.utils.toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class CustomPLaylistDialog(songId: Int, tPLaylistList: List<Int>) :
-    BottomSheetDialogFragment(), OnItemClickListener {
-    private lateinit var dialogBinding: CustomPlaylistDialogBinding
-    private val viewModel: HomeViewModel by viewModels({ requireParentFragment() })
-    private lateinit var playlistDiaLogAdapter: PlaylistDialogAdapter
-    private lateinit var playlistList: List<LibraryItem>
-    private val tPLaylist = tPLaylistList
 
-    val songId = songId
+class CustomPLaylistDialog(
+    allPlaylist: MutableList<LibraryItem>,
+    private var songId: Int
+) :
+    BottomSheetDialogFragment(),
+    OnItemClickListener {
+    private lateinit var dialogBinding: CustomPlaylistDialogBinding
+    private lateinit var playlistDiaLogAdapter: PlaylistDialogAdapter
+    private val viewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
+    private var playlistList = allPlaylist
+    private lateinit var cPlaylistList: MutableList<Int>
+    private lateinit var oPlaylistList: List<Int>
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireContext(), theme)
         dialog.setOnShowListener {
@@ -55,20 +60,41 @@ class CustomPLaylistDialog(songId: Int, tPLaylistList: List<Int>) :
         savedInstanceState: Bundle?
     ): View? {
         dialogBinding = CustomPlaylistDialogBinding.inflate(inflater, container, false)
-        viewModel.getPlaylistOfSong(songId)
-        viewModel.listAll()
 
-        viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
-            playlistList = newList
-            playlistDiaLogAdapter = PlaylistDialogAdapter(playlistList, tPLaylist, this)
+
+        viewModel.tPlaylistListId.observe(viewLifecycleOwner) {
+            cPlaylistList = it.toMutableList()
+            oPlaylistList = it
+            playlistDiaLogAdapter =
+                PlaylistDialogAdapter(playlistList.toMutableList(), cPlaylistList, this)
             dialogBinding.rcvListPlaylist.adapter = playlistDiaLogAdapter
-            dialogBinding.rcvListPlaylist.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+
+        dialogBinding.rcvListPlaylist.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        dialogBinding.btnDone.setOnClickListener {
+            viewModel.reset(cPlaylistList, oPlaylistList, songId)
+            dismiss()
+        }
+
         return dialogBinding.root
     }
 
-    override fun onItemClicked(view: DialogPlaylistItemBinding) {
-        view.playlistTitle.text.toString().toast(requireContext())
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        viewModel.playlistId.observe(viewLifecycleOwner) {
+            it.toString().toast(requireContext())
+            viewModel.getSong(it)
+        }
+    }
+
+    override fun onItemClicked(playlistId: Int, view: DialogPlaylistItemBinding) {
+        view.btnAction.isChecked.toString().toast(requireContext())
+        if (view.btnAction.isChecked && playlistId !in cPlaylistList)
+            cPlaylistList.add(playlistId)
+        else if (!view.btnAction.isChecked && playlistId in cPlaylistList)
+            cPlaylistList.remove(playlistId)
+
     }
 }

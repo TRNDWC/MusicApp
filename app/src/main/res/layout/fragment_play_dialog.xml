@@ -5,12 +5,41 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
 
-        android:id="@+id/play_fragment_dialog"
+        android:id="@+id/play_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black"
-
         tools:context=".ui.play.PlayFragment">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/fragment_guideline_v_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/fragment_guideline_v_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.9" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/fragment_guideline_h_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/fragment_guideline_h_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.6" />
+
 
         <ImageView
             android:id="@+id/btn_down"
@@ -24,32 +53,16 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.022" />
 
-        <ImageView
-            android:id="@+id/btn_option"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_more"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.9493"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.022" />
 
         <ImageView
             android:id="@+id/song_image"
-            android:layout_width="378dp"
-            android:layout_height="378dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/ic_launcher_foreground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-
-            app:layout_constraintVertical_bias="0.224" />
-
-
+            app:layout_constraintBottom_toTopOf="@+id/fragment_guideline_h_2"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_guideline_v_2"
+            app:layout_constraintStart_toStartOf="@+id/fragment_guideline_v_1"
+            app:layout_constraintTop_toTopOf="@+id/fragment_guideline_h_1"/>
 
 
         <TextView
@@ -71,8 +84,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#00FFFFFF"
-
-
             android:src="@drawable/ic_oke"
 
             android:textColor="@color/white"

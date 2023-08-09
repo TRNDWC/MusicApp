@@ -1,5 +1,7 @@
 package com.example.baseproject.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.PlaylistWithSongs
@@ -34,8 +36,11 @@ class MusicRepository(private val musicDao: MusicDao) {
         return musicDao.getSongsofPlaylist(id)
     }
 
-    suspend fun getPlaylistsOfSong(id: Int): SongWithPlaylists {
-        return musicDao.getPlaylistsOfSong(id)
+    fun getPlaylistsOfSong(id: Int) = flow {
+        coroutineScope {
+            val playlists = async { musicDao.getPlaylistsOfSong(id) }
+            emit(playlists.await())
+        }
     }
 
     suspend fun getPLaylistSize(id: Int): Int {
@@ -44,5 +49,9 @@ class MusicRepository(private val musicDao: MusicDao) {
 
     suspend fun addSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef) {
         musicDao.addSongPlaylistCrossRef(crossRef)
+    }
+
+    suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef) {
+        musicDao.deleteSongPlaylistCrossRef(crossRef)
     }
 }

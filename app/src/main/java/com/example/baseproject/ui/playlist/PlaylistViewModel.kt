@@ -5,32 +5,25 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.baseproject.R
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
-import com.example.baseproject.databinding.ParentLayoutBindingImpl
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
-import com.example.core.utils.toast
-import com.example.setting.model.HomePageItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.text.FieldPosition
 import java.util.Locale
 import javax.inject.Inject
-
 
 @HiltViewModel
 class PlaylistViewModel @Inject constructor(
@@ -43,13 +36,17 @@ class PlaylistViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
-    private val _songList = MutableLiveData<List<PlaylistSongItem>>()
-    val songList: LiveData<List<PlaylistSongItem>> = _songList
+    // hiển thị danh sách các bài hát thuộc playlist có id là id
+
+    private var _songList = MutableLiveData<List<PlaylistSongItem>>()
+    var songList: LiveData<List<PlaylistSongItem>> = _songList
 
     fun getSong(id: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.getSongsOfPlaylist(id)
-            _songList.postValue(data.songs)
+            _songList.postValue(repository.getSongsOfPlaylist(id).songs)
+            _songList.value?.forEach {
+                Log.d("playlist and song", "${id} + +${it.songTitle}")
+            }
         }
     }
 
@@ -59,8 +56,11 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    private val _addSongList = MutableStateFlow<List<PlaylistSongItem>>(listOf())
-    val addSongList = _addSongList
+
+    // hiển thị các bài hát để thêm vào playlist hiện tại
+
+    val addSongList = MutableLiveData<List<PlaylistSongItem>>()
+
 
     fun listAll() {
         repository.getAllSong()
@@ -70,19 +70,12 @@ class PlaylistViewModel @Inject constructor(
             }.onCompletion {
                 isLoading.value = false
             }.onEach {
-                _addSongList.value = addDialogFilter(it)
+
+                addSongList.value = addDialogFilter(it)
             }.catch {
                 messageError.value = it.message
             }.launchIn(viewModelScope)
     }
-
-//    fun remove(position: Int) {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            _addSongList.postValue(_addSongList.value?.toMutableList()?.apply {
-//                removeAt(position)
-//            }?.toList())
-//        }
-//    }
 
     fun addDialogFilter(list: List<PlaylistSongItem>): List<PlaylistSongItem> {
         val data = mutableListOf<Int>()
@@ -91,12 +84,72 @@ class PlaylistViewModel @Inject constructor(
         }
         val result = mutableListOf<PlaylistSongItem>()
         list.forEach {
-            if (!data.contains(it.songId))
+            if (!data.contains(it.songId)) {
                 result.add(it)
+                Log.d("checked", it.songTitle.toString())
+            }
         }
         return result
     }
 
+    // play fragment dialog
+    val tPlaylistListId = SingleLiveEvent<List<Int>>()
+
+    fun getPlaylistOfSong(id: Int) {
+        repository.getPlaylistsOfSong(id)
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                isLoading.value = true
+            }.onCompletion {
+                isLoading.value = false
+            }.onEach {
+                tPlaylistListId.value = filter(it.playlists)
+            }.catch {
+                messageError.value = it.message
+            }.launchIn(viewModelScope)
+    }
+
+    fun filter(list: List<LibraryItem>): List<Int> {
+        val dataId: MutableList<Int> = mutableListOf()
+        list.forEach {
+            dataId.add(it.playlistId)
+        }
+        return dataId
+    }
+
+    // custom fragment
+
+    fun reset(newList: List<Int>, oldList: List<Int>, songId: Int) {
+        viewModelScope.launch {
+            newList.forEach {
+                if (it !in oldList)
+                    repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+            }
+
+            oldList.forEach {
+                if (it !in newList)
+                    repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+            }
+        }
+    }
+
+    val playlistId = MutableLiveData<Int>()
+    fun set(id: Int) {
+        playlistId.value = id
+
+    }
+
+    // lấy dữ liệu về các playlist
+
+    val playlists = SingleLiveEvent<List<LibraryItem>>()
+    fun getAllPlaylists() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = repository.getAllPlaylist()
+            playlists.postValue(data)
+        }
+    }
+
+    // các chức năng khác
     fun convert(str: String?): String {
         var str = str
         str = str!!.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
@@ -135,4 +188,5 @@ class PlaylistViewModel @Inject constructor(
         }
         return filterList
     }
+
 }

@@ -1,4 +1,4 @@
-package com.example.baseproject.data.songrepo
+package com.example.baseproject.di.songrepo
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

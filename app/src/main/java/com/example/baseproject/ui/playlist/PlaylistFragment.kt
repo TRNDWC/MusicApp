@@ -7,8 +7,10 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
@@ -32,7 +34,7 @@ class PlaylistFragment :
     OnItemClickListener {
     @Inject
     lateinit var appNavigation: AppNavigation
-    private val viewModel: PlaylistViewModel by viewModels()
+    private val viewModel: PlaylistViewModel by activityViewModels()
 
     override fun getVM() = viewModel
     private var musicService: MusicService? = null
@@ -62,8 +64,6 @@ class PlaylistFragment :
 
     override fun setOnClick() {
         super.setOnClick()
-        recyclerviewAction()
-        searchAction()
         binding.addSong.setOnClickListener {
             viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
@@ -76,7 +76,12 @@ class PlaylistFragment :
     override fun bindingStateView() {
         super.bindingStateView()
         val item = arguments?.getParcelable<LibraryItem>("playlist")
-        item?.let { viewModel.getSong(it.playlistId) }
+        item?.let {
+            viewModel.getSong(it.playlistId)
+            viewModel.set(it.playlistId)
+        }
+        recyclerviewAction()
+        searchAction()
         // material tool bar
         materialToolbar = binding.materialToolbar
         materialToolbar.title = item?.playlistTitle
@@ -96,8 +101,9 @@ class PlaylistFragment :
     }
 
     private fun recyclerviewAction() {
-        viewModel.songList.observe(viewLifecycleOwner) { newList ->
-            mSongList = newList
+        viewModel.songList.observe(viewLifecycleOwner) {
+            Log.d("playlist and song", "new list found")
+            mSongList = it
             playlistAdapter = PlaylistSongItemAdapter(mSongList, this)
             binding.rcvPlaylistSong.adapter = playlistAdapter
         }
@@ -137,7 +143,5 @@ class PlaylistFragment :
             requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             previousClickedSong = item
         }
-
-
     }
 }

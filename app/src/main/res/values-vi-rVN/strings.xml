@@ -43,6 +43,8 @@
     <string name="password_is_incorrect">Mật khẩu không chính xác</string>
     <string name="email_or_password_is_empty">Email hoặc mật khẩu trống</string>
     <string name="profile">Hồ sơ</string>
+    <string name="done">Xong</string>
+
 
 
 </resources>

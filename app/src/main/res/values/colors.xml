@@ -11,6 +11,7 @@
     <color name="spotifyGreen">#FF4CAF50</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="_4caf50">#4CAF50</color>
+    <color name="play_bottom_color">#000000</color>
     <drawable name="clr_normal">#00AAAAAA</drawable>
     <drawable name="clr_pressed">#000000</drawable>
 </resources>
