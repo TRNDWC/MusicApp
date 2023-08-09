@@ -120,17 +120,25 @@ class PlaylistViewModel @Inject constructor(
     // custom fragment
 
     fun reset(newList: List<Int>, oldList: List<Int>, songId: Int) {
-        viewModelScope.launch {
+//        viewModelScope.launch {
             newList.forEach {
-                if (it !in oldList)
-                    repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                if (it !in oldList) {
+                    viewModelScope.launch(Dispatchers.IO) {
+                        repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                    }
+
+                }
             }
 
             oldList.forEach {
-                if (it !in newList)
-                    repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                if (it !in newList){
+                    viewModelScope.launch(Dispatchers.IO) {
+                        repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                    }
+                }
+
             }
-        }
+//        }
     }
 
     val playlistId = MutableLiveData<Int>()

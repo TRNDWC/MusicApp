@@ -23,6 +23,16 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartFragmentViewModel>
     private val viewModel: StartFragmentViewModel by viewModels()
     override fun getVM() = viewModel
 
+    override fun setOnClick() {
+        super.setOnClick()
+        binding.loginTextView.setOnClickListener {
+            appNavigation.openStartToLogin()
+        }
+        binding.freeSignUpButton.setOnClickListener {
+            appNavigation.openStartToSignUp()
+        }
+    }
+
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
        if(viewModel.isLogin){
