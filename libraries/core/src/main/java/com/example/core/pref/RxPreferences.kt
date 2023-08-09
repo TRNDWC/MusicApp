@@ -14,6 +14,10 @@ interface RxPreferences : BasePreferences {
 
     suspend fun setLanguage(language: String)
 
+    fun getEmail(): Flow<String?>
+
+    suspend fun setEmail(email: String)
+
     fun logout()
 
 }

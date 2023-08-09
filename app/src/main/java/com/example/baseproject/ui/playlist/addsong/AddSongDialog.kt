@@ -24,10 +24,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
+
 class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
     OnItemClickListener {
     private lateinit var dialogBinding: AddSongDialogBinding
     private val viewModel: PlaylistViewModel by activityViewModels()
+
     private lateinit var songDialogAdapter: SongDiaLogAdapter
     private lateinit var songList: List<PlaylistSongItem>
     fun getVM() = viewModel
@@ -78,6 +80,7 @@ class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
             songDialogAdapter = SongDiaLogAdapter(songList.toMutableList(), this@AddSongDialog)
             dialogBinding.rcvListSong.adapter = songDialogAdapter
         }
+
 
         dialogBinding.rcvListSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)

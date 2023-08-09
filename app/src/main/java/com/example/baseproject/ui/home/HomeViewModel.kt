@@ -23,11 +23,13 @@ class HomeViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
+
     val playlists = SingleLiveEvent<List<LibraryItem>>()
     fun getAllPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
             val data = repository.getAllPlaylist()
             playlists.postValue(data)
+
         }
     }
 }

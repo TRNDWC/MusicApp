@@ -5,11 +5,14 @@ import com.example.core.model.network.navigationComponent.BaseNavigator
 
 interface AppNavigation : BaseNavigator {
 
-    fun openSplashToLogin(bundle: Bundle? = null)
+    fun openSplashToStartScreen(bundle: Bundle? = null)
     fun openLogintoHomeScreen(bundle: Bundle? = null)
-    fun openLogintoSignUp(bundle: Bundle? = null)
+    fun openStartToSignUp(bundle: Bundle? = null)
+    fun openStartToLogin(bundle: Bundle? = null)
     fun openSignUptoHome(bundle: Bundle? = null)
 
-    fun openPlayListScreenToPlayScreen(bundle: Bundle? = null)
+    fun openStartToHome(bundle: Bundle? = null)
+    fun openSignUptoLogin(bundle: Bundle? = null)
+
 
 }

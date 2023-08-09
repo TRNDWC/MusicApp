@@ -15,6 +15,7 @@ class AppPreferences @Inject constructor(
     private object PreferencesKeys {
         val PREF_PARAM_ACCESS_TOKEN = stringPreferencesKey("PREF_PARAM_ACCESS_TOKEN")
         val PREF_PARAM_LANGUAGE = stringPreferencesKey("PREF_PARAM_LANGUAGE")
+        val PREF_PARAM_EMAIL = stringPreferencesKey("PREF_PARAM_EMAIL")
     }
 
     override fun getToken(): Flow<String?> = getValue(PreferencesKeys.PREF_PARAM_ACCESS_TOKEN)
@@ -27,6 +28,14 @@ class AppPreferences @Inject constructor(
 
     override suspend fun setLanguage(language: String) {
         putValue(PreferencesKeys.PREF_PARAM_LANGUAGE, language)
+    }
+
+    override fun getEmail(): Flow<String?> {
+        return getValue(PreferencesKeys.PREF_PARAM_EMAIL)
+    }
+
+    override suspend fun setEmail(email: String) {
+        putValue(PreferencesKeys.PREF_PARAM_EMAIL, email)
     }
 
     override fun logout() {
