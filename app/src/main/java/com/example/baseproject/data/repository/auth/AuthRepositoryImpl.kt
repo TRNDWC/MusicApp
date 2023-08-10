@@ -1,4 +1,4 @@
-package com.example.baseproject.data.repository
+package com.example.baseproject.data.repository.auth
 
 import android.util.Log
 import com.example.baseproject.utils.Response
@@ -37,6 +37,15 @@ class AuthRepositoryImpl : AuthRepository {
     override suspend fun firebaseLogin(email: String, password: String): Response<Boolean> {
         return try {
             auth.signInWithEmailAndPassword(email, password).await()
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Failure(e)
+        }
+    }
+
+    override suspend fun firebaseLogout(): Response<Boolean> {
+        return try {
+            auth.signOut()
             Response.Success(true)
         } catch (e: Exception) {
             Response.Failure(e)

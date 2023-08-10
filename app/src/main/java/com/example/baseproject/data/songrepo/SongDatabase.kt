@@ -1,4 +1,4 @@
-package com.example.baseproject.di.songrepo
+package com.example.baseproject.data.songrepo
 
 import android.content.Context
 import androidx.room.Database

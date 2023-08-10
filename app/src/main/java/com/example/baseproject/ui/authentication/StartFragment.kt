@@ -29,4 +29,16 @@ class StartFragment : BaseFragment<FragmentStartBinding, StartFragmentViewModel>
            appNavigation.openStartToHome()
        }
     }
+
+    override fun setOnClick() {
+        super.setOnClick()
+        binding.apply {
+            loginTextView.setOnClickListener {
+                appNavigation.openStartToLogin()
+            }
+            freeSignUpButton.setOnClickListener {
+                appNavigation.openStartToSignUp()
+            }
+        }
+    }
 }

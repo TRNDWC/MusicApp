@@ -1,7 +1,7 @@
 package com.example.baseproject.di
 
-import com.example.baseproject.data.repository.AuthRepository
-import com.example.baseproject.data.repository.AuthRepositoryImpl
+import com.example.baseproject.data.repository.auth.AuthRepository
+import com.example.baseproject.data.repository.auth.AuthRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

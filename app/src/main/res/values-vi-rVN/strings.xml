@@ -44,7 +44,10 @@
     <string name="email_or_password_is_empty">Email hoặc mật khẩu trống</string>
     <string name="profile">Hồ sơ</string>
     <string name="done">Xong</string>
-
+    <string name="edit">Edit</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save">Save</string>
+    <string name="do_not_let_username_empty">Do not let username empty</string>
 
 
 </resources>

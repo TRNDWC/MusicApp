@@ -44,6 +44,14 @@
     <string name="email_or_password_is_empty">Email or password is empty</string>
     <string name="profile">Profile</string>
     <string name="done">done</string>
+    <string name="edit">Edit</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="save">Save</string>
+    <string name="EditProfileDescription">This could be your first name or a nickname.\nIt\'s how you\'ll appear on Spotify.</string>
+    <string name="do_not_let_username_empty">Do not let username empty</string>
 
 
 </resources>

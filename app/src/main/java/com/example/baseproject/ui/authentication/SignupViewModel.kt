@@ -3,7 +3,7 @@ package com.example.baseproject.ui.authentication
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.baseproject.data.repository.AuthRepository
+import com.example.baseproject.data.repository.auth.AuthRepository
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
