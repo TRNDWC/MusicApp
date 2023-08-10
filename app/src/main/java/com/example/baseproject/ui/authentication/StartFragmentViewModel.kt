@@ -1,6 +1,6 @@
 package com.example.baseproject.ui.authentication
 
-import com.example.baseproject.data.repository.AuthRepository
+import com.example.baseproject.data.repository.auth.AuthRepository
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
