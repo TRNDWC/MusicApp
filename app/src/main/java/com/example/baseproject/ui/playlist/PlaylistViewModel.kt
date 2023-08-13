@@ -169,12 +169,18 @@ class PlaylistViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             repository.updatePlaylist(playlistId, new_title, image)
         }
-        update(new_title)
+        updateTitle(new_title)
+        updateImage(image)
     }
 
     val title = MutableLiveData<String>()
-    private fun update(nTitle: String) {
+    private fun updateTitle(nTitle: String) {
         title.postValue(nTitle)
+    }
+
+    val image = MutableLiveData<String?>()
+    private fun updateImage(nImage: String?) {
+        image.postValue(nImage)
     }
 
 

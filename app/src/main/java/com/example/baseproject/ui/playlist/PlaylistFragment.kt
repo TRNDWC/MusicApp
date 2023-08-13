@@ -11,9 +11,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.appcompat.widget.Toolbar
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.palette.graphics.Palette
@@ -28,9 +26,7 @@ import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.baseproject.ui.playlist.editplaylist.EditPlaylistDialog
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
 import com.google.android.material.appbar.CollapsingToolbarLayout
-import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.InputStream
 import java.util.Collections
@@ -80,7 +76,6 @@ class PlaylistFragment :
             )
         }
         binding.btnEdit.setOnClickListener {
-            "clicked".toast(requireContext())
             viewModel.getSong(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId)
             EditPlaylistDialog(
                 arguments?.getParcelable<LibraryItem>("playlist")!!
@@ -110,7 +105,6 @@ class PlaylistFragment :
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(Color.parseColor("#464545"), Color.BLACK)
             )
-//            materialToolbar.background = getDominantColor(bitmap)
         } else {
             binding.playlistCover.setImageURI(item.playlistImage.toUri())
             val `is`: InputStream? =
@@ -120,12 +114,28 @@ class PlaylistFragment :
             binding.collapsingToolbar.background = getDominantColor(bitmap)
         }
 
+        updateViewChange()
+    }
+
+    private fun updateViewChange() {
         viewModel.title.observe(viewLifecycleOwner) {
-            binding.collapsingToolbar.title = it
-            it.toast(requireContext())
+            if (it != "") {
+                binding.collapsingToolbar.title = it
+                viewModel.title.postValue("")
+            }
         }
 
-//        (activity as AppCompatActivity).setSupportActionBar(materialToolbar as Toolbar)
+        viewModel.image.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.playlistCover.setImageURI(it.toUri())
+                val `is`: InputStream? =
+                    requireActivity().contentResolver.openInputStream(it.toUri())
+                val bitmap = BitmapFactory.decodeStream(`is`)
+                `is`?.close()
+                binding.collapsingToolbar.background = getDominantColor(bitmap)
+                viewModel.image.postValue(null)
+            }
+        }
     }
 
     private fun prepareBundle(item: PlaylistSongItem) {
