@@ -22,11 +22,12 @@
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_50dp"
             android:layout_margin="@dimen/_10dp"
-            android:textSize="18sp"
+            android:background="@drawable/search_bar_background"
+            android:theme="@style/AppSearchView"
             app:iconifiedByDefault="false"
-            app:queryBackground="@color/transparent" />
+            app:searchIcon="@drawable/ic_search" />
 
         <ScrollView
             android:layout_width="match_parent"

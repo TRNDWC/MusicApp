@@ -1,11 +1,13 @@
 package com.example.baseproject.data
 
+import android.net.Uri
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.PlaylistWithSongs
@@ -27,6 +29,12 @@ interface MusicDao {
 
     @Query("SELECT * FROM playlist_data ORDER BY playlistTitle ASC")
     suspend fun listAllPlaylist(): List<LibraryItem>
+
+    @Query("UPDATE playlist_data SET playlistTitle=:title WHERE playlistId=:id")
+    suspend fun updatePlaylistTitle(id: Int, title: String)
+
+    @Query("UPDATE playlist_data SET playlistImage=:uri WHERE playlistId=:id")
+    suspend fun updatePlaylistImage(id: Int, uri: String?)
 
     //Music
     @Insert(onConflict = OnConflictStrategy.REPLACE)

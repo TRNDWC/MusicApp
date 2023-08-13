@@ -62,22 +62,40 @@
             app:layout_constraintBottom_toTopOf="@+id/fragment_guideline_h_2"
             app:layout_constraintEnd_toStartOf="@+id/fragment_guideline_v_2"
             app:layout_constraintStart_toStartOf="@+id/fragment_guideline_v_1"
-            app:layout_constraintTop_toTopOf="@+id/fragment_guideline_h_1"/>
+            app:layout_constraintTop_toTopOf="@+id/fragment_guideline_h_1" />
 
 
         <TextView
-            android:id="@+id/song_des"
-            android:layout_width="wrap_content"
+            android:id="@+id/song_title"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_50dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/song_title"
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.15"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_guideline_v_2"
+            app:layout_constraintStart_toStartOf="@+id/fragment_guideline_v_1"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.67" />
+            app:layout_constraintVertical_bias="0.66" />
+
+        <TextView
+            android:id="@+id/song_artis"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_50dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/song_title"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/fragment_guideline_v_2"
+            app:layout_constraintStart_toStartOf="@+id/fragment_guideline_v_1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.69" />
 
         <ImageButton
             android:id="@+id/btn_fav"

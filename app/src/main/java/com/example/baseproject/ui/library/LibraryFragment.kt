@@ -32,21 +32,19 @@ class LibraryFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-
+        viewModel.getPlaylists()
         viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
             binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
             playlistList = newList
         }
-
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {
-                viewModel.addPlaylist(LibraryItem(0, newList.toString(), R.drawable.playlist_default.toString()))
+                viewModel.addPlaylist(LibraryItem(0, newList.toString(), null))
                 viewModel.set()
             }
-
-            binding.libraryRcv.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
+        binding.libraryRcv.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onItemClick(position: Int) {

@@ -48,6 +48,8 @@
     <string name="edit_profile">Edit Profile</string>
     <string name="save">Save</string>
     <string name="do_not_let_username_empty">Do not let username empty</string>
+    <string name="none">none</string>
+    <string name="edit_playlist">Edit playlist</string>
 
 
 </resources>

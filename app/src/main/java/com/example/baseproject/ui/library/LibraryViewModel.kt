@@ -26,10 +26,9 @@ class LibraryViewModel @Inject constructor(
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
-        getPlaylists()
     }
 
-    private fun getPlaylists() {
+    fun getPlaylists() {
         viewModelScope.launch(Dispatchers.IO) {
             _playlistList.postValue(repository.getAllPlaylist())
         }

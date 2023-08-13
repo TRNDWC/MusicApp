@@ -1,4 +1,4 @@
-package com.example.baseproject.ui.home.customplaylist
+package com.example.baseproject.ui.playlist.customplaylist
 
 import android.app.Dialog
 import android.content.DialogInterface
