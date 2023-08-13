@@ -13,26 +13,52 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient_playlist"
-            android:paddingTop="60dp">
+            android:background="@drawable/gradient_playlist">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsingToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="500dp"
+                android:drawableLeft="@drawable/ic_edit"
                 app:collapsedTitleGravity="start"
                 app:collapsedTitleTextColor="@color/white"
                 app:contentScrim="@color/transparent"
                 app:expandedTitleTextColor="@color/white"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <ImageView
-                    android:id="@+id/playlist_cover"
-                    android:layout_width="253dp"
-                    android:layout_height="253dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_margin="@dimen/_10dp"
-                    android:background="@drawable/spotify" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="@dimen/_50dp">
+
+                    <ImageButton
+                        android:id="@+id/btn_edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:layout_margin="@dimen/_10dp"
+                        android:background="@drawable/ic_edit" />
+
+                    <ImageView
+                        android:id="@+id/playlist_cover"
+                        android:layout_width="253dp"
+                        android:layout_height="253dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="@dimen/_10dp"
+                        android:background="@drawable/spotify"
+                        android:contentDescription="@string/none" />
+
+                    <androidx.appcompat.widget.SearchView
+                        android:id="@+id/searchView"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
+                        android:layout_margin="@dimen/_10dp"
+                        android:background="@drawable/search_bar_background"
+                        android:theme="@style/AppSearchView"
+                        app:iconifiedByDefault="false"
+                        app:searchIcon="@drawable/ic_search" />
+                </LinearLayout>
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/materialToolbar"
@@ -46,7 +72,7 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FF121212"
+            android:background="@color/transparent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
@@ -55,23 +81,6 @@
                 android:layout_marginTop="@dimen/_50dp"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/_135dp">
-
-                <androidx.appcompat.widget.SearchView
-                    android:id="@+id/searchView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_10dp"
-                    android:textSize="18sp"
-                    app:iconifiedByDefault="false"
-                    app:queryBackground="@color/transparent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rcvPlaylistSong"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="@dimen/_10dp"
-                    android:textSize="18sp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/add_song"
@@ -84,6 +93,7 @@
                         android:id="@+id/song_image_view"
                         android:layout_width="60dp"
                         android:layout_height="65dp"
+                        android:contentDescription="@string/none"
                         android:src="@drawable/ic_add_song"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -107,6 +117,14 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.5" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvPlaylistSong"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/_10dp"
+                    android:textSize="18sp" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -115,10 +133,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
+            android:contentDescription="@string/none"
             android:src="@drawable/ic_green_play"
             app:backgroundTint="@color/_4caf50"
             app:layout_anchor="@id/collapsingToolbar"
-            app:layout_anchorGravity="end|bottom" />
+            app:layout_anchorGravity="bottom|right" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -1,5 +1,7 @@
 package com.example.baseproject.data
 
+import android.icu.text.CaseMap.Title
+import android.media.Image
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.data.model.LibraryItem
@@ -41,6 +43,11 @@ class MusicRepository(private val musicDao: MusicDao) {
             val playlists = async { musicDao.getPlaylistsOfSong(id) }
             emit(playlists.await())
         }
+    }
+
+    suspend fun updatePlaylist(id: Int, title: String, uri: String?) {
+        musicDao.updatePlaylistTitle(id, title)
+        musicDao.updatePlaylistImage(id, uri)
     }
 
     suspend fun getPLaylistSize(id: Int): Int {

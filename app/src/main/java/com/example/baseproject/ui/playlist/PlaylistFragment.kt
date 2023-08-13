@@ -4,14 +4,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.appcompat.widget.Toolbar
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
@@ -21,10 +26,14 @@ import com.example.baseproject.databinding.PlaylistSongItemBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
+import com.example.baseproject.ui.playlist.editplaylist.EditPlaylistDialog
 import com.example.core.base.BaseFragment
 import com.example.core.utils.toast
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.InputStream
+import java.util.Collections
 import javax.inject.Inject
 
 
@@ -40,7 +49,7 @@ class PlaylistFragment :
     private var musicService: MusicService? = null
     private lateinit var mSongList: List<PlaylistSongItem>
     private lateinit var playlistAdapter: PlaylistSongItemAdapter
-    private lateinit var materialToolbar: MaterialToolbar
+    private lateinit var materialToolbar: CollapsingToolbarLayout
     private var isServiceConnected: Boolean = false
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
@@ -67,10 +76,19 @@ class PlaylistFragment :
         binding.addSong.setOnClickListener {
             viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
-                childFragmentManager,
-                "add_song"
+                childFragmentManager, "add_song"
             )
         }
+        binding.btnEdit.setOnClickListener {
+            "clicked".toast(requireContext())
+            viewModel.getSong(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId)
+            EditPlaylistDialog(
+                arguments?.getParcelable<LibraryItem>("playlist")!!
+            ).show(
+                childFragmentManager, "edit_playlist"
+            )
+        }
+
     }
 
     override fun bindingStateView() {
@@ -82,18 +100,40 @@ class PlaylistFragment :
         }
         recyclerviewAction()
         searchAction()
+
         // material tool bar
-        materialToolbar = binding.materialToolbar
+        materialToolbar = binding.collapsingToolbar
         materialToolbar.title = item?.playlistTitle
-        (activity as AppCompatActivity).setSupportActionBar(materialToolbar)
-        binding.searchView.setBackgroundResource(R.color.color_btn)
+        if (item?.playlistImage == null) {
+            binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
+            binding.collapsingToolbar.background = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(Color.parseColor("#464545"), Color.BLACK)
+            )
+//            materialToolbar.background = getDominantColor(bitmap)
+        } else {
+            binding.playlistCover.setImageURI(item.playlistImage.toUri())
+            val `is`: InputStream? =
+                requireActivity().contentResolver.openInputStream(item.playlistImage.toUri())
+            val bitmap = BitmapFactory.decodeStream(`is`)
+            `is`?.close()
+            binding.collapsingToolbar.background = getDominantColor(bitmap)
+        }
+
+        viewModel.title.observe(viewLifecycleOwner) {
+            binding.collapsingToolbar.title = it
+            it.toast(requireContext())
+        }
+
+//        (activity as AppCompatActivity).setSupportActionBar(materialToolbar as Toolbar)
     }
 
     private fun prepareBundle(item: PlaylistSongItem) {
         bundle = Bundle()
         val position = viewModel.songList.value!!.indexOf(item)
         bundle.putInt("song_position", position)
-        bundle.putParcelableArrayList("song_list",
+        bundle.putParcelableArrayList(
+            "song_list",
             viewModel.songList.value?.let { it1 -> ArrayList(it1) })
         bundle.putParcelable("song_item", item)
         intent = Intent(context, MusicService::class.java)
@@ -112,6 +152,7 @@ class PlaylistFragment :
     }
 
     private fun searchAction() {
+
         binding.searchView.setOnQueryTextListener(object : OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -122,6 +163,28 @@ class PlaylistFragment :
                 return true
             }
         })
+    }
+
+    private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
+        val swatchesTemp = Palette.from(bitmap!!).generate().swatches
+        val swatches: List<Palette.Swatch> = ArrayList(swatchesTemp)
+        Collections.sort(
+            swatches
+        ) { swatch1, swatch2 -> swatch2.population - swatch1.population }
+        val gd: GradientDrawable
+        when (swatches.size) {
+            0 -> gd = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.BLACK, Color.BLACK)
+            )
+
+            else -> gd = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(swatches[0].rgb, Color.BLACK)
+            )
+
+        }
+        gd.cornerRadius = 0f
+        return gd
     }
 
     override fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding) {

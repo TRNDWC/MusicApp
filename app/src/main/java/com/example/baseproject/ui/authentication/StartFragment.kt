@@ -13,31 +13,24 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class StartFragment : BaseFragment<FragmentStartBinding, StartFragmentViewModel>(R.layout.fragment_start) {
+class StartFragment :
+    BaseFragment<FragmentStartBinding, StartFragmentViewModel>(R.layout.fragment_start) {
 
     companion object {
         fun newInstance() = StartFragment()
     }
+
     @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: StartFragmentViewModel by viewModels()
     override fun getVM() = viewModel
 
-    override fun setOnClick() {
-        super.setOnClick()
-        binding.loginTextView.setOnClickListener {
-            appNavigation.openStartToLogin()
-        }
-        binding.freeSignUpButton.setOnClickListener {
-            appNavigation.openStartToSignUp()
-        }
-    }
-
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
-       if(viewModel.isLogin){
-           appNavigation.openStartToHome()
-       }
+        if (viewModel.isLogin) {
+            appNavigation.openStartToHome()
+        }
+        appNavigation.openStartToHome()
     }
 
     override fun setOnClick() {

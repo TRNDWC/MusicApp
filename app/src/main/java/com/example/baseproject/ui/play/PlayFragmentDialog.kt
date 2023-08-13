@@ -29,7 +29,7 @@ import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.home.customplaylist.CustomPLaylistDialog
+import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -65,7 +65,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             musicService.songLiveData.observe(viewLifecycleOwner) {
                 bindingPlayerView(it)
             }
-            musicService.songIsPlaying.observe(viewLifecycleOwner){
+            musicService.songIsPlaying.observe(viewLifecycleOwner) {
                 isPlaying = it
                 if (isPlaying) {
                     dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
@@ -93,7 +93,6 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
-
         return dialog
     }
 
@@ -115,11 +114,12 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             dialog!!.dismiss()
         }
         dialogBinding.btnRepeat.setOnClickListener {
-            isLooping = when(isLooping){
+            isLooping = when (isLooping) {
                 true -> {
                     dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
                     false
                 }
+
                 false -> {
                     dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
                     true
@@ -199,7 +199,8 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun bindingPlayerView(song: PlaylistSongItem) {
         dialogBinding.songImage.setImageURI(song.songImage!!.toUri())
-        dialogBinding.songDes.text = "${song.songTitle}\n${song.artists}"
+        dialogBinding.songTitle.text = "${song.songTitle}"
+        dialogBinding.songArtis.text = "${song.artists}"
         val `is`: InputStream? =
             requireActivity().contentResolver.openInputStream(song.songImage!!.toUri())
         val bitmap = BitmapFactory.decodeStream(`is`)

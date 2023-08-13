@@ -1,6 +1,8 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
+import android.icu.text.CaseMap.Title
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -121,30 +123,29 @@ class PlaylistViewModel @Inject constructor(
 
     fun reset(newList: List<Int>, oldList: List<Int>, songId: Int) {
 //        viewModelScope.launch {
-            newList.forEach {
-                if (it !in oldList) {
-                    viewModelScope.launch(Dispatchers.IO) {
-                        repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
-                    }
-
-                }
-            }
-
-            oldList.forEach {
-                if (it !in newList){
-                    viewModelScope.launch(Dispatchers.IO) {
-                        repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
-                    }
+        newList.forEach {
+            if (it !in oldList) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
                 }
 
             }
+        }
+
+        oldList.forEach {
+            if (it !in newList) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                }
+            }
+
+        }
 //        }
     }
 
     val playlistId = MutableLiveData<Int>()
     fun set(id: Int) {
         playlistId.value = id
-
     }
 
     // lấy dữ liệu về các playlist
@@ -156,6 +157,26 @@ class PlaylistViewModel @Inject constructor(
             playlists.postValue(data)
         }
     }
+
+    // edit playlist
+
+    fun edit(list: List<Int>, playlistId: Int, new_title: String, image: String?) {
+        list.forEach {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(it, playlistId))
+            }
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updatePlaylist(playlistId, new_title, image)
+        }
+        update(new_title)
+    }
+
+    val title = MutableLiveData<String>()
+    private fun update(nTitle: String) {
+        title.postValue(nTitle)
+    }
+
 
     // các chức năng khác
     fun convert(str: String?): String {

@@ -1,12 +1,9 @@
-package com.example.baseproject.ui.home.customplaylist
+package com.example.baseproject.ui.playlist.customplaylist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem

@@ -52,6 +52,8 @@
     <string name="save">Save</string>
     <string name="EditProfileDescription">This could be your first name or a nickname.\nIt\'s how you\'ll appear on Spotify.</string>
     <string name="do_not_let_username_empty">Do not let username empty</string>
+    <string name="none">none</string>
+    <string name="edit_playlist">Edit playlist</string>
 
 
 </resources>

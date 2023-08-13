@@ -68,6 +68,7 @@ dependencies {
 
     implementation libraries.hilt
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-common-ktx:20.3.3'
     kapt libraries.hiltSupport
     //implementation libraries.hiltViewModel
     //kapt libraries.hiltCompiler
@@ -120,5 +121,9 @@ dependencies {
 
     //palette
     implementation 'androidx.palette:palette-ktx:1.0.0'
+
+    //image picker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+
 
 }
