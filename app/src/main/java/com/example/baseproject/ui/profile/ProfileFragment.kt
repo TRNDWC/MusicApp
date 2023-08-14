@@ -1,7 +1,9 @@
 package com.example.baseproject.ui.profile
 
 import android.os.Bundle
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
@@ -24,7 +26,7 @@ class ProfileFragment :
     private val viewModel: ProfileViewModel by viewModels()
     override fun getVM(): ProfileViewModel = viewModel
 
-
+    private var profileImageUri : String? = null
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         viewModel.profileResponse.observe(viewLifecycleOwner) { response ->
@@ -32,7 +34,11 @@ class ProfileFragment :
                 is Response.Failure -> {}
                 is Response.Loading -> {}
                 is Response.Success -> {
-                    binding.userName.text = response.data
+                    binding.userName.text = response.data.name
+                    Glide.with(requireContext())
+                        .load(response.data.profilePictureUrl.toUri())
+                        .into(binding.imgProfile)
+                    profileImageUri = response.data.profilePictureUrl
                 }
             }
 
@@ -59,7 +65,7 @@ class ProfileFragment :
                 viewModel.logOut()
             }
             btnEditProfile.setOnClickListener {
-                EditProfileDialog(binding.userName.text.toString()).show(
+                EditProfileDialog(binding.userName.text.toString(), profileImageUri).show(
                     childFragmentManager,
                     "EditProfileDialog"
                 )

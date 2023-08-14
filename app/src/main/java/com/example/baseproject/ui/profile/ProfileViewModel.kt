@@ -1,8 +1,10 @@
 package com.example.baseproject.ui.profile
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.model.User
 import com.example.baseproject.data.repository.auth.AuthRepository
 import com.example.baseproject.data.repository.profile.ProfileRepository
 import com.example.baseproject.utils.Response
@@ -28,15 +30,15 @@ class ProfileViewModel @Inject constructor(
     }
 
     private var _profileResponse = profileRepository.getProfile()
-    val profileResponse: LiveData<Response<String>> = _profileResponse
+    val profileResponse: LiveData<Response<User>> = _profileResponse
 
     private var _editResponse = MutableLiveData<Response<Boolean>>()
     val editResponse: MutableLiveData<Response<Boolean>> get() = _editResponse
 
-    fun updateProfile(name: String) {
+    fun updateProfile(name: String, profilePictureUri: Uri?) {
         viewModelScope.launch {
             _editResponse.postValue(Response.Loading)
-            _editResponse.postValue(profileRepository.updateProfile(name))
+            _editResponse.postValue(profileRepository.updateProfile(name, profilePictureUri))
         }
     }
 

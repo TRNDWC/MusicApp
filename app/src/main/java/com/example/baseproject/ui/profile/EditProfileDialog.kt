@@ -11,7 +11,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.motion.widget.TransitionBuilder.validate
+import androidx.core.net.toUri
+import androidx.databinding.adapters.TextViewBindingAdapter.setText
 import androidx.fragment.app.activityViewModels
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentEditProfileDialogBinding
 import com.example.baseproject.extension.validate
@@ -22,7 +26,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 
-class EditProfileDialog(private val userName: String) : BottomSheetDialogFragment() {
+class EditProfileDialog constructor(private val userName: String, private val profileImageUri: String?) : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentEditProfileDialogBinding
     private val viewModel: ProfileViewModel by activityViewModels()
@@ -59,11 +63,12 @@ class EditProfileDialog(private val userName: String) : BottomSheetDialogFragmen
         binding = FragmentEditProfileDialogBinding.inflate(inflater, container, false)
         binding.apply {
 
+            Glide.with(requireContext()).load(profileImageUri).into(imgProfile)
             btnCancel.setOnClickListener {
                 dismiss()
             }
             btnSave.setOnClickListener {
-                viewModel.updateProfile(binding.etEditUsername.text.toString())
+                viewModel.updateProfile(binding.etEditUsername.text.toString(), newImage?.toUri())
                 dismiss()
             }
             etEditUsername.apply {
