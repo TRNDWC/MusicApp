@@ -1,5 +1,6 @@
 package com.example.baseproject.data.repository.profile
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.utils.Response
 import com.google.firebase.auth.FirebaseAuth
@@ -8,7 +9,9 @@ import com.google.firebase.database.FirebaseDatabase
 class ProfileRepositoryImpl : ProfileRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
-    override suspend fun updateProfile(name: String): Response<Boolean> {
+
+
+    override suspend fun updateProfile(name: String, profilePictureUri: Uri?): Response<Boolean> {
         return try {
             database.reference.child("users").child(auth.uid!!).child("profile").apply {
                 child("display_name").setValue(name)
