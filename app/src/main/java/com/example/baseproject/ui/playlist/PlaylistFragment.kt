@@ -83,7 +83,26 @@ class PlaylistFragment :
                 childFragmentManager, "edit_playlist"
             )
         }
+        binding.btnPlaylistPlay.setOnClickListener {
+            val item = mSongList[0]
+            Log.e("HoangDH", "itemClicked")
+            prepareBundle(item)
+            Log.e("HoangDH", "$previousClickedSong")
 
+            if (!firstInit) {
+                requireActivity().startService(intent)
+                requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                firstInit = true
+                previousClickedSong = item
+                Log.e("HoangDH", "$firstInit")
+            } else if (previousClickedSong != item) {
+                requireActivity().stopService(intent)
+                requireActivity().unbindService(mServiceConnection)
+                requireActivity().startService(intent)
+                requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                previousClickedSong = item
+            }
+        }
     }
 
     override fun bindingStateView() {
@@ -191,7 +210,6 @@ class PlaylistFragment :
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(swatches[0].rgb, Color.BLACK)
             )
-
         }
         gd.cornerRadius = 0f
         return gd
