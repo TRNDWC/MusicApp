@@ -30,7 +30,7 @@ class StartFragment :
         if (viewModel.isLogin) {
             appNavigation.openStartToHome()
         }
-        appNavigation.openStartToHome()
+//        appNavigation.openStartToHome()
     }
 
     override fun setOnClick() {
