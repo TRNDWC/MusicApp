@@ -1,17 +1,14 @@
 package com.example.baseproject.ui.profile
 
-import android.app.Activity
 import android.os.Bundle
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
-import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,7 +26,7 @@ class ProfileFragment :
     private val viewModel: ProfileViewModel by viewModels()
     override fun getVM(): ProfileViewModel = viewModel
 
-
+    private var profileImageUri : String? = null
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         viewModel.profileResponse.observe(viewLifecycleOwner) { response ->
@@ -37,7 +34,11 @@ class ProfileFragment :
                 is Response.Failure -> {}
                 is Response.Loading -> {}
                 is Response.Success -> {
-                    binding.userName.text = response.data
+                    binding.userName.text = response.data.name
+                    Glide.with(requireContext())
+                        .load(response.data.profilePictureUrl.toUri())
+                        .into(binding.imgProfile)
+                    profileImageUri = response.data.profilePictureUrl
                 }
             }
 
@@ -64,39 +65,11 @@ class ProfileFragment :
                 viewModel.logOut()
             }
             btnEditProfile.setOnClickListener {
-                EditProfileDialog(binding.userName.text.toString()).show(
+                EditProfileDialog(binding.userName.text.toString(), profileImageUri).show(
                     childFragmentManager,
                     "EditProfileDialog"
                 )
             }
         }
-        binding.imgProfile.setOnClickListener {
-            ImagePicker.with(this)
-                .compress(1024)
-                .crop()
-                .maxResultSize(
-                    1080,
-                    1080
-                )
-                .createIntent { intent ->
-                    startForProfileImageResult.launch(intent)
-                }
-        }
     }
-
-    private val startForProfileImageResult =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            val resultCode = result.resultCode
-            val data = result.data
-            if (resultCode == Activity.RESULT_OK) {
-                //Image Uri will not be null for RESULT_OK
-                val fileUri = data?.data!!
-                binding.imgProfile.setImageURI(fileUri)
-            } else if (resultCode == ImagePicker.RESULT_ERROR) {
-                ImagePicker.getError(data).toast(requireContext())
-            } else {
-                "Task Cancelled".toast(requireContext())
-            }
-        }
-
 }
