@@ -25,4 +25,9 @@
         <item name="android:editTextColor">@android:color/white</item>
         <item name="background">@drawable/search_bar_background</item>
     </style>
+
+    <style name="circleImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>

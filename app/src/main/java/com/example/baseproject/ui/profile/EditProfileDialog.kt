@@ -123,8 +123,4 @@ class EditProfileDialog constructor(private val userName: String, private val pr
                 "Task Cancelled".toast(requireContext())
             }
         }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-    }
 }

@@ -40,6 +40,8 @@ class PlaylistFragment :
     @Inject
     lateinit var appNavigation: AppNavigation
     private val viewModel: PlaylistViewModel by activityViewModels()
+    val item = arguments?.getParcelable<LibraryItem>("playlist")
+    private var image: String? = null
 
     override fun getVM() = viewModel
     private var musicService: MusicService? = null
@@ -77,8 +79,11 @@ class PlaylistFragment :
         }
         binding.btnEdit.setOnClickListener {
             viewModel.getSong(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId)
+            var data = arguments?.getParcelable<LibraryItem>("playlist")!!
+            if (image != null)
+                data = LibraryItem(data.playlistId, data.playlistTitle, image)
             EditPlaylistDialog(
-                arguments?.getParcelable<LibraryItem>("playlist")!!
+                data
             ).show(
                 childFragmentManager, "edit_playlist"
             )
@@ -146,6 +151,7 @@ class PlaylistFragment :
 
         viewModel.image.observe(viewLifecycleOwner) {
             if (it != null) {
+                image = it
                 binding.playlistCover.setImageURI(it.toUri())
                 val `is`: InputStream? =
                     requireActivity().contentResolver.openInputStream(it.toUri())

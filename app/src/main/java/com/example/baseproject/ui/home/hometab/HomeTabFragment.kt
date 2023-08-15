@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.databinding.FragmentHomeTabBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,6 +39,18 @@ class HomeTabFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
+        viewModel.profileResponse.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Response.Loading -> {}
+                is Response.Failure -> {}
+                is Response.Success -> {
+                    Glide.with(requireContext())
+                        .load(response.data.profilePictureUrl)
+                        .into(binding.imgProfile)
+                    binding.titleTv.text = "Hello ${response.data.name}"
+                }
+            }
+        }
         binding.rcvFrg.adapter = parentAdapter
         binding.rcvFrg.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL,
