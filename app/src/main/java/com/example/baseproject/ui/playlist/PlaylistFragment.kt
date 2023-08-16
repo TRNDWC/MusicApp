@@ -46,7 +46,7 @@ class PlaylistFragment :
 
     override fun getVM() = viewModel
     private var musicService: MusicService? = null
-    private lateinit var mSongList: List<PlaylistSongItem>
+    private var mSongList: List<PlaylistSongItem> = mutableListOf()
     private lateinit var playlistAdapter: PlaylistSongItemAdapter
     private lateinit var materialToolbar: CollapsingToolbarLayout
     private var isServiceConnected: Boolean = false
@@ -72,6 +72,7 @@ class PlaylistFragment :
 
     override fun setOnClick() {
         super.setOnClick()
+
         binding.addSong.setOnClickListener {
             viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
@@ -91,24 +92,29 @@ class PlaylistFragment :
                 childFragmentManager, "edit_playlist"
             )
         }
-        binding.btnPlaylistPlay.setOnClickListener {
-            val item = mSongList[0]
-            Log.e("HoangDH", "itemClicked")
-            prepareBundle(item)
-            Log.e("HoangDH", "$previousClickedSong")
+        binding.btnPlaylistPlay.apply {
+            if(mSongList.isEmpty()) isEnabled = false
+            else {
+                setOnClickListener {
+                    val item = mSongList[0]
+                    Log.e("HoangDH", "itemClicked")
+                    prepareBundle(item)
+                    Log.e("HoangDH", "$previousClickedSong")
 
-            if (!firstInit) {
-                requireActivity().startService(intent)
-                requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-                firstInit = true
-                previousClickedSong = item
-                Log.e("HoangDH", "$firstInit")
-            } else if (previousClickedSong != item) {
-                requireActivity().stopService(intent)
-                requireActivity().unbindService(mServiceConnection)
-                requireActivity().startService(intent)
-                requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-                previousClickedSong = item
+                    if (!firstInit) {
+                        requireActivity().startService(intent)
+                        requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                        firstInit = true
+                        previousClickedSong = item
+                        Log.e("HoangDH", "$firstInit")
+                    } else if (previousClickedSong != item) {
+                        requireActivity().stopService(intent)
+                        requireActivity().unbindService(mServiceConnection)
+                        requireActivity().startService(intent)
+                        requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                        previousClickedSong = item
+                    }
+                }
             }
         }
     }
@@ -233,16 +239,17 @@ class PlaylistFragment :
         Log.e("HoangDH", "$previousClickedSong")
 
         if (!firstInit) {
-            requireActivity().startService(intent)
-            requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            context?.startService(intent)
+            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             firstInit = true
             previousClickedSong = item
             Log.e("HoangDH", "$firstInit")
         } else if (previousClickedSong != item) {
-            requireActivity().stopService(intent)
-            requireActivity().unbindService(mServiceConnection)
-            requireActivity().startService(intent)
-            requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+            musicService?.reset()
+            context?.stopService(intent)
+            context?.unbindService(mServiceConnection)
+            context?.startService(intent)
+            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             previousClickedSong = item
         }
     }

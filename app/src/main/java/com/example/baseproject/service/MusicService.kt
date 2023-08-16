@@ -123,6 +123,10 @@ class MusicService : BaseService() {
         }
     }
 
+    fun reset(){
+        musicPlayer.stop()
+    }
+
     fun repeatMusic(looping: Boolean) {
         isLooping = looping
         Log.e("HoangDH", "$isLooping")
