@@ -67,7 +67,8 @@ class MusicService : BaseService() {
         songList = bundle.getParcelableArrayList("song_list")!!
         songPosition = bundle.getInt("song_position")
         _songLiveData.postValue(songItem)
-        musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+        musicPlayer = MediaPlayer()
+        musicPlayer.setDataSource("https://open.spotify.com/track/4WNcduiCmDNfmTEz7JvmLv")
         startMusic()
         sendNotification(songItem)
 
