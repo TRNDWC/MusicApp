@@ -251,6 +251,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
     private fun startMusicService() {
         // stop previous song
+        musicService.reset()
         context?.stopService(intent)
         context?.unbindService(mServiceConnection)
         //start next song

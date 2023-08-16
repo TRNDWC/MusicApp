@@ -70,7 +70,6 @@ class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
         savedInstanceState: Bundle?
     ): View? {
         dialogBinding = AddSongDialogBinding.inflate(inflater, container, false)
-//        dialogBinding.searchView.setBackgroundResource(R.color.color_btn)
 
         viewModel.addSongList.observe(viewLifecycleOwner) { newList ->
             songList = newList
