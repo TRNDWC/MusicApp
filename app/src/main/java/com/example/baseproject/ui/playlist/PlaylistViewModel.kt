@@ -12,6 +12,7 @@ import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -166,11 +167,20 @@ class PlaylistViewModel @Inject constructor(
                 repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(it, playlistId))
             }
         }
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.updatePlaylist(playlistId, new_title, image)
+        if (new_title != "") {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updatePlaylist(playlistId, new_title)
+                Log.d("trndwcs", "${new_title}  ${image}")
+            }
+            updateTitle(new_title)
         }
-        updateTitle(new_title)
-        updateImage(image)
+        if (image != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updataImage(playlistId, image)
+                Log.d("trndwcs", "${new_title}  ${image}")
+            }
+            updateImage(image)
+        }
     }
 
     val title = MutableLiveData<String>()
@@ -182,6 +192,8 @@ class PlaylistViewModel @Inject constructor(
     private fun updateImage(nImage: String?) {
         image.postValue(nImage)
     }
+
+    //
 
 
     // các chức năng khác

@@ -42,6 +42,7 @@ class PlaylistFragment :
     private val viewModel: PlaylistViewModel by activityViewModels()
     val item = arguments?.getParcelable<LibraryItem>("playlist")
     private var image: String? = null
+    private var title: String = ""
 
     override fun getVM() = viewModel
     private var musicService: MusicService? = null
@@ -83,6 +84,8 @@ class PlaylistFragment :
             var data = arguments?.getParcelable<LibraryItem>("playlist")!!
             if (image != null)
                 data = LibraryItem(data.playlistId, data.playlistTitle, image)
+            if (title != "")
+                data.playlistTitle = title
             EditPlaylistDialog(
                 data
             ).show(
@@ -150,6 +153,7 @@ class PlaylistFragment :
     private fun updateViewChange() {
         viewModel.title.observe(viewLifecycleOwner) {
             if (it != "") {
+                title = it
                 binding.collapsingToolbar.title = it
                 viewModel.title.postValue("")
             }
@@ -183,11 +187,12 @@ class PlaylistFragment :
 
     private fun recyclerviewAction() {
         viewModel.songList.observe(viewLifecycleOwner) {
-            Log.d("playlist and song", "new list found")
             mSongList = it
             playlistAdapter = PlaylistSongItemAdapter(mSongList, this)
             binding.rcvPlaylistSong.adapter = playlistAdapter
         }
+
+
         binding.rcvPlaylistSong.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
     }
