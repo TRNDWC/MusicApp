@@ -45,9 +45,12 @@ class MusicRepository(private val musicDao: MusicDao) {
         }
     }
 
-    suspend fun updatePlaylist(id: Int, title: String, uri: String?) {
+    suspend fun updatePlaylist(id: Int, title: String) {
         musicDao.updatePlaylistTitle(id, title)
-        musicDao.updatePlaylistImage(id, uri)
+    }
+
+    suspend fun updataImage(id: Int, image: String?) {
+        musicDao.updatePlaylistImage(id, image)
     }
 
     suspend fun getPLaylistSize(id: Int): Int {
@@ -60,5 +63,17 @@ class MusicRepository(private val musicDao: MusicDao) {
 
     suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef) {
         musicDao.deleteSongPlaylistCrossRef(crossRef)
+    }
+
+    suspend fun deleteData() {
+        musicDao.deleteData()
+    }
+
+    suspend fun getAllCrossRef(): List<SongPlaylistCrossRef> {
+        return musicDao.getAllCrossRef()
+    }
+
+    suspend fun deletePlaylists() {
+        musicDao.deletePlaylist()
     }
 }

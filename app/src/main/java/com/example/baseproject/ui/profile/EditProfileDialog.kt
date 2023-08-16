@@ -62,7 +62,6 @@ class EditProfileDialog constructor(private val userName: String, private val pr
         Log.e("EditProfileDialog", "${userName}")
         binding = FragmentEditProfileDialogBinding.inflate(inflater, container, false)
         binding.apply {
-
             Glide.with(requireContext()).load(profileImageUri).into(imgProfile)
             btnCancel.setOnClickListener {
                 dismiss()

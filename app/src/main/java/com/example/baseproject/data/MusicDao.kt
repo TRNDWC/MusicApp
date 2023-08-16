@@ -1,13 +1,12 @@
 package com.example.baseproject.data
 
-import android.net.Uri
+import androidx.annotation.WorkerThread
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.PlaylistWithSongs
@@ -50,4 +49,13 @@ interface MusicDao {
 
     @Delete
     suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)
+
+    @Query("DELETE FROM playlist_data")
+    suspend fun deletePlaylist()
+
+    @Query("DELETE FROM SongPlaylistCrossRef")
+    suspend fun deleteData()
+
+    @Query("SELECT * FROM SongPlaylistCrossRef")
+    suspend fun getAllCrossRef(): List<SongPlaylistCrossRef>
 }

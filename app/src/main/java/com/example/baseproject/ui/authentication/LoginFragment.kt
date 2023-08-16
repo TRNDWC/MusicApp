@@ -29,6 +29,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
 
     @Inject
     lateinit var appNavigation: AppNavigation
+
     @Inject
     lateinit var rxPreferences: RxPreferences
     private val viewModel: LoginViewModel by viewModels()
@@ -44,7 +45,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             }
         }
     }
-
 
     override fun setOnClick() {
         super.setOnClick()
@@ -116,7 +116,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
             binding.btnSignIn.isEnabled = validator
         }
 
-        if(viewModel.isLogin){
+        if (viewModel.isLogin) {
             appNavigation.openLogintoHomeScreen()
         }
 
@@ -129,6 +129,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
                 is Response.Loading -> {}
                 is Response.Success -> {
                     getString(R.string.login_successfully).toast(requireContext())
+//                    viewModel.data.observe(viewLifecycleOwner) { data ->
+//                        when (data) {
+//                            is Response.Loading -> {}
+//                            is Response.Failure -> {}
+//                            is Response.Success -> {
+//                                viewModel.setup(data.data)
+//                            }
+//                        }
+//                    }
                     appNavigation.openLogintoHomeScreen()
                 }
 

@@ -1,9 +1,12 @@
 package com.example.baseproject.ui.library
 
 import android.os.Bundle
+import android.util.Log
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.FragmentLibraryBinding
@@ -11,6 +14,7 @@ import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import retrofit2.Response
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,6 +40,7 @@ class LibraryFragment :
         viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
             binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
             playlistList = newList
+            viewModel.updateFB(newList)
         }
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {

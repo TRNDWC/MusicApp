@@ -7,7 +7,6 @@ import com.example.baseproject.utils.Response
 
 interface ProfileRepository {
     suspend fun updateProfile(name: String, profilePictureUri : Uri?) : Response<Boolean>
-
     fun getProfile() : MutableLiveData<Response<User>>
 
 }

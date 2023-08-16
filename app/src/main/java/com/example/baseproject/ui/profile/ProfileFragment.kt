@@ -26,7 +26,7 @@ class ProfileFragment :
     private val viewModel: ProfileViewModel by viewModels()
     override fun getVM(): ProfileViewModel = viewModel
 
-    private var profileImageUri : String? = null
+    private var profileImageUri: String? = null
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
         viewModel.profileResponse.observe(viewLifecycleOwner) { response ->
@@ -41,7 +41,10 @@ class ProfileFragment :
                     profileImageUri = response.data.profilePictureUrl
                 }
             }
-
+        }
+        viewModel.get()
+        viewModel.data.observe(viewLifecycleOwner){
+            viewModel.pushCrossRef(it)
         }
     }
 
@@ -62,6 +65,7 @@ class ProfileFragment :
         super.setOnClick()
         binding.apply {
             btnLogout.setOnClickListener {
+                viewModel.logoutFunction()
                 viewModel.logOut()
             }
             btnEditProfile.setOnClickListener {
