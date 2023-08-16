@@ -90,28 +90,40 @@ class PlaylistFragment :
             )
         }
         binding.btnPlaylistPlay.apply {
-            if(mSongList.isEmpty()) isEnabled = false
-            else {
-                setOnClickListener {
-                    val item = mSongList[0]
-                    Log.e("HoangDH", "itemClicked")
-                    prepareBundle(item)
-                    Log.e("HoangDH", "$previousClickedSong")
+            viewModel.songList.observe(viewLifecycleOwner) { songList ->
+                if (songList.isEmpty()) isEnabled = false
+                else {
+                    isEnabled = true
+                    setOnClickListener {
+                        val item = mSongList[0]
+                        Log.e("HoangDH", "itemClicked")
+                        prepareBundle(item)
+                        Log.e("HoangDH", "$previousClickedSong")
 
-                    if (!firstInit) {
-                        requireActivity().startService(intent)
-                        requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-                        firstInit = true
-                        previousClickedSong = item
-                        Log.e("HoangDH", "$firstInit")
-                    } else if (previousClickedSong != item) {
-                        requireActivity().stopService(intent)
-                        requireActivity().unbindService(mServiceConnection)
-                        requireActivity().startService(intent)
-                        requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-                        previousClickedSong = item
+                        if (!firstInit) {
+                            requireActivity().startService(intent)
+                            requireActivity().bindService(
+                                intent,
+                                mServiceConnection,
+                                Context.BIND_AUTO_CREATE
+                            )
+                            firstInit = true
+                            previousClickedSong = item
+                            Log.e("HoangDH", "$firstInit")
+                        } else if (previousClickedSong != item) {
+                            requireActivity().stopService(intent)
+                            requireActivity().unbindService(mServiceConnection)
+                            requireActivity().startService(intent)
+                            requireActivity().bindService(
+                                intent,
+                                mServiceConnection,
+                                Context.BIND_AUTO_CREATE
+                            )
+                            previousClickedSong = item
+                        }
                     }
                 }
+
             }
         }
     }
