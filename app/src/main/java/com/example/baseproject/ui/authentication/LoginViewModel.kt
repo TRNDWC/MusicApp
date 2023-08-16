@@ -1,16 +1,24 @@
 package com.example.baseproject.ui.authentication
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.MusicDatabase
+import com.example.baseproject.data.MusicRepository
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.repository.auth.AuthRepository
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val authRepository: AuthRepository) :
+class LoginViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) :
     BaseViewModel() {
     private var _signInResponse = MutableLiveData<Response<Boolean>>()
     val signInResponse: MutableLiveData<Response<Boolean>> get() = _signInResponse
@@ -36,6 +44,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
         _isValidPassword = isValidPassword!!
         _validator.value = _isValidEmail && _isValidPassword
     }
+
     val isLogin: Boolean
         get() = authRepository.isLogin()
 }

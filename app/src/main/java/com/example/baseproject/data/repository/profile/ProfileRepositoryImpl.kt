@@ -44,7 +44,6 @@ class ProfileRepositoryImpl : ProfileRepository {
                     )
                     profileResponse.postValue(Response.Success(user))
                 }
-
                 override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
                     profileResponse.postValue(Response.Failure(error.toException()))
                 }

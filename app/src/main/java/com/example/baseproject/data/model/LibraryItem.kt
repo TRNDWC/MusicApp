@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "playlist_data")
 data class LibraryItem(
     @PrimaryKey(autoGenerate = true)
-    val playlistId: Int,
-    val playlistTitle: String?,
-    val playlistImage: String?
+    val playlistId: Int = 0,
+    var playlistTitle: String? = null,
+    val playlistImage: String? = null
 ) :
     Parcelable {
     constructor(parcel: Parcel) : this(

@@ -1,26 +1,40 @@
 package com.example.baseproject.ui.profile
 
+import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.data.MusicDatabase
+import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.User
+import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.auth.AuthRepository
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.baseproject.data.repository.profile.ProfileRepository
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    application: Application,
+    private val playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
 
     private var _logOutResponse = MutableLiveData<Response<Boolean>>()
     val logOutResponse: MutableLiveData<Response<Boolean>> get() = _logOutResponse
+    private val repository: MusicRepository
+
+    init {
+        val musicDao = MusicDatabase.getDatabase(application).musicDao()
+        repository = MusicRepository(musicDao)
+    }
 
     fun logOut() {
         viewModelScope.launch {
@@ -51,5 +65,28 @@ class ProfileViewModel @Inject constructor(
     ) {
         _isValidName = isValidName!!
         _validator.value = _isValidName
+    }
+
+    val data = MutableLiveData<List<SongPlaylistCrossRef>>()
+
+    fun pushCrossRef(list: List<SongPlaylistCrossRef>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistRepositoryFB.updateCrossRef(list)
+        }
+    }
+
+    fun get() {
+        viewModelScope.launch {
+            data.postValue(repository.getAllCrossRef())
+        }
+    }
+
+    fun logoutFunction() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteData()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deletePlaylists()
+        }
     }
 }
