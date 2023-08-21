@@ -10,7 +10,6 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -19,7 +18,6 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.core.base.BaseService
 
 
@@ -68,6 +66,7 @@ class MusicService : BaseService() {
             songItem = bundle!!.getParcelable("song_item")!!
             songList = bundle.getParcelableArrayList("song_list")!!
             songPosition = bundle.getInt("song_position")
+            _songLiveData.value = songItem
             _songLiveData.postValue(songItem)
             musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
             sendNotification(songItem)
@@ -96,7 +95,7 @@ class MusicService : BaseService() {
     fun startMusic() {
         Log.e("HoangDH", "startMusic")
         musicPlayer.start()
-
+        sendNotification(_songLiveData.value!!)
         _songIsPlaying.postValue(true)
         if (isLooping) {
             if (songPosition < songList.size - 1) {
@@ -147,6 +146,7 @@ class MusicService : BaseService() {
     fun pauseMusic() {
         Log.e("HoangDH", "pauseMusic")
         musicPlayer.pause()
+        sendNotification(_songLiveData.value!!)
         _songIsPlaying.postValue(false)
     }
 
@@ -164,59 +164,53 @@ class MusicService : BaseService() {
 
     private fun sendNotification(songItem: PlaylistSongItem) {
         Log.e("HoangDH", "sendNotification")
-        val pendingIntent = NavDeepLinkBuilder(this)
-            .setGraph(R.navigation.main_navigation)
-            .setDestination(R.id.homeFragment)
-            .setArguments(
-                Bundle().apply {
-                    putBoolean(NEED_OPEN_DIALOG, true)
-                }
-            )
-            .createPendingIntent()
+        val pendingIntent = NavDeepLinkBuilder(this).setGraph(R.navigation.main_navigation)
+            .setDestination(R.id.homeFragment).setArguments(Bundle().apply {
+                putBoolean(NEED_OPEN_DIALOG, true)
+            }).createPendingIntent()
 
         val picture =
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
-        val remoteViews = RemoteViews(packageName, R.layout.notification_layout)
-
-        val notification =
-            NotificationCompat.Builder(this, CHANNEL_ID).apply {
-                setSmallIcon(R.drawable.spotify)
-                setLargeIcon(picture)
-                setContentTitle(songItem.songTitle)
-                setContentText(songItem.artists)
+        val notification = NotificationCompat.Builder(this, CHANNEL_ID).apply {
+            Log.e("HoangDH", "notification builder")
+            setSmallIcon(R.drawable.spotify)
+            setLargeIcon(picture)
+            setContentTitle(songItem.songTitle)
+            setContentText(songItem.artists)
+            addAction(
+                R.drawable.ic_pre,
+                "Previous",
+                getPendingIntent(this@MusicService, MusicAction.ACTION_PREVIOUS)
+            )
+            if (musicPlayer.isPlaying) {
                 addAction(
-                    R.drawable.ic_pre,
-                    "Previous",
-                    getPendingIntent(this@MusicService, MusicAction.ACTION_PREVIOUS)
+                    R.drawable.ic_pause,
+                    "Pause",
+                    getPendingIntent(this@MusicService, MusicAction.ACTION_PAUSE)
                 )
-                if (musicPlayer.isPlaying) {
-                    addAction(
-                        R.drawable.ic_pause,
-                        "Pause",
-                        getPendingIntent(this@MusicService, MusicAction.ACTION_PAUSE)
-                    )
-                } else {
-                    addAction(
-                        R.drawable.ic_play,
-                        "Play",
-                        getPendingIntent(this@MusicService, MusicAction.ACTION_PLAY)
-                    )
-                }
-
+            } else {
                 addAction(
-                    R.drawable.ic_next,
-                    "Next",
-                    getPendingIntent(this@MusicService, MusicAction.ACTION_NEXT)
+                    R.drawable.ic_play,
+                    "Play",
+                    getPendingIntent(this@MusicService, MusicAction.ACTION_PLAY)
                 )
-                setStyle(
-                    androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(1)
-                )
-                priority = NotificationCompat.PRIORITY_LOW
-                setContentIntent(pendingIntent)
             }
-                .build()
+
+            addAction(
+                R.drawable.ic_next,
+                "Next",
+                getPendingIntent(this@MusicService, MusicAction.ACTION_NEXT)
+            )
+            setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(1)
+
+            )
+            priority = NotificationCompat.PRIORITY_LOW
+            setContentIntent(pendingIntent)
+        }.build()
+
         startForeground(1, notification)
     }
 
@@ -233,19 +227,24 @@ class MusicService : BaseService() {
             MusicAction.ACTION_NEXT -> {
                 if (songPosition < songList.size - 1) {
                     songPosition++
-                }
-                else{
+                } else {
                     songPosition = 0
                 }
+                val nextSong = songList[songPosition]
+                _songLiveData.value = nextSong
+                _songLiveData.postValue(nextSong)
+                sendNotification(_songLiveData.value!!)
+                autoPlayNextSong(_songLiveData.value!!)
             }
 
             MusicAction.ACTION_PREVIOUS -> {
                 if (songPosition > 0) {
                     songPosition--
                     val nextSong = songList[songPosition]
+                    _songLiveData.value = nextSong
                     _songLiveData.postValue(nextSong)
-                    sendNotification(nextSong)
-                    autoPlayNextSong(nextSong)
+                    sendNotification(_songLiveData.value!!)
+                    autoPlayNextSong(_songLiveData.value!!)
                 }
             }
         }
@@ -253,7 +252,7 @@ class MusicService : BaseService() {
 
     private fun getPendingIntent(context: Context, action: String): PendingIntent {
         val intent = Intent(this, MyReceiver::class.java)
-        Log.e("HoangDH", "getPendingIntent")
+        Log.e("HoangDH", "getPendingIntent: ${action}")
         intent.action = action
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
