@@ -1,7 +1,7 @@
 package com.example.baseproject.data.repository.playlist
 
-import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
@@ -30,6 +30,7 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
                         if (playlist != null) {
                             lists.add(playlist)
                         }
+                        Log.d("trndwcs","${playlist?.playlistId} ${playlist?.playlistTitle} ${playlist?.playlistImage}")
                     }
                     playlistResponse.postValue(Response.Success(lists))
                 }
@@ -44,8 +45,21 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
 
     override suspend fun updatePlaylists(list: List<LibraryItem>): Response<Boolean> {
         return try {
+            val data = mutableListOf<LibraryItem>()
+            list.forEach { item ->
+                var url: String? = null
+                if (item.playlistImage != null) {
+                    val storageRef = storage.reference
+                    val fileRef =
+                        storageRef.child("playlist_picture/${auth.uid}/${item.playlistId}/${item.playlistTitle}")
+                    fileRef.putFile(item.playlistImage!!.toUri()).await()
+                    url = fileRef.downloadUrl.await().toString()
+                }
+                val item = LibraryItem(item.playlistId, item.playlistTitle, url)
+                data.add(item)
+            }
             database.reference.child("users").child(auth.uid!!).apply {
-                child("playlists").setValue(list)
+                child("playlists").setValue(data)
             }
             Response.Success(true)
         } catch (e: Exception) {

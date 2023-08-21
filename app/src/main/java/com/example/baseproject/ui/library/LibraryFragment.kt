@@ -40,7 +40,6 @@ class LibraryFragment :
         viewModel.playlistList.observe(viewLifecycleOwner) { newList ->
             binding.libraryRcv.adapter = LibraryItemAdapter(newList, this)
             playlistList = newList
-            viewModel.updateFB(newList)
         }
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {

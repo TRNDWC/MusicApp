@@ -3,8 +3,10 @@ package com.example.baseproject.ui.library
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.LibraryItemBinding
 import com.example.baseproject.navigation.ItemClickNavigation
@@ -47,6 +49,9 @@ class LibraryItemAdapter(
     override fun onBindViewHolder(holder: LibraryItemViewHolder, position: Int) {
         val item = libraryItemList[position]
         holder.libraryItemTitle.text = item.playlistTitle
-        holder.libraryItemImage.setImageURI(item.playlistImage?.toUri())
+        val context = holder.libraryItemImage.context
+        Glide.with(context)
+            .load(item.playlistImage?.toUri())
+            .into(holder.libraryItemImage)
     }
 }

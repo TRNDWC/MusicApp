@@ -68,7 +68,7 @@ class EditPlaylistDialog(
         dialogBinding.edtTitle.setText(playlist.playlistTitle)
 
         if (playlist.playlistImage != null)
-            dialogBinding.imgPlaylistCover.setImageURI(playlist.playlistImage.toUri())
+            dialogBinding.imgPlaylistCover.setImageURI(playlist.playlistImage!!.toUri())
         else
             dialogBinding.imgPlaylistCover.setImageResource(R.drawable.spotify)
 

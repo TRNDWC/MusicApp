@@ -163,6 +163,7 @@ class MusicService : BaseService() {
     }
 
     private fun sendNotification(songItem: PlaylistSongItem) {
+        Log.e("HoangDH", "sendNotification")
         val pendingIntent = NavDeepLinkBuilder(this)
             .setGraph(R.navigation.main_navigation)
             .setDestination(R.id.homeFragment)
@@ -176,6 +177,7 @@ class MusicService : BaseService() {
         val picture =
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
+        val remoteViews = RemoteViews(packageName, R.layout.notification_layout)
 
         val notification =
             NotificationCompat.Builder(this, CHANNEL_ID).apply {
@@ -188,7 +190,7 @@ class MusicService : BaseService() {
                     "Previous",
                     getPendingIntent(this@MusicService, MusicAction.ACTION_PREVIOUS)
                 )
-                if (_songIsPlaying.value == true) {
+                if (musicPlayer.isPlaying) {
                     addAction(
                         R.drawable.ic_pause,
                         "Pause",
@@ -210,13 +212,9 @@ class MusicService : BaseService() {
                 setStyle(
                     androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(1)
-//                        .setMediaSession(mediaSession.sessionToken)
                 )
-
-
-                setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                priority = NotificationCompat.PRIORITY_LOW
                 setContentIntent(pendingIntent)
-                setOnlyAlertOnce(true)
             }
                 .build()
         startForeground(1, notification)
@@ -235,10 +233,9 @@ class MusicService : BaseService() {
             MusicAction.ACTION_NEXT -> {
                 if (songPosition < songList.size - 1) {
                     songPosition++
-                    val nextSong = songList[songPosition]
-                    _songLiveData.postValue(nextSong)
-                    sendNotification(nextSong)
-                    autoPlayNextSong(nextSong)
+                }
+                else{
+                    songPosition = 0
                 }
             }
 
