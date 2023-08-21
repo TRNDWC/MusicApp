@@ -1,5 +1,6 @@
 package com.example.baseproject.data.repository.playlist
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.data.model.LibraryItem
@@ -8,7 +9,7 @@ import com.example.baseproject.utils.Response
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.j256.ormlite.stmt.query.In
+import kotlinx.coroutines.tasks.await
 
 
 class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
@@ -40,6 +41,7 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
         return playlistResponse
     }
 
+
     override suspend fun updatePlaylists(list: List<LibraryItem>): Response<Boolean> {
         return try {
             database.reference.child("users").child(auth.uid!!).apply {
@@ -53,7 +55,7 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
 
     override fun getCrossRef(): MutableLiveData<Response<List<SongPlaylistCrossRef>>> {
         val playlistResponse = MutableLiveData<Response<List<SongPlaylistCrossRef>>>()
-        var lists = mutableListOf<SongPlaylistCrossRef>()
+        val lists = mutableListOf<SongPlaylistCrossRef>()
         database.reference.child("users").child(auth.uid!!).child("cross_refs")
             .addValueEventListener(object : com.google.firebase.database.ValueEventListener {
                 override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {

@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -62,18 +63,22 @@ class MusicService : BaseService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("HoangDH", "onStartCommand")
-        val bundle = intent?.getBundleExtra("song_bundle")
-        songItem = bundle!!.getParcelable("song_item")!!
-        songList = bundle.getParcelableArrayList("song_list")!!
-        songPosition = bundle.getInt("song_position")
-        _songLiveData.postValue(songItem)
-        musicPlayer = MediaPlayer()
-        musicPlayer.setDataSource("https://open.spotify.com/track/4WNcduiCmDNfmTEz7JvmLv")
-        startMusic()
-        sendNotification(songItem)
+        if (intent?.getBundleExtra("song_bundle") != null) {
+            val bundle = intent?.getBundleExtra("song_bundle")
+            songItem = bundle!!.getParcelable("song_item")!!
+            songList = bundle.getParcelableArrayList("song_list")!!
+            songPosition = bundle.getInt("song_position")
+            _songLiveData.postValue(songItem)
+            musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
+            sendNotification(songItem)
+            startMusic()
 
-//        val musicAction = intent.action
-//        handleMusicAction(musicAction!!)
+        }
+
+        if (intent?.action != null) {
+            handleMusicAction(intent.action!!)
+        }
+
         return START_NOT_STICKY
     }
 
@@ -124,7 +129,7 @@ class MusicService : BaseService() {
         }
     }
 
-    fun reset(){
+    fun reset() {
         musicPlayer.stop()
     }
 
@@ -133,7 +138,8 @@ class MusicService : BaseService() {
         Log.e("HoangDH", "$isLooping")
     }
 
-    fun autoPlayNextSong(songItem: PlaylistSongItem) {
+    private fun autoPlayNextSong(songItem: PlaylistSongItem) {
+        reset()
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         startMusic()
     }
@@ -157,7 +163,6 @@ class MusicService : BaseService() {
     }
 
     private fun sendNotification(songItem: PlaylistSongItem) {
-        val intent = Intent(this, PlayFragmentDialog::class.java)
         val pendingIntent = NavDeepLinkBuilder(this)
             .setGraph(R.navigation.main_navigation)
             .setDestination(R.id.homeFragment)
@@ -173,26 +178,46 @@ class MusicService : BaseService() {
 
 
         val notification =
-            NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.spotify)
-                .setLargeIcon(picture)
-                .setContentTitle(songItem.songTitle)
-                .setContentText(songItem.artists)
+            NotificationCompat.Builder(this, CHANNEL_ID).apply {
+                setSmallIcon(R.drawable.spotify)
+                setLargeIcon(picture)
+                setContentTitle(songItem.songTitle)
+                setContentText(songItem.artists)
+                addAction(
+                    R.drawable.ic_pre,
+                    "Previous",
+                    getPendingIntent(this@MusicService, MusicAction.ACTION_PREVIOUS)
+                )
+                if (_songIsPlaying.value == true) {
+                    addAction(
+                        R.drawable.ic_pause,
+                        "Pause",
+                        getPendingIntent(this@MusicService, MusicAction.ACTION_PAUSE)
+                    )
+                } else {
+                    addAction(
+                        R.drawable.ic_play,
+                        "Play",
+                        getPendingIntent(this@MusicService, MusicAction.ACTION_PLAY)
+                    )
+                }
 
-
-                .addAction(R.drawable.ic_pre, "Previous", null)
-                .addAction(R.drawable.ic_play, "Play", null)
-                .addAction(R.drawable.ic_next, "Next", null)
-                .setStyle(
+                addAction(
+                    R.drawable.ic_next,
+                    "Next",
+                    getPendingIntent(this@MusicService, MusicAction.ACTION_NEXT)
+                )
+                setStyle(
                     androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(1)
 //                        .setMediaSession(mediaSession.sessionToken)
                 )
 
 
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setContentIntent(pendingIntent)
-                .setOnlyAlertOnce(true)
+                setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                setContentIntent(pendingIntent)
+                setOnlyAlertOnce(true)
+            }
                 .build()
         startForeground(1, notification)
     }
