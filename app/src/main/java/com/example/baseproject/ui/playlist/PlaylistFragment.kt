@@ -11,11 +11,13 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.View
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -27,6 +29,8 @@ import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.baseproject.ui.playlist.editplaylist.EditPlaylistDialog
 import com.example.core.base.BaseFragment
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.InputStream
 import java.util.Collections
@@ -72,7 +76,6 @@ class PlaylistFragment :
 
     override fun setOnClick() {
         super.setOnClick()
-
         binding.addSong.setOnClickListener {
             viewModel.listAll()
             AddSongDialog(arguments?.getParcelable<LibraryItem>("playlist")!!.playlistId).show(
@@ -137,6 +140,7 @@ class PlaylistFragment :
         item?.let {
             viewModel.getSong(it.playlistId)
             viewModel.set(it.playlistId)
+            viewModel.getData(it.playlistId)
         }
         recyclerviewAction()
         searchAction()
@@ -144,21 +148,28 @@ class PlaylistFragment :
         // material tool bar
         materialToolbar = binding.collapsingToolbar
         materialToolbar.title = item?.playlistTitle
-        if (item?.playlistImage == null) {
-            binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
-            binding.collapsingToolbar.background = GradientDrawable(
-                GradientDrawable.Orientation.TOP_BOTTOM,
-                intArrayOf(Color.parseColor("#464545"), Color.BLACK)
-            )
-        } else {
-            binding.playlistCover.setImageURI(item.playlistImage.toUri())
-            val `is`: InputStream? =
-                requireActivity().contentResolver.openInputStream(item.playlistImage.toUri())
-            val bitmap = BitmapFactory.decodeStream(`is`)
-            `is`?.close()
-            binding.collapsingToolbar.background = getDominantColor(bitmap)
+        binding.ProgressBar.visibility = View.VISIBLE
+        viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
+            if (item?.playlistImage == null) {
+                binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
+                binding.collapsingToolbar.background = GradientDrawable(
+                    GradientDrawable.Orientation.TOP_BOTTOM,
+                    intArrayOf(Color.parseColor("#464545"), Color.BLACK)
+                )
+            } else {
+                Glide.with(requireContext())
+                    .load(item.playlistImage!!.toUri())
+                    .into(binding.playlistCover)
+                getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
+                    if (bitmap != null) {
+                        binding.collapsingToolbar.background = getDominantColor(bitmap)
+                        binding.ProgressBar.visibility = View.GONE
+                    } else {
+                        binding.ProgressBar.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
-
         updateViewChange()
     }
 
@@ -166,14 +177,15 @@ class PlaylistFragment :
         viewModel.title.observe(viewLifecycleOwner) {
             if (it != "") {
                 title = it
+                item?.playlistTitle = it
                 binding.collapsingToolbar.title = it
                 viewModel.title.postValue("")
             }
         }
-
         viewModel.image.observe(viewLifecycleOwner) {
             if (it != null) {
                 image = it
+                item?.playlistImage = it
                 binding.playlistCover.setImageURI(it.toUri())
                 val `is`: InputStream? =
                     requireActivity().contentResolver.openInputStream(it.toUri())
@@ -183,6 +195,22 @@ class PlaylistFragment :
                 viewModel.image.postValue(null)
             }
         }
+    }
+
+    private fun getBitmapFromFirebaseStorage(url: String, callback: (Bitmap?) -> Unit) {
+        val storageReference: StorageReference =
+            FirebaseStorage.getInstance().getReferenceFromUrl(url)
+
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        storageReference.getBytes(ONE_MEGABYTE)
+            .addOnSuccessListener { bytes ->
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                callback(bitmap)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+                callback(null)
+            }
     }
 
     private fun prepareBundle(item: PlaylistSongItem) {

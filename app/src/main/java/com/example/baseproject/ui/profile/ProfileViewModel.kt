@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
+import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.User
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.auth.AuthRepository
@@ -68,6 +69,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     val data = MutableLiveData<List<SongPlaylistCrossRef>>()
+    val playlists = MutableLiveData<List<LibraryItem>>()
 
     fun pushCrossRef(list: List<SongPlaylistCrossRef>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -75,9 +77,18 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    fun pushPlaylist(list: List<LibraryItem>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            playlistRepositoryFB.updatePlaylists(list)
+        }
+    }
+
     fun get() {
         viewModelScope.launch {
             data.postValue(repository.getAllCrossRef())
+        }
+        viewModelScope.launch {
+            playlists.postValue(repository.getAllPlaylist())
         }
     }
 
