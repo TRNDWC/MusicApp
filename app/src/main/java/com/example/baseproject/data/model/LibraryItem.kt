@@ -4,23 +4,25 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import javax.annotation.Nonnull
 
 @Entity(tableName = "playlist_data")
 data class LibraryItem(
-    @PrimaryKey(autoGenerate = true)
-    val playlistId: Int = 0,
+    @Nonnull
+    @PrimaryKey
+    val playlistId: String = "",
     var playlistTitle: String? = null,
     var playlistImage: String? = null
 ) :
     Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readString()!!,
         parcel.readString(),
         parcel.readString()
     )
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeInt(playlistId)
+        dest.writeString(playlistId)
         dest.writeString(playlistTitle)
         dest.writeString(playlistImage)
     }

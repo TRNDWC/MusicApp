@@ -79,15 +79,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         if (needOpenDialog != null && needOpenDialog) {
             PlayFragmentDialog().show(childFragmentManager, "play_screen")
         }
-        viewModel.data.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Response.Loading -> {}
-                is Response.Failure -> {}
-                is Response.Success -> {
-                    viewModel.setup(response.data)
-                }
-            }
-        }
         viewModel.crossRefData.observe(viewLifecycleOwner){ response->
             when (response) {
                 is Response.Loading -> {}

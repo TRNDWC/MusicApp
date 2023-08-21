@@ -64,12 +64,8 @@ class ProfileFragment :
                 viewModel.get()
                 viewModel.data.observe(viewLifecycleOwner) {
                     viewModel.pushCrossRef(it)
+                    viewModel.logOut()
                 }
-                viewModel.playlists.observe(viewLifecycleOwner) {
-                    viewModel.pushPlaylist(it)
-                }
-                viewModel.logoutFunction()
-                viewModel.logOut()
             }
             btnEditProfile.setOnClickListener {
                 EditProfileDialog(binding.userName.text.toString(), profileImageUri).show(

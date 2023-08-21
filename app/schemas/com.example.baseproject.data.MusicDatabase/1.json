@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e8ffd9ac8f51a5690ed1262a8a3be5bb",
+    "identityHash": "b3bb77beddabc69fd05dd743cf213c02",
     "entities": [
       {
         "tableName": "song_data",
@@ -50,12 +50,12 @@
       },
       {
         "tableName": "playlist_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `playlistTitle` TEXT, `playlistImage` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`playlistId` TEXT NOT NULL, `playlistTitle` TEXT, `playlistImage` TEXT, PRIMARY KEY(`playlistId`))",
         "fields": [
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -72,7 +72,7 @@
           }
         ],
         "primaryKey": {
-          "autoGenerate": true,
+          "autoGenerate": false,
           "columnNames": [
             "playlistId"
           ]
@@ -82,7 +82,7 @@
       },
       {
         "tableName": "SongPlaylistCrossRef",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `playlistId` INTEGER NOT NULL, PRIMARY KEY(`songId`, `playlistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER NOT NULL, `playlistId` TEXT NOT NULL, PRIMARY KEY(`songId`, `playlistId`))",
         "fields": [
           {
             "fieldPath": "songId",
@@ -93,7 +93,7 @@
           {
             "fieldPath": "playlistId",
             "columnName": "playlistId",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -111,7 +111,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e8ffd9ac8f51a5690ed1262a8a3be5bb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3bb77beddabc69fd05dd743cf213c02')"
     ]
   }
 }

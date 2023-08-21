@@ -30,10 +30,10 @@ interface MusicDao {
     suspend fun listAllPlaylist(): List<LibraryItem>
 
     @Query("UPDATE playlist_data SET playlistTitle=:title WHERE playlistId=:id")
-    suspend fun updatePlaylistTitle(id: Int, title: String)
+    suspend fun updatePlaylistTitle(id: String, title: String)
 
     @Query("UPDATE playlist_data SET playlistImage=:uri WHERE playlistId=:id")
-    suspend fun updatePlaylistImage(id: Int, uri: String?)
+    suspend fun updatePlaylistImage(id: String, uri: String?)
 
     //Music
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -41,7 +41,7 @@ interface MusicDao {
 
     @Transaction
     @Query("SELECT * FROM playlist_data WHERE playlistId = :playlistId")
-    suspend fun getSongsofPlaylist(playlistId: Int): PlaylistWithSongs
+    suspend fun getSongsofPlaylist(playlistId: String): PlaylistWithSongs
 
     @Transaction
     @Query("SELECT * FROM song_data WHERE songId = :songId")
@@ -60,5 +60,5 @@ interface MusicDao {
     suspend fun getAllCrossRef(): List<SongPlaylistCrossRef>
 
     @Query("SELECT * FROM playlist_data WHERE playlistId = :playlistId")
-    suspend fun getPlaylist(playlistId: Int): LibraryItem
+    suspend fun getPlaylist(playlistId: String): LibraryItem
 }

@@ -12,14 +12,13 @@ import com.example.baseproject.databinding.DialogPlaylistItemBinding
 
 interface OnItemClickListener {
 
-    fun onItemClicked(playlistId: Int, view: DialogPlaylistItemBinding)
+    fun onItemClicked(playlistId: String, view: DialogPlaylistItemBinding)
 
 }
 
 class PlaylistDialogAdapter(
     private val mPlaylistList: MutableList<LibraryItem>,
-    private val cPlaylistList: MutableList<Int>,
-
+    private val cPlaylistList: MutableList<String>,
     private val onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<PlaylistDialogAdapter.PlaylistViewHolder>() {
@@ -54,7 +53,6 @@ class PlaylistDialogAdapter(
         holder.playlistTitle.text = item.playlistTitle
 
         holder.customBtn.isChecked = item.playlistId in cPlaylistList
-
 
     }
 

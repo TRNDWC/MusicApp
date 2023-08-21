@@ -2,6 +2,8 @@ package com.example.baseproject.ui.profile
 
 import android.app.Application
 import android.net.Uri
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -15,6 +17,7 @@ import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.baseproject.data.repository.profile.ProfileRepository
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
+import com.example.core.utils.toast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,6 +44,12 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _logOutResponse.value = Response.Loading
             _logOutResponse.value = authRepository.firebaseLogout()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteData()
+        }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deletePlaylists()
         }
     }
 
@@ -69,7 +78,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     val data = MutableLiveData<List<SongPlaylistCrossRef>>()
-    val playlists = MutableLiveData<List<LibraryItem>>()
 
     fun pushCrossRef(list: List<SongPlaylistCrossRef>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -77,27 +85,9 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun pushPlaylist(list: List<LibraryItem>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            playlistRepositoryFB.updatePlaylists(list)
-        }
-    }
-
     fun get() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             data.postValue(repository.getAllCrossRef())
-        }
-        viewModelScope.launch {
-            playlists.postValue(repository.getAllPlaylist())
-        }
-    }
-
-    fun logoutFunction() {
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deleteData()
-        }
-        viewModelScope.launch(Dispatchers.IO) {
-            repository.deletePlaylists()
         }
     }
 }

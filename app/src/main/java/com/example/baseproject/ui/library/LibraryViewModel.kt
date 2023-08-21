@@ -1,7 +1,6 @@
 package com.example.baseproject.ui.library
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -17,30 +16,33 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
-    private val _playlistList = MutableLiveData<List<LibraryItem>>()
-    val playlistList: LiveData<List<LibraryItem>> = _playlistList
+
+
     private val repository: MusicRepository
+    var playlistList = playlistRepositoryFB.getPlaylist()
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
     }
 
-    fun getPlaylists() {
+    fun setup(list: List<LibraryItem>) {
         viewModelScope.launch(Dispatchers.IO) {
-            _playlistList.postValue(repository.getAllPlaylist())
+            list.forEach {
+                repository.addPlaylist(it)
+            }
         }
     }
 
     fun addPlaylist(item: LibraryItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addPlaylist(item)
-            _playlistList.postValue(repository.getAllPlaylist())
+            playlistRepositoryFB.addPlaylist(item)
         }
     }
-    
+
     private val _newPlaylist = MutableLiveData("")
     val newPlaylist: LiveData<String> = _newPlaylist
 
