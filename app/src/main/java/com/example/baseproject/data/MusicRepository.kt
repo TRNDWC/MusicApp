@@ -73,6 +73,10 @@ class MusicRepository(private val musicDao: MusicDao) {
         return musicDao.getAllCrossRef()
     }
 
+    suspend fun getPLaylist(id: Int): LibraryItem {
+        return musicDao.getPlaylist(id)
+    }
+
     suspend fun deletePlaylists() {
         musicDao.deletePlaylist()
     }

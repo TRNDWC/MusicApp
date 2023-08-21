@@ -58,4 +58,7 @@ interface MusicDao {
 
     @Query("SELECT * FROM SongPlaylistCrossRef")
     suspend fun getAllCrossRef(): List<SongPlaylistCrossRef>
+
+    @Query("SELECT * FROM playlist_data WHERE playlistId = :playlistId")
+    suspend fun getPlaylist(playlistId: Int): LibraryItem
 }

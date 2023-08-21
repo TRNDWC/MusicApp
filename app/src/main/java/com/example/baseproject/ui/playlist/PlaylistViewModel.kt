@@ -39,6 +39,13 @@ class PlaylistViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
+    val cPlaylist = MutableLiveData<LibraryItem>()
+
+    fun getData(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cPlaylist.postValue(repository.getPLaylist(id))
+        }
+    }
     // hiển thị danh sách các bài hát thuộc playlist có id là id
 
     private var _songList = MutableLiveData<List<PlaylistSongItem>>()

@@ -10,7 +10,7 @@ data class LibraryItem(
     @PrimaryKey(autoGenerate = true)
     val playlistId: Int = 0,
     var playlistTitle: String? = null,
-    val playlistImage: String? = null
+    var playlistImage: String? = null
 ) :
     Parcelable {
     constructor(parcel: Parcel) : this(

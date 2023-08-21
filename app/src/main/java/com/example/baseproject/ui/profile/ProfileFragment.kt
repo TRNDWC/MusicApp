@@ -42,10 +42,6 @@ class ProfileFragment :
                 }
             }
         }
-        viewModel.get()
-        viewModel.data.observe(viewLifecycleOwner){
-            viewModel.pushCrossRef(it)
-        }
     }
 
     override fun bindingAction() {
@@ -65,6 +61,13 @@ class ProfileFragment :
         super.setOnClick()
         binding.apply {
             btnLogout.setOnClickListener {
+                viewModel.get()
+                viewModel.data.observe(viewLifecycleOwner) {
+                    viewModel.pushCrossRef(it)
+                }
+                viewModel.playlists.observe(viewLifecycleOwner) {
+                    viewModel.pushPlaylist(it)
+                }
                 viewModel.logoutFunction()
                 viewModel.logOut()
             }

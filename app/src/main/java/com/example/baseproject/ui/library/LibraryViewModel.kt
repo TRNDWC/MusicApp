@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    application: Application,
-    private val playlistRepositoryFB: PlaylistRepositoryFB
+    application: Application
 ) : BaseViewModel() {
     private val _playlistList = MutableLiveData<List<LibraryItem>>()
     val playlistList: LiveData<List<LibraryItem>> = _playlistList
@@ -41,13 +40,7 @@ class LibraryViewModel @Inject constructor(
             _playlistList.postValue(repository.getAllPlaylist())
         }
     }
-
-    fun updateFB(list: List<LibraryItem>) {
-        viewModelScope.launch {
-            playlistRepositoryFB.updatePlaylists(list)
-        }
-    }
-
+    
     private val _newPlaylist = MutableLiveData("")
     val newPlaylist: LiveData<String> = _newPlaylist
 
