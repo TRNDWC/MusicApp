@@ -17,14 +17,6 @@
             android:paddingHorizontal="20dp"
             android:paddingVertical="40dp">
 
-            <ImageButton
-                android:id="@+id/avatar_btn"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="15dp"
-                android:src="@drawable/ic_launcher_foreground" />
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -32,7 +24,7 @@
                 android:layout_weight="1"
                 android:text="@string/library_music"
                 android:textColor="@color/white"
-                android:textSize="28sp"
+                android:textSize="32sp"
                 android:textStyle="bold" />
 
             <ImageView
