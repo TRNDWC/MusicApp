@@ -18,9 +18,8 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
     private val storage = FirebaseStorage.getInstance()
 
     override fun getPlaylist(): MutableLiveData<Response<List<LibraryItem>>> {
-        Log.d("trndwcs", "getting")
         val playlistResponse = MutableLiveData<Response<List<LibraryItem>>>()
-        var lists = mutableListOf<LibraryItem>()
+        val lists = mutableListOf<LibraryItem>()
         database.reference.child("users").child(auth.uid!!).child("playlists")
             .addValueEventListener(object : com.google.firebase.database.ValueEventListener {
                 override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
@@ -30,7 +29,6 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
                         if (playlist != null) {
                             lists.add(playlist)
                         }
-                        Log.d("trndwcs","${playlist?.playlistId} ${playlist?.playlistTitle} ${playlist?.playlistImage}")
                     }
                     playlistResponse.postValue(Response.Success(lists))
                 }
@@ -40,31 +38,6 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
                 }
             })
         return playlistResponse
-    }
-
-
-    override suspend fun updatePlaylists(list: List<LibraryItem>): Response<Boolean> {
-        return try {
-            val data = mutableListOf<LibraryItem>()
-            list.forEach { item ->
-                var url: String? = null
-                if (item.playlistImage != null) {
-                    val storageRef = storage.reference
-                    val fileRef =
-                        storageRef.child("playlist_picture/${auth.uid}/${item.playlistId}/${item.playlistTitle}")
-                    fileRef.putFile(item.playlistImage!!.toUri()).await()
-                    url = fileRef.downloadUrl.await().toString()
-                }
-                val item = LibraryItem(item.playlistId, item.playlistTitle, url)
-                data.add(item)
-            }
-            database.reference.child("users").child(auth.uid!!).apply {
-                child("playlists").setValue(data)
-            }
-            Response.Success(true)
-        } catch (e: Exception) {
-            Response.Failure(e)
-        }
     }
 
     override fun getCrossRef(): MutableLiveData<Response<List<SongPlaylistCrossRef>>> {
@@ -95,6 +68,74 @@ class PlaylistRepositoryFBImpl : PlaylistRepositoryFB {
         return try {
             database.reference.child("users").child(auth.uid!!).apply {
                 child("cross_refs").setValue(list)
+                list.forEach {
+                    Log.d("trndwcs", it.playlistId)
+                }
+            }
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Failure(e)
+        }
+    }
+
+    override suspend fun updatePlaylist(
+        id: String,
+        title: String,
+        image: String?
+    ): Response<Boolean> {
+        return try {
+            var url: String? = null
+            if (image != null) {
+                val storageRef = storage.reference
+                val fileRef = storageRef.child("playlist_picture/${id}")
+                fileRef.putFile(image.toUri()).await()
+                url = fileRef.downloadUrl.await().toString()
+            }
+            if (title != "") {
+                database.reference.child("users").child(auth.uid!!).child("playlists").child(id)
+                    .apply {
+                        child("playlistTitle").setValue(title)
+                        if (url != null) child("playlistImage").setValue(url)
+                    }
+            }
+            Response.Success(true)
+        } catch (e: Exception) {
+            Response.Failure(e)
+        }
+    }
+
+    override suspend fun getSongOfPlaylist(id: String): Response<List<SongPlaylistCrossRef>> {
+        return try {
+            val lists = mutableListOf<SongPlaylistCrossRef>()
+            database.reference.child("users").child(auth.uid!!).child("cross_refs")
+                .addValueEventListener(object : com.google.firebase.database.ValueEventListener {
+                    override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                        lists.clear()
+                        for (postSnapshot in snapshot.children) {
+                            val item: SongPlaylistCrossRef? =
+                                postSnapshot.getValue(SongPlaylistCrossRef::class.java)
+                            if (item != null && item.playlistId == id) {
+                                lists.add(item)
+                            }
+                        }
+                    }
+
+                    override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                    }
+                })
+            Response.Success(lists)
+        } catch (e: Exception) {
+            Response.Failure(e)
+        }
+    }
+
+    override suspend fun addPlaylist(item: LibraryItem): Response<Boolean> {
+        return try {
+            database.reference.child("users").child(auth.uid!!).apply {
+                child("playlists").push().key?.let {
+                    child("playlists").child(it)
+                        .setValue(LibraryItem(it, item.playlistTitle, null))
+                }
             }
             Response.Success(true)
         } catch (e: Exception) {

@@ -25,7 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 
 
-class AddSongDialog(private val playlistId: Int) : BottomSheetDialogFragment(),
+class AddSongDialog(private val playlistId: String) : BottomSheetDialogFragment(),
     OnItemClickListener {
     private lateinit var dialogBinding: AddSongDialogBinding
     private val viewModel: PlaylistViewModel by activityViewModels()

@@ -34,7 +34,7 @@ class MusicRepository(private val musicDao: MusicDao) {
         musicDao.addPlaylist(item)
     }
 
-    suspend fun getSongsOfPlaylist(id: Int): PlaylistWithSongs {
+    suspend fun getSongsOfPlaylist(id: String): PlaylistWithSongs {
         return musicDao.getSongsofPlaylist(id)
     }
 
@@ -45,15 +45,15 @@ class MusicRepository(private val musicDao: MusicDao) {
         }
     }
 
-    suspend fun updatePlaylist(id: Int, title: String) {
+    suspend fun updatePlaylist(id: String, title: String) {
         musicDao.updatePlaylistTitle(id, title)
     }
 
-    suspend fun updataImage(id: Int, image: String?) {
+    suspend fun updataImage(id: String, image: String?) {
         musicDao.updatePlaylistImage(id, image)
     }
 
-    suspend fun getPLaylistSize(id: Int): Int {
+    suspend fun getPLaylistSize(id: String): Int {
         return musicDao.getSongsofPlaylist(id).songs.size
     }
 
@@ -73,7 +73,7 @@ class MusicRepository(private val musicDao: MusicDao) {
         return musicDao.getAllCrossRef()
     }
 
-    suspend fun getPLaylist(id: Int): LibraryItem {
+    suspend fun getPLaylist(id: String): LibraryItem {
         return musicDao.getPlaylist(id)
     }
 

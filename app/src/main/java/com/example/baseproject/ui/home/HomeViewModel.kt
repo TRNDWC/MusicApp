@@ -28,30 +28,6 @@ class HomeViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
-    val data = playlistRepositoryFB.getPlaylist()
-
-    fun setup(list: List<LibraryItem>) {
-        list.forEach {
-            var uri = it.playlistImage
-//            if (uri != null) {
-//                val file =
-//                    File(URI.create(uri).path)
-//                if (!file.exists()) {
-//                    uri = null
-//                }
-//            }
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.addPlaylist(
-                    LibraryItem(
-                        it.playlistId,
-                        it.playlistTitle,
-                        uri
-                    )
-                )
-            }
-        }
-    }
-
     val crossRefData = playlistRepositoryFB.getCrossRef()
 
     fun setupCrossRef(list: List<SongPlaylistCrossRef>) {
@@ -61,13 +37,4 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-
-//    val playlists = SingleLiveEvent<List<LibraryItem>>()
-//    fun getAllPlaylists() {
-//        viewModelScope.launch(Dispatchers.IO) {
-//            val data = repository.getAllPlaylist()
-//            playlists.postValue(data)
-//        }
-//    }
 }

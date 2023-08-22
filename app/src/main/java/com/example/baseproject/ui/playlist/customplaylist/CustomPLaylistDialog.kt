@@ -30,8 +30,8 @@ class CustomPLaylistDialog(
     private val viewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
     private var playlistList = allPlaylist
-    private lateinit var cPlaylistList: MutableList<Int>
-    private lateinit var oPlaylistList: List<Int>
+    private lateinit var cPlaylistList: MutableList<String>
+    private lateinit var oPlaylistList: List<String>
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = BottomSheetDialog(requireContext(), theme)
         dialog.setOnShowListener {
@@ -89,7 +89,7 @@ class CustomPLaylistDialog(
         }
     }
 
-    override fun onItemClicked(playlistId: Int, view: DialogPlaylistItemBinding) {
+    override fun onItemClicked(playlistId: String, view: DialogPlaylistItemBinding) {
         view.btnAction.isChecked.toString().toast(requireContext())
         if (view.btnAction.isChecked && playlistId !in cPlaylistList)
             cPlaylistList.add(playlistId)

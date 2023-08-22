@@ -148,7 +148,14 @@ class PlaylistFragment :
         // material tool bar
         materialToolbar = binding.collapsingToolbar
         materialToolbar.title = item?.playlistTitle
-        binding.ProgressBar.visibility = View.VISIBLE
+
+        binding.apply {
+            nestedScrollView.visibility = View.GONE
+            collapsingToolbar.visibility = View.GONE
+            btnPlaylistPlay.visibility = View.GONE
+            ProgressBar.visibility = View.VISIBLE
+        }
+
         viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
             if (item?.playlistImage == null) {
                 binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
@@ -163,9 +170,20 @@ class PlaylistFragment :
                 getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
                     if (bitmap != null) {
                         binding.collapsingToolbar.background = getDominantColor(bitmap)
-                        binding.ProgressBar.visibility = View.GONE
+
+                        binding.apply {
+                            nestedScrollView.visibility = View.VISIBLE
+                            collapsingToolbar.visibility = View.VISIBLE
+                            btnPlaylistPlay.visibility = View.VISIBLE
+                            ProgressBar.visibility = View.GONE
+                        }
                     } else {
-                        binding.ProgressBar.visibility = View.VISIBLE
+                        binding.apply {
+                            nestedScrollView.visibility = View.GONE
+                            collapsingToolbar.visibility = View.GONE
+                            btnPlaylistPlay.visibility = View.GONE
+                            ProgressBar.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
