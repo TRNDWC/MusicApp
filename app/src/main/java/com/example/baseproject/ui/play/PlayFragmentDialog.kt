@@ -29,8 +29,9 @@ import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
 import com.example.baseproject.ui.playlist.PlaylistViewModel
+import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
+import com.example.baseproject.utils.Random
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -46,11 +47,12 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private lateinit var bundle: Bundle
 
     private var isPlaying: Boolean = false
-    private var isLooping: Boolean = false
-
+    private var isLoopingPlaylist: Boolean = false
+    private var isLoopingSong: Boolean = false
+    private var isShuffle: Boolean = false
     private var data: List<LibraryItem>? = null
-
-    val handler = Handler()
+    private val handler = Handler()
+    private val random = Random()
     private val viewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
 
@@ -105,28 +107,68 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+
         viewModel.getAllPlaylists()
+
         dialogBinding = FragmentPlayDialogBinding.inflate(inflater, container, false)
+
         val intent = Intent(context, MusicService::class.java)
+
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-        dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
-        dialogBinding.btnDown.setOnClickListener {
-            dialog!!.dismiss()
-        }
-        dialogBinding.btnRepeat.setOnClickListener {
-            isLooping = when (isLooping) {
-                true -> {
-                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
-                    false
-                }
 
-                false -> {
-                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
-                    true
-                }
+
+        dialogBinding.apply {
+            btnPlay.setImageResource(R.drawable.ic_pause)
+            btnDown.setOnClickListener {
+                dialog!!.dismiss()
             }
-            musicService.repeatMusic(isLooping)
 
+            btnRepeat.setOnClickListener {
+                isLoopingPlaylist = when (isLoopingPlaylist) {
+                    true -> {
+                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+                        false
+                    }
+
+                    false -> {
+                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
+                        true
+                    }
+                }
+                musicService.repeatPlaylist(isLoopingPlaylist)
+
+            }
+
+            btnRepeat.setOnLongClickListener {
+                isLoopingSong = when (isLoopingSong) {
+                    true -> {
+                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+                        false
+                    }
+
+                    false -> {
+                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat_one)
+                        true
+                    }
+                }
+                musicService.repeatSong(isLoopingSong)
+                true
+            }
+
+            btnShu.setOnClickListener {
+                isShuffle = when (isShuffle) {
+                    true -> {
+                        dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
+                        false
+                    }
+
+                    false -> {
+                        dialogBinding.btnShu.setImageResource(R.drawable.ic_clicked_shuffle)
+                        true
+                    }
+                }
+                musicService.shuffleSong(isShuffle)
+            }
         }
         return dialogBinding.root
     }
@@ -137,55 +179,75 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     }
 
     private fun setOnClick() {
-        dialogBinding.btnPlay.setOnClickListener {
-            if (!isPlaying) {
-                playSound()
-                dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
-            } else {
-                pauseSound()
-                dialogBinding.btnPlay.setImageResource(R.drawable.ic_green_play)
-            }
-        }
-        dialogBinding.btnNext.setOnClickListener {
-            when (musicService.songPosition < musicService.songList.size - 1) {
-                true -> musicService.songPosition++
-                false -> musicService.songPosition = 0
-            }
-            prepareBundle()
-            bindingPlayerView(musicService.songList[musicService.songPosition])
-            startMusicService()
-        }
-        dialogBinding.btnPre.setOnClickListener {
-            when (musicService.songPosition > 0) {
-                true -> musicService.songPosition--
-                false -> musicService.songPosition = musicService.songList.size - 1
-            }
-            prepareBundle()
-            bindingPlayerView(musicService.songList[musicService.songPosition])
-            startMusicService()
-        }
 
-        dialogBinding.btnFav.setOnClickListener {
-            viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+        dialogBinding.apply {
 
-            viewModel.playlists.observe(viewLifecycleOwner) {
-                data = it
+            btnPlay.setOnClickListener {
+                if (!isPlaying) {
+                    playSound()
+                    dialogBinding.btnPlay.setImageResource(R.drawable.ic_pause)
+                } else {
+                    pauseSound()
+                    dialogBinding.btnPlay.setImageResource(R.drawable.ic_green_play)
+                }
             }
 
-            data?.let {
-                CustomPLaylistDialog(
-                    data!!.toMutableList(),
-                    musicService.songList[musicService.songPosition].songId
-                ).show(
-                    childFragmentManager,
-                    "custom playlist"
-                )
+            btnNext.setOnClickListener {
+
+                if(isShuffle){
+                    Log.e("HoangDH", "shuffle")
+                    when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
+                        true -> musicService.songPosition++
+                        false -> musicService.songPosition = 0
+                    }
+                    prepareBundle(musicService.shuffleSongList[musicService.songPosition])
+                    bindingPlayerView(musicService.shuffleSongList[musicService.songPosition])
+                    startMusicService()
+                }
+                else {
+                    Log.e("HoangDH", "not shuffle")
+                    when (musicService.songPosition < musicService.songList.size - 1) {
+                        true -> musicService.songPosition++
+                        false -> musicService.songPosition = 0
+                    }
+                    prepareBundle(musicService.songList[musicService.songPosition])
+                    bindingPlayerView(musicService.songList[musicService.songPosition])
+                    startMusicService()
+                }
+            }
+
+            btnPre.setOnClickListener {
+                when (musicService.songPosition > 0) {
+                    true -> musicService.songPosition--
+                    false -> musicService.songPosition = musicService.songList.size - 1
+                }
+                prepareBundle(musicService.songList[musicService.songPosition])
+                bindingPlayerView(musicService.songList[musicService.songPosition])
+                startMusicService()
+            }
+            btnFav.setOnClickListener {
+                viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+
+                viewModel.playlists.observe(viewLifecycleOwner) {
+                    data = it
+                }
+
+                data?.let {
+                    CustomPLaylistDialog(
+                        data!!.toMutableList(),
+                        musicService.songList[musicService.songPosition].songId
+                    ).show(
+                        childFragmentManager,
+                        "custom playlist"
+                    )
+                }
+            }
+
+            dialogBinding.btnDown.setOnClickListener {
+                this@PlayFragmentDialog.dismiss()
             }
         }
 
-        dialogBinding.btnDown.setOnClickListener {
-            this.dismiss()
-        }
     }
 
     private fun playSound() {
@@ -206,7 +268,13 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         val bitmap = BitmapFactory.decodeStream(`is`)
         `is`?.close()
         dialogBinding.playBg.background = getDominantColor(bitmap)
-        dialogBinding.playBg
+        isLoopingSong = false
+        if (isLoopingPlaylist) {
+            dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
+        } else {
+            dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+        }
+        musicService.repeatSong(isLoopingSong)
     }
 
     private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
@@ -240,11 +308,12 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         return gd
     }
 
-    private fun prepareBundle() {
+    private fun prepareBundle(songItem: PlaylistSongItem) {
         bundle = Bundle()
         bundle.putInt("song_position", musicService.songPosition)
         bundle.putParcelableArrayList("song_list", ArrayList(musicService.songList))
-        bundle.putParcelable("song_item", musicService.songList[musicService.songPosition])
+        bundle.putParcelableArrayList("shuffle_song_list", ArrayList(musicService.shuffleSongList))
+        bundle.putParcelable("song_item", songItem)
         intent = Intent(context, MusicService::class.java)
         intent.putExtra("song_bundle", bundle)
     }
@@ -261,7 +330,6 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     }
 
     private fun initSeekBar() {
-        Log.e("HoangDH", "initSeekBar")
         dialogBinding.seekBar.progress = musicService.currentPosition()
         dialogBinding.seekBar.max = musicService.duration()
         dialogBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
