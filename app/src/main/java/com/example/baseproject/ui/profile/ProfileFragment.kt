@@ -1,10 +1,12 @@
 package com.example.baseproject.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.baseproject.R
+import com.example.baseproject.container.MainActivity
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.utils.Response

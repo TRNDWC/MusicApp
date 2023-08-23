@@ -8,6 +8,7 @@ import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
+import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +23,15 @@ class LibraryViewModel @Inject constructor(
 
 
     private val repository: MusicRepository
-    var playlistList = playlistRepositoryFB.getPlaylist()
+    var playlistList: MutableLiveData<Response<List<LibraryItem>>>? = null
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
+    }
+
+    fun get() {
+        playlistList = playlistRepositoryFB.getPlaylist()
     }
 
     fun setup(list: List<LibraryItem>) {

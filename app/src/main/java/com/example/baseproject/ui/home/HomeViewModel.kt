@@ -28,7 +28,16 @@ class HomeViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
+    var playlistsList = playlistRepositoryFB.getPlaylist()
     val crossRefData = playlistRepositoryFB.getCrossRef()
+
+    fun setup(list: List<LibraryItem>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            list.forEach {
+                repository.addPlaylist(it)
+            }
+        }
+    }
 
     fun setupCrossRef(list: List<SongPlaylistCrossRef>) {
         list.forEach {

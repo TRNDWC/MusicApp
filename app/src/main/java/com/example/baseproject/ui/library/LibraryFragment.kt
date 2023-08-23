@@ -35,22 +35,24 @@ class LibraryFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-        viewModel.playlistList.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Response.Loading -> {
-                    Log.e("HoangDH", "Loading")
-                }
+        viewModel.get()
+        viewModel.playlistList?.observe(viewLifecycleOwner) { response ->
+            if (response != null)
+                when (response) {
+                    is Response.Loading -> {
+                        Log.e("HoangDH", "Loading")
+                    }
 
-                is Response.Success -> {
-                    binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
-                    playlistList = response.data
-                    viewModel.setup(response.data)
-                }
+                    is Response.Success -> {
+                        binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
+                        playlistList = response.data
+                        viewModel.setup(response.data)
+                    }
 
-                is Response.Failure -> {
-                    Log.e("HoangDH", "Error")
+                    is Response.Failure -> {
+                        Log.e("HoangDH", "Error")
+                    }
                 }
-            }
         }
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {
