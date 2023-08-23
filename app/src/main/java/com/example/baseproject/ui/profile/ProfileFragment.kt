@@ -1,26 +1,20 @@
 package com.example.baseproject.ui.profile
 
+
 import android.content.Context
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.container.MainActivity
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
-import com.example.baseproject.utils.LanguageConfig
 import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.Response
 import com.example.baseproject.utils.SharedPrefs
 import com.example.core.base.BaseFragment
-import com.example.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 

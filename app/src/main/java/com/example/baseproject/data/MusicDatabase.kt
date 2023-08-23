@@ -13,7 +13,7 @@ import com.example.baseproject.data.relation.SongPlaylistCrossRef
         PlaylistSongItem::class,
         LibraryItem::class,
         SongPlaylistCrossRef::class
-    ], version = 2
+    ], version = 1
 )
 abstract class MusicDatabase : RoomDatabase() {
     abstract fun musicDao(): MusicDao

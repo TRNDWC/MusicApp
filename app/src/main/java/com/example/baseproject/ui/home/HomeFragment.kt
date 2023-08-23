@@ -20,6 +20,7 @@ import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.library.LibraryItemAdapter
 import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
@@ -85,6 +86,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 is Response.Failure -> {}
                 is Response.Success -> {
                     viewModel.setupCrossRef(response.data)
+                }
+            }
+        }
+        viewModel.playlistsList.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Response.Loading -> {
+                    Log.e("HoangDH", "Loading")
+                }
+
+                is Response.Success -> {
+                    viewModel.setup(response.data)
+                }
+
+                is Response.Failure -> {
+                    Log.e("HoangDH", "Error")
                 }
             }
         }

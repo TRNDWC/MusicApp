@@ -58,15 +58,6 @@
             app:layout_constraintTop_toBottomOf="@id/fragment_guideline_h_1"
             app:layout_constraintVertical_bias="0.1" />
 
-        <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@drawable/ic_edit"
-            app:layout_constraintBottom_toBottomOf="@id/img_playlist_cover"
-            app:layout_constraintEnd_toEndOf="@id/img_playlist_cover"
-            app:layout_constraintStart_toStartOf="@+id/img_playlist_cover"
-            app:layout_constraintTop_toTopOf="@+id/img_playlist_cover" />
-
         <EditText
             android:id="@+id/edt_title"
             android:layout_width="match_parent"

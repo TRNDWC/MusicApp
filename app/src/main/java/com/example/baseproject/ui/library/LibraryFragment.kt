@@ -2,7 +2,6 @@ package com.example.baseproject.ui.library
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,7 +13,6 @@ import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,24 +34,26 @@ class LibraryFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
-        binding.ProgressBar.visibility = View.VISIBLE
-        viewModel.playlistList.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Response.Loading -> {
-                    Log.e("HoangDH", "Loading")
-                }
+        binding.ProgressBar.visibility = android.view.View.VISIBLE
+        viewModel.get()
+        viewModel.playlistList?.observe(viewLifecycleOwner) { response ->
+            if (response != null)
+                when (response) {
+                    is Response.Loading -> {
+                        Log.e("HoangDH", "Loading")
+                    }
 
-                is Response.Success -> {
-                    binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
-                    playlistList = response.data
-                    binding.ProgressBar.visibility = View.GONE
-                    viewModel.setup(response.data)
-                }
+                    is Response.Success -> {
+                        binding.ProgressBar.visibility = android.view.View.GONE
+                        binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
+                        playlistList = response.data
+                        viewModel.setup(response.data)
+                    }
 
-                is Response.Failure -> {
-                    Log.e("HoangDH", "Error")
+                    is Response.Failure -> {
+                        Log.e("HoangDH", "Error")
+                    }
                 }
-            }
         }
         viewModel.newPlaylist.observe(viewLifecycleOwner) { newList ->
             if (newList != "") {

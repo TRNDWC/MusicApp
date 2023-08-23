@@ -168,6 +168,12 @@ class PlaylistFragment :
                     GradientDrawable.Orientation.TOP_BOTTOM,
                     intArrayOf(Color.parseColor("#464545"), Color.BLACK)
                 )
+                binding.apply {
+                    nestedScrollView.visibility = View.VISIBLE
+                    collapsingToolbar.visibility = View.VISIBLE
+                    btnPlaylistPlay.visibility = View.VISIBLE
+                    ProgressBar.visibility = View.GONE
+                }
             } else {
                 Glide.with(requireContext())
                     .load(item.playlistImage!!.toUri())
@@ -175,7 +181,6 @@ class PlaylistFragment :
                 getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
                     if (bitmap != null) {
                         binding.collapsingToolbar.background = getDominantColor(bitmap)
-
                         binding.apply {
                             nestedScrollView.visibility = View.VISIBLE
                             collapsingToolbar.visibility = View.VISIBLE
