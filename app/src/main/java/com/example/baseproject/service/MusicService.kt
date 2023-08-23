@@ -18,6 +18,7 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
+import com.example.baseproject.utils.Random
 import com.example.core.base.BaseService
 
 
@@ -27,8 +28,8 @@ class MusicService : BaseService() {
     private var binder = MyBinder()
     private lateinit var mediaSession: MediaSessionCompat
     private lateinit var songItem: PlaylistSongItem
-    private var isLooping: Boolean = false
-
+    private var isLoopingPlaylist: Boolean = false
+    private var isShuffle: Boolean = false
     private val _songLiveData = MutableLiveData<PlaylistSongItem>()
     val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
     private val _songIsPlaying: MutableLiveData<Boolean> by lazy {
@@ -36,6 +37,7 @@ class MusicService : BaseService() {
     }
     val songIsPlaying: LiveData<Boolean> = _songIsPlaying
     lateinit var songList: List<PlaylistSongItem>
+    lateinit var shuffleSongList: List<PlaylistSongItem>
     var songPosition: Int = 0
 
 
@@ -51,20 +53,18 @@ class MusicService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         mediaSession = MediaSessionCompat(this, "PlayerAudio")
-        Log.e("HoangDH", "onCreate")
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        Log.e("HoangDH", "onBind")
         return binder
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.e("HoangDH", "onStartCommand")
         if (intent?.getBundleExtra("song_bundle") != null) {
-            val bundle = intent?.getBundleExtra("song_bundle")
+            val bundle = intent.getBundleExtra("song_bundle")
             songItem = bundle!!.getParcelable("song_item")!!
             songList = bundle.getParcelableArrayList("song_list")!!
+            shuffleSongList = bundle.getParcelableArrayList("shuffle_song_list")!!
             songPosition = bundle.getInt("song_position")
             _songLiveData.value = songItem
             _songLiveData.postValue(songItem)
@@ -83,7 +83,6 @@ class MusicService : BaseService() {
 
 
     override fun onUnbind(intent: Intent?): Boolean {
-        Log.e("HoangDH", "onUnbind")
         return super.onUnbind(intent)
     }
 
@@ -93,11 +92,10 @@ class MusicService : BaseService() {
     }
 
     fun startMusic() {
-        Log.e("HoangDH", "startMusic")
         musicPlayer.start()
         sendNotification(_songLiveData.value!!)
         _songIsPlaying.postValue(true)
-        if (isLooping) {
+        if (isLoopingPlaylist) {
             if (songPosition < songList.size - 1) {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
@@ -125,6 +123,13 @@ class MusicService : BaseService() {
                     autoPlayNextSong(nextSong)
                 }
             }
+            else{
+                musicPlayer.setOnCompletionListener {
+                    stopSelf()
+                    _songIsPlaying.postValue(false)
+                }
+
+            }
         }
     }
 
@@ -132,9 +137,18 @@ class MusicService : BaseService() {
         musicPlayer.stop()
     }
 
-    fun repeatMusic(looping: Boolean) {
-        isLooping = looping
-        Log.e("HoangDH", "$isLooping")
+
+
+    fun repeatPlaylist(loopingPlaylist: Boolean) {
+        isLoopingPlaylist = loopingPlaylist
+    }
+
+    fun repeatSong(loopingSong: Boolean) {
+        musicPlayer.isLooping = loopingSong
+    }
+
+    fun shuffleSong(shuffle: Boolean) {
+        isShuffle = shuffle
     }
 
     private fun autoPlayNextSong(songItem: PlaylistSongItem) {
@@ -144,7 +158,6 @@ class MusicService : BaseService() {
     }
 
     fun pauseMusic() {
-        Log.e("HoangDH", "pauseMusic")
         musicPlayer.pause()
         sendNotification(_songLiveData.value!!)
         _songIsPlaying.postValue(false)
@@ -163,7 +176,6 @@ class MusicService : BaseService() {
     }
 
     private fun sendNotification(songItem: PlaylistSongItem) {
-        Log.e("HoangDH", "sendNotification")
         val pendingIntent = NavDeepLinkBuilder(this).setGraph(R.navigation.main_navigation)
             .setDestination(R.id.homeFragment).setArguments(Bundle().apply {
                 putBoolean(NEED_OPEN_DIALOG, true)
@@ -173,7 +185,6 @@ class MusicService : BaseService() {
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID).apply {
-            Log.e("HoangDH", "notification builder")
             setSmallIcon(R.drawable.spotify)
             setLargeIcon(picture)
             setContentTitle(songItem.songTitle)
@@ -252,9 +263,8 @@ class MusicService : BaseService() {
 
     private fun getPendingIntent(context: Context, action: String): PendingIntent {
         val intent = Intent(this, MyReceiver::class.java)
-        Log.e("HoangDH", "getPendingIntent: ${action}")
         intent.action = action
-        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_MUTABLE)
     }
 
 }
