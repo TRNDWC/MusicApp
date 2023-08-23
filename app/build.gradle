@@ -15,6 +15,7 @@ plugins {
 android {
     compileSdk versions.compileSdk
     defaultConfig {
+        resConfigs("en","vi")
         applicationId "com.project.demo"
         minSdk versions.minSdk
         targetSdk versions.targetSdk

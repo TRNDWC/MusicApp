@@ -26,6 +26,7 @@ class HomeTabFragment :
     override fun getVM() = viewModel
     override fun setOnClick() {
         super.setOnClick()
+        binding.ProgressBar.visibility= android.view.View.VISIBLE
         parentAdapter.onItemClick = { parentItem: ParentItem, childItem: ChildItem ->
             val bundle = Bundle()
 
@@ -47,7 +48,8 @@ class HomeTabFragment :
                     Glide.with(requireContext())
                         .load(response.data.profilePictureUrl)
                         .into(binding.imgProfile)
-                    binding.titleTv.text = "Hello ${response.data.name}"
+                    binding.titleTv.text = getString(R.string.hello) + " ${response.data.name}"
+                    binding.ProgressBar.visibility= android.view.View.GONE
                 }
             }
         }
@@ -56,10 +58,6 @@ class HomeTabFragment :
             requireContext(), LinearLayoutManager.VERTICAL,
             false
         )
-    }
-
-    override fun bindingAction() {
-        super.bindingAction()
     }
 
     private fun ParentItemList(): List<ParentItem> {

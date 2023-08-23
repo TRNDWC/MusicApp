@@ -85,7 +85,7 @@ class EditProfileDialog constructor(private val userName: String, private val pr
             imgProfile.setOnClickListener {
                 ImagePicker.with(this@EditProfileDialog)
                     .compress(1024)
-                    .crop()
+                    .cropSquare()
                     .maxResultSize(
                         1080,
                         1080

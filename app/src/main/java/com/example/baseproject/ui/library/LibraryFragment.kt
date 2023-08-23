@@ -2,6 +2,7 @@ package com.example.baseproject.ui.library
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,7 @@ class LibraryFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
+        binding.ProgressBar.visibility = View.VISIBLE
         viewModel.playlistList.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {
@@ -44,6 +46,7 @@ class LibraryFragment :
                 is Response.Success -> {
                     binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
                     playlistList = response.data
+                    binding.ProgressBar.visibility = View.GONE
                     viewModel.setup(response.data)
                 }
 
