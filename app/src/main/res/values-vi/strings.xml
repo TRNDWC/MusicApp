@@ -3,6 +3,7 @@
     <string name="appname">Dự án mẫu</string>
     <string name="home">Trang chủ</string>
     <string name="favorite">Yêu thích</string>
+    <string name="hello">Xin Chào</string>
     <string name="splash">Bắn tung tóe</string>
     <string name="next">Tiếp tục</string>
     <string name="password">Mật khẩu</string>
@@ -44,6 +45,9 @@
     <string name="email_or_password_is_empty">Email hoặc mật khẩu trống</string>
     <string name="profile">Hồ sơ</string>
     <string name="done">Xong</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="EditProfileDescription">Đây có thể là tên hoặc nickname của bạn.\nTên này dùng để hiển thị trên app.</string>
+    <string name="cancel">Hủy</string>
     <string name="edit">Sửa</string>
     <string name="edit_profile">Sửa Hồ Sơ</string>
     <string name="save">Lưu</string>

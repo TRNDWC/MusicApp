@@ -113,7 +113,7 @@ class EditPlaylistDialog(
         dialogBinding.imgPlaylistCover.setOnClickListener {
             ImagePicker.with(this)
                 .compress(1024)
-                .crop()
+                .cropSquare()
                 .maxResultSize(
                     1080,
                     1080

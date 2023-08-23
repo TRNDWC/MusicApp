@@ -1,5 +1,6 @@
 package com.example.baseproject.service
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -221,7 +222,6 @@ class MusicService : BaseService() {
             priority = NotificationCompat.PRIORITY_LOW
             setContentIntent(pendingIntent)
         }.build()
-
         startForeground(1, notification)
     }
 
