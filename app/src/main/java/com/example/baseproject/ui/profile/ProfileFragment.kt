@@ -1,6 +1,7 @@
 package com.example.baseproject.ui.profile
 
-import android.content.Intent
+
+import android.content.Context
 import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
@@ -9,10 +10,13 @@ import com.example.baseproject.R
 import com.example.baseproject.container.MainActivity
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.Response
+import com.example.baseproject.utils.SharedPrefs
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ProfileFragment :
@@ -24,6 +28,8 @@ class ProfileFragment :
 
     @Inject
     lateinit var appNavigation: AppNavigation
+
+    lateinit var sharedPreferences: SharedPrefs
 
     private val viewModel: ProfileViewModel by viewModels()
     override fun getVM(): ProfileViewModel = viewModel
@@ -44,6 +50,16 @@ class ProfileFragment :
                 }
             }
         }
+        if (sharedPreferences.locale == "en") {
+            binding.btnLanguage.setBackgroundResource(R.drawable.ic_gb_flag)
+        } else {
+            binding.btnLanguage.setBackgroundResource(R.drawable.ic_vi_flag)
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        sharedPreferences = SharedPrefs(context)
     }
 
     override fun bindingAction() {
@@ -74,6 +90,18 @@ class ProfileFragment :
                     childFragmentManager,
                     "EditProfileDialog"
                 )
+            }
+            btnLanguage.setOnClickListener {
+                if (sharedPreferences.locale == "en") {
+                    sharedPreferences.locale = "vi"
+                    changeLanguage(requireContext(), "vi")
+                    binding.btnLanguage.setBackgroundResource(R.drawable.ic_vi_flag)
+                } else {
+                    sharedPreferences.locale = "en"
+                    changeLanguage(requireContext(), "en")
+                    binding.btnLanguage.setBackgroundResource(R.drawable.ic_gb_flag)
+                }
+                (activity as MainActivity).recreate()
             }
         }
     }

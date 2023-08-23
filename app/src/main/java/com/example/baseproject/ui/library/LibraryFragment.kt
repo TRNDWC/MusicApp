@@ -13,7 +13,6 @@ import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
-
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -35,6 +34,7 @@ class LibraryFragment :
 
     override fun bindingStateView() {
         super.bindingStateView()
+        binding.ProgressBar.visibility = android.view.View.VISIBLE
         viewModel.get()
         viewModel.playlistList?.observe(viewLifecycleOwner) { response ->
             if (response != null)
@@ -44,6 +44,7 @@ class LibraryFragment :
                     }
 
                     is Response.Success -> {
+                        binding.ProgressBar.visibility = android.view.View.GONE
                         binding.libraryRcv.adapter = LibraryItemAdapter(response.data, this)
                         playlistList = response.data
                         viewModel.setup(response.data)

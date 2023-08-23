@@ -16,6 +16,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.databinding.PlaylistEditDialogBinding
@@ -68,7 +69,9 @@ class EditPlaylistDialog(
         dialogBinding.edtTitle.setText(playlist.playlistTitle)
 
         if (playlist.playlistImage != null)
-            dialogBinding.imgPlaylistCover.setImageURI(playlist.playlistImage!!.toUri())
+            Glide.with(requireContext())
+                .load(playlist.playlistImage!!.toUri())
+                .into(dialogBinding.imgPlaylistCover)
         else
             dialogBinding.imgPlaylistCover.setImageResource(R.drawable.spotify)
 
@@ -110,7 +113,7 @@ class EditPlaylistDialog(
         dialogBinding.imgPlaylistCover.setOnClickListener {
             ImagePicker.with(this)
                 .compress(1024)
-                .crop()
+                .cropSquare()
                 .maxResultSize(
                     1080,
                     1080

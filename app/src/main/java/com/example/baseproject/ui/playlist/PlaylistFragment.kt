@@ -13,6 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.palette.graphics.Palette
@@ -27,6 +28,7 @@ import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.addsong.AddSongDialog
 import com.example.baseproject.ui.playlist.editplaylist.EditPlaylistDialog
+import com.example.baseproject.utils.Random
 import com.example.core.base.BaseFragment
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.storage.FirebaseStorage
@@ -34,6 +36,7 @@ import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.InputStream
 import java.util.Collections
+
 import javax.inject.Inject
 
 
@@ -49,8 +52,10 @@ class PlaylistFragment :
     private var title: String = ""
 
     override fun getVM() = viewModel
+    private val random = Random()
     private var musicService: MusicService? = null
     private var mSongList: List<PlaylistSongItem> = mutableListOf()
+    private var mShuffleSongList: List<PlaylistSongItem> = mutableListOf()
     private lateinit var playlistAdapter: PlaylistSongItemAdapter
     private lateinit var materialToolbar: CollapsingToolbarLayout
     private var isServiceConnected: Boolean = false
@@ -148,7 +153,14 @@ class PlaylistFragment :
         // material tool bar
         materialToolbar = binding.collapsingToolbar
         materialToolbar.title = item?.playlistTitle
-        binding.ProgressBar.visibility = View.VISIBLE
+
+        binding.apply {
+            nestedScrollView.visibility = View.GONE
+            collapsingToolbar.visibility = View.GONE
+            btnPlaylistPlay.visibility = View.GONE
+            ProgressBar.visibility = View.VISIBLE
+        }
+
         viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
             if (item?.playlistImage == null) {
                 binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
@@ -156,6 +168,12 @@ class PlaylistFragment :
                     GradientDrawable.Orientation.TOP_BOTTOM,
                     intArrayOf(Color.parseColor("#464545"), Color.BLACK)
                 )
+                binding.apply {
+                    nestedScrollView.visibility = View.VISIBLE
+                    collapsingToolbar.visibility = View.VISIBLE
+                    btnPlaylistPlay.visibility = View.VISIBLE
+                    ProgressBar.visibility = View.GONE
+                }
             } else {
                 Glide.with(requireContext())
                     .load(item.playlistImage!!.toUri())
@@ -163,9 +181,19 @@ class PlaylistFragment :
                 getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
                     if (bitmap != null) {
                         binding.collapsingToolbar.background = getDominantColor(bitmap)
-                        binding.ProgressBar.visibility = View.GONE
+                        binding.apply {
+                            nestedScrollView.visibility = View.VISIBLE
+                            collapsingToolbar.visibility = View.VISIBLE
+                            btnPlaylistPlay.visibility = View.VISIBLE
+                            ProgressBar.visibility = View.GONE
+                        }
                     } else {
-                        binding.ProgressBar.visibility = View.VISIBLE
+                        binding.apply {
+                            nestedScrollView.visibility = View.GONE
+                            collapsingToolbar.visibility = View.GONE
+                            btnPlaylistPlay.visibility = View.GONE
+                            ProgressBar.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
@@ -219,7 +247,11 @@ class PlaylistFragment :
         bundle.putInt("song_position", position)
         bundle.putParcelableArrayList(
             "song_list",
-            viewModel.songList.value?.let { it1 -> ArrayList(it1) })
+            viewModel.songList.value as ArrayList<PlaylistSongItem>)
+        bundle.putParcelableArrayList(
+            "shuffle_song_list",
+            mShuffleSongList as ArrayList<PlaylistSongItem>
+        )
         bundle.putParcelable("song_item", item)
         intent = Intent(context, MusicService::class.java)
         intent.putExtra("song_bundle", bundle)
@@ -275,6 +307,7 @@ class PlaylistFragment :
     override fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding) {
 
         Log.e("HoangDH", "itemClicked")
+        shuffleSong()
         prepareBundle(item)
         Log.e("HoangDH", "$previousClickedSong")
 
@@ -292,5 +325,8 @@ class PlaylistFragment :
             context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             previousClickedSong = item
         }
+    }
+    private fun shuffleSong() {
+        mShuffleSongList = random.getRandomSongList(mSongList)
     }
 }
