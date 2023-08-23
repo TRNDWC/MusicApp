@@ -25,7 +25,7 @@
                 android:id="@+id/titleTv"
                 android:layout_width="300dp"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/_10dp"
+                android:layout_marginEnd="@dimen/_10dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:textColor="@color/white"
