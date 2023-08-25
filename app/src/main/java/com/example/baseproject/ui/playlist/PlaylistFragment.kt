@@ -129,13 +129,11 @@ class PlaylistFragment :
         Log.e("HoangDH", "itemClicked")
         prepareBundle(item)
         Log.e("HoangDH", "$previousClickedSong")
-
         if (!firstInit) {
             requireActivity().startService(intent)
             requireActivity().bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
             firstInit = true
             previousClickedSong = item
-            Log.e("HoangDH", "$firstInit")
         } else if (previousClickedSong != item) {
             requireActivity().stopService(intent)
             requireActivity().unbindService(mServiceConnection)
