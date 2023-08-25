@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
-import com.example.baseproject.data.playlistrepo.PlaylistDatabase
-import com.example.baseproject.data.playlistrepo.PlaylistRepository
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
+import com.example.baseproject.utils.Response
 import com.example.core.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,28 +17,34 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LibraryViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
-    private val _playlistList = MutableLiveData<List<LibraryItem>>()
-    val playlistList: LiveData<List<LibraryItem>> = _playlistList
+
+
     private val repository: MusicRepository
+    var playlistList: MutableLiveData<Response<List<LibraryItem>>>? = null
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
-        getPlaylists()
     }
 
-    private fun getPlaylists() {
+    fun get() {
+        playlistList = playlistRepositoryFB.getPlaylist()
+    }
+
+    fun setup(list: List<LibraryItem>) {
         viewModelScope.launch(Dispatchers.IO) {
-            _playlistList.postValue(repository.getAllPlaylist())
+            list.forEach {
+                repository.addPlaylist(it)
+            }
         }
     }
 
     fun addPlaylist(item: LibraryItem) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.addPlaylist(item)
-            _playlistList.postValue(repository.getAllPlaylist())
+            playlistRepositoryFB.addPlaylist(item)
         }
     }
 

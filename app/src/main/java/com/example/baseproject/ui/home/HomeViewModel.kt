@@ -5,16 +5,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.relation.SongPlaylistCrossRef
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.core.base.BaseViewModel
-import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.net.URI
 import javax.inject.Inject
+
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
     private val repository: MusicRepository
 
@@ -23,13 +28,22 @@ class HomeViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
+    var playlistsList = playlistRepositoryFB.getPlaylist()
+    val crossRefData = playlistRepositoryFB.getCrossRef()
 
-    val playlists = SingleLiveEvent<List<LibraryItem>>()
-    fun getAllPlaylists() {
+    fun setup(list: List<LibraryItem>) {
         viewModelScope.launch(Dispatchers.IO) {
-            val data = repository.getAllPlaylist()
-            playlists.postValue(data)
+            list.forEach {
+                repository.addPlaylist(it)
+            }
+        }
+    }
 
+    fun setupCrossRef(list: List<SongPlaylistCrossRef>) {
+        list.forEach {
+            viewModelScope.launch {
+                repository.addSongPlaylistCrossRef(it)
+            }
         }
     }
 }

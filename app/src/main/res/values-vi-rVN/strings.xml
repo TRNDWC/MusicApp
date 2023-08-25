@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="appname">Dự án mẫu</string>
-    <string name="home">Trang chu</string>
-    <string name="favorite">Yeu thich</string>
+    <string name="home">Trang chủ</string>
+    <string name="favorite">Yêu thích</string>
     <string name="splash">Bắn tung tóe</string>
     <string name="next">Tiếp tục</string>
     <string name="password">Mật khẩu</string>
@@ -44,10 +44,11 @@
     <string name="email_or_password_is_empty">Email hoặc mật khẩu trống</string>
     <string name="profile">Hồ sơ</string>
     <string name="done">Xong</string>
-    <string name="edit">Edit</string>
-    <string name="edit_profile">Edit Profile</string>
-    <string name="save">Save</string>
-    <string name="do_not_let_username_empty">Do not let username empty</string>
-
-
+    <string name="edit">Sửa</string>
+    <string name="edit_profile">Sửa Hồ Sơ</string>
+    <string name="save">Lưu</string>
+    <string name="do_not_let_username_empty">Không được để trống tên người dùng</string>
+    <string name="none">none</string>
+    <string name="edit_playlist">Sửa danh sách phát</string>
+    <string name="log_out">Đăng Xuất</string>
 </resources>

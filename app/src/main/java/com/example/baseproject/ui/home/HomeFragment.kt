@@ -14,12 +14,15 @@ import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.library.LibraryItemAdapter
 import com.example.baseproject.ui.play.PlayFragmentDialog
+import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -30,7 +33,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     @Inject
     lateinit var appNavigation: AppNavigation
-
     private var musicService: MusicService? = null
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var intent: Intent
@@ -45,7 +47,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
                 bindingBottomMusicPlayer(it)
             }
 
-            musicService!!.songIsPlaying.observe(viewLifecycleOwner){
+            musicService!!.songIsPlaying.observe(viewLifecycleOwner) {
                 isPlaying = it
                 if (isPlaying) {
                     binding.playBtn.setImageResource(R.drawable.ic_pause)
@@ -72,10 +74,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
         val needOpenDialog = arguments?.getBoolean(
-            MusicService.NEED_OPEN_DIALOG, false)
+            MusicService.NEED_OPEN_DIALOG, false
+        )
 
-        if(needOpenDialog != null && needOpenDialog){
+        if (needOpenDialog != null && needOpenDialog) {
             PlayFragmentDialog().show(childFragmentManager, "play_screen")
+        }
+        viewModel.crossRefData.observe(viewLifecycleOwner){ response->
+            when (response) {
+                is Response.Loading -> {}
+                is Response.Failure -> {}
+                is Response.Success -> {
+                    viewModel.setupCrossRef(response.data)
+                }
+            }
+        }
+        viewModel.playlistsList.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Response.Loading -> {
+                    Log.e("HoangDH", "Loading")
+                }
+
+                is Response.Success -> {
+                    viewModel.setup(response.data)
+                }
+
+                is Response.Failure -> {
+                    Log.e("HoangDH", "Error")
+                }
+            }
         }
     }
 

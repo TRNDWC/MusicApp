@@ -1,12 +1,9 @@
-package com.example.baseproject.ui.home.customplaylist
+package com.example.baseproject.ui.playlist.customplaylist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.ToggleButton
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
@@ -15,14 +12,13 @@ import com.example.baseproject.databinding.DialogPlaylistItemBinding
 
 interface OnItemClickListener {
 
-    fun onItemClicked(playlistId: Int, view: DialogPlaylistItemBinding)
+    fun onItemClicked(playlistId: String, view: DialogPlaylistItemBinding)
 
 }
 
 class PlaylistDialogAdapter(
     private val mPlaylistList: MutableList<LibraryItem>,
-    private val cPlaylistList: MutableList<Int>,
-
+    private val cPlaylistList: MutableList<String>,
     private val onItemClickListener: OnItemClickListener
 ) :
     RecyclerView.Adapter<PlaylistDialogAdapter.PlaylistViewHolder>() {
@@ -57,7 +53,6 @@ class PlaylistDialogAdapter(
         holder.playlistTitle.text = item.playlistTitle
 
         holder.customBtn.isChecked = item.playlistId in cPlaylistList
-
 
     }
 

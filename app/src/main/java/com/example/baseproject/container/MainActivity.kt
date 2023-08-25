@@ -1,6 +1,7 @@
 package com.example.baseproject.container
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -10,8 +11,10 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.baseproject.R
 import com.example.baseproject.databinding.ActivityMainBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.PermissionsUtil
 import com.example.baseproject.utils.PermissionsUtil.requestPermissions
+import com.example.baseproject.utils.SharedPrefs
 import com.example.core.base.BaseActivity
 import com.example.core.pref.RxPreferences
 import com.example.core.utils.NetworkConnectionManager
@@ -38,6 +41,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     @Inject
     lateinit var rxPreferences: RxPreferences
 
+    var sharedPreferences: SharedPrefs? = null
+
     private val viewModel: MainViewModel by viewModels()
     override fun getVM() = viewModel
     override val layoutId = R.layout.activity_main
@@ -49,16 +54,11 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
         if (!checkStorePermission(STORAGE_PERMISSION_ID)) {
             showRequestPermission(STORAGE_PERMISSION_ID)
         }
-        
+
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)
-
-        lifecycleScope.launch {
-            val language = rxPreferences.getLanguage().first()
-            language?.let { setLanguage(it) }
-        }
 
         networkConnectionManager.isNetworkConnectedFlow
             .onEach {
@@ -113,6 +113,13 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
                 i++
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        sharedPreferences = SharedPrefs(newBase!!)
+        val languageCode: String = sharedPreferences!!.locale
+        val context: Context = changeLanguage(newBase, languageCode)
+        super.attachBaseContext(context)
     }
 
     override fun onStart() {

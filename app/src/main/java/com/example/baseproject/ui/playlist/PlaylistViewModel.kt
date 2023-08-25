@@ -1,7 +1,6 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,11 +9,11 @@ import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
+import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -27,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
     private val repository: MusicRepository
 
@@ -36,21 +36,26 @@ class PlaylistViewModel @Inject constructor(
         repository = MusicRepository(musicDao)
     }
 
+
+    val cPlaylist = MutableLiveData<LibraryItem>()
+
+    fun getData(id: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            cPlaylist.postValue(repository.getPLaylist(id))
+        }
+    }
     // hiển thị danh sách các bài hát thuộc playlist có id là id
 
     private var _songList = MutableLiveData<List<PlaylistSongItem>>()
     var songList: LiveData<List<PlaylistSongItem>> = _songList
 
-    fun getSong(id: Int) {
+    fun getSong(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             _songList.postValue(repository.getSongsOfPlaylist(id).songs)
-            _songList.value?.forEach {
-                Log.d("playlist and song", "${id} + +${it.songTitle}")
-            }
         }
     }
 
-    fun addSongtoPlaylist(songId: Int, playlistId: Int) {
+    fun addSongtoPlaylist(songId: Int, playlistId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, playlistId))
         }
@@ -77,7 +82,7 @@ class PlaylistViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun addDialogFilter(list: List<PlaylistSongItem>): List<PlaylistSongItem> {
+    private fun addDialogFilter(list: List<PlaylistSongItem>): List<PlaylistSongItem> {
         val data = mutableListOf<Int>()
         songList.value?.forEach {
             data.add(it.songId)
@@ -86,14 +91,13 @@ class PlaylistViewModel @Inject constructor(
         list.forEach {
             if (!data.contains(it.songId)) {
                 result.add(it)
-                Log.d("checked", it.songTitle.toString())
             }
         }
         return result
     }
 
     // play fragment dialog
-    val tPlaylistListId = SingleLiveEvent<List<Int>>()
+    val tPlaylistListId = SingleLiveEvent<List<String>>()
 
     fun getPlaylistOfSong(id: Int) {
         repository.getPlaylistsOfSong(id)
@@ -109,8 +113,8 @@ class PlaylistViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun filter(list: List<LibraryItem>): List<Int> {
-        val dataId: MutableList<Int> = mutableListOf()
+    private fun filter(list: List<LibraryItem>): List<String> {
+        val dataId: MutableList<String> = mutableListOf()
         list.forEach {
             dataId.add(it.playlistId)
         }
@@ -119,24 +123,30 @@ class PlaylistViewModel @Inject constructor(
 
     // custom fragment
 
-    fun reset(newList: List<Int>, oldList: List<Int>, songId: Int) {
-        viewModelScope.launch {
-            newList.forEach {
-                if (it !in oldList)
+    fun reset(newList: List<String>, oldList: List<String>, songId: Int) {
+//        viewModelScope.launch {
+        newList.forEach {
+            if (it !in oldList) {
+                viewModelScope.launch(Dispatchers.IO) {
                     repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                }
+
+            }
+        }
+
+        oldList.forEach {
+            if (it !in newList) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
+                }
             }
 
-            oldList.forEach {
-                if (it !in newList)
-                    repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(songId, it))
-            }
         }
     }
 
-    val playlistId = MutableLiveData<Int>()
-    fun set(id: Int) {
+    val playlistId = MutableLiveData<String>()
+    fun set(id: String) {
         playlistId.value = id
-
     }
 
     // lấy dữ liệu về các playlist
@@ -149,22 +159,60 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
+    // edit playlist
+
+    fun edit(list: List<Int>, playlistId: String, new_title: String, image: String?) {
+        list.forEach {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(it, playlistId))
+            }
+        }
+        if (new_title != "") {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updatePlaylist(playlistId, new_title)
+            }
+            viewModelScope.launch(Dispatchers.IO) {
+                playlistRepositoryFB.updatePlaylist(playlistId, new_title, image)
+            }
+            updateTitle(new_title)
+        }
+        if (image != null) {
+            viewModelScope.launch(Dispatchers.IO) {
+                repository.updataImage(playlistId, image)
+            }
+            updateImage(image)
+        }
+    }
+
+    val title = MutableLiveData<String>()
+    private fun updateTitle(nTitle: String) {
+        title.postValue(nTitle)
+    }
+
+    val image = MutableLiveData<String?>()
+    private fun updateImage(nImage: String?) {
+        image.postValue(nImage)
+    }
+
+    //
+
+
     // các chức năng khác
-    fun convert(str: String?): String {
+    private fun convert(str: String?): String {
         var str = str
-        str = str!!.replace("à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ".toRegex(), "a")
-        str = str.replace("è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ".toRegex(), "e")
-        str = str.replace("ì|í|ị|ỉ|ĩ".toRegex(), "i")
-        str = str.replace("ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ".toRegex(), "o")
-        str = str.replace("ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ".toRegex(), "u")
-        str = str.replace("ỳ|ý|ỵ|ỷ|ỹ".toRegex(), "y")
+        str = str!!.replace("[àáạảãâầấậẩẫăằắặẳẵ]".toRegex(), "a")
+        str = str.replace("[èéẹẻẽêềếệểễ]".toRegex(), "e")
+        str = str.replace("[ìíịỉĩ]".toRegex(), "i")
+        str = str.replace("[òóọỏõôồốộổỗơờớợởỡ]".toRegex(), "o")
+        str = str.replace("[ùúụủũưừứựửữ]".toRegex(), "u")
+        str = str.replace("[ỳýỵỷỹ]".toRegex(), "y")
         str = str.replace("đ".toRegex(), "d")
-        str = str.replace("À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ".toRegex(), "A")
-        str = str.replace("È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ".toRegex(), "E")
-        str = str.replace("Ì|Í|Ị|Ỉ|Ĩ".toRegex(), "I")
-        str = str.replace("Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ".toRegex(), "O")
-        str = str.replace("Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ".toRegex(), "U")
-        str = str.replace("Ỳ|Ý|Ỵ|Ỷ|Ỹ".toRegex(), "Y")
+        str = str.replace("[ÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴ]".toRegex(), "A")
+        str = str.replace("[ÈÉẸẺẼÊỀẾỆỂỄ]".toRegex(), "E")
+        str = str.replace("[ÌÍỊỈĨ]".toRegex(), "I")
+        str = str.replace("[ÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠ]".toRegex(), "O")
+        str = str.replace("[ÙÚỤỦŨƯỪỨỰỬỮ]".toRegex(), "U")
+        str = str.replace("[ỲÝỴỶỸ]".toRegex(), "Y")
         str = str.replace("Đ".toRegex(), "D")
         return str
     }
@@ -179,11 +227,11 @@ class PlaylistViewModel @Inject constructor(
                     filterList.add(it)
                 }
             }
-            if (filterList.isEmpty()) {
+            return if (filterList.isEmpty()) {
                 val emptyList = ArrayList<PlaylistSongItem>()
-                return emptyList
+                emptyList
             } else {
-                return filterList
+                filterList
             }
         }
         return filterList

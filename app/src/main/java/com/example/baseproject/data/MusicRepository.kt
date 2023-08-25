@@ -1,5 +1,7 @@
 package com.example.baseproject.data
 
+import android.icu.text.CaseMap.Title
+import android.media.Image
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.baseproject.data.model.LibraryItem
@@ -32,7 +34,7 @@ class MusicRepository(private val musicDao: MusicDao) {
         musicDao.addPlaylist(item)
     }
 
-    suspend fun getSongsOfPlaylist(id: Int): PlaylistWithSongs {
+    suspend fun getSongsOfPlaylist(id: String): PlaylistWithSongs {
         return musicDao.getSongsofPlaylist(id)
     }
 
@@ -43,7 +45,15 @@ class MusicRepository(private val musicDao: MusicDao) {
         }
     }
 
-    suspend fun getPLaylistSize(id: Int): Int {
+    suspend fun updatePlaylist(id: String, title: String) {
+        musicDao.updatePlaylistTitle(id, title)
+    }
+
+    suspend fun updataImage(id: String, image: String?) {
+        musicDao.updatePlaylistImage(id, image)
+    }
+
+    suspend fun getPLaylistSize(id: String): Int {
         return musicDao.getSongsofPlaylist(id).songs.size
     }
 
@@ -53,5 +63,21 @@ class MusicRepository(private val musicDao: MusicDao) {
 
     suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef) {
         musicDao.deleteSongPlaylistCrossRef(crossRef)
+    }
+
+    suspend fun deleteData() {
+        musicDao.deleteData()
+    }
+
+    suspend fun getAllCrossRef(): List<SongPlaylistCrossRef> {
+        return musicDao.getAllCrossRef()
+    }
+
+    suspend fun getPLaylist(id: String): LibraryItem {
+        return musicDao.getPlaylist(id)
+    }
+
+    suspend fun deletePlaylists() {
+        musicDao.deletePlaylist()
     }
 }

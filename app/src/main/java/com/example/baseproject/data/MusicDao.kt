@@ -1,5 +1,6 @@
 package com.example.baseproject.data
 
+import androidx.annotation.WorkerThread
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -28,13 +29,19 @@ interface MusicDao {
     @Query("SELECT * FROM playlist_data ORDER BY playlistTitle ASC")
     suspend fun listAllPlaylist(): List<LibraryItem>
 
+    @Query("UPDATE playlist_data SET playlistTitle=:title WHERE playlistId=:id")
+    suspend fun updatePlaylistTitle(id: String, title: String)
+
+    @Query("UPDATE playlist_data SET playlistImage=:uri WHERE playlistId=:id")
+    suspend fun updatePlaylistImage(id: String, uri: String?)
+
     //Music
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)
 
     @Transaction
     @Query("SELECT * FROM playlist_data WHERE playlistId = :playlistId")
-    suspend fun getSongsofPlaylist(playlistId: Int): PlaylistWithSongs
+    suspend fun getSongsofPlaylist(playlistId: String): PlaylistWithSongs
 
     @Transaction
     @Query("SELECT * FROM song_data WHERE songId = :songId")
@@ -42,4 +49,16 @@ interface MusicDao {
 
     @Delete
     suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)
+
+    @Query("DELETE FROM playlist_data")
+    suspend fun deletePlaylist()
+
+    @Query("DELETE FROM SongPlaylistCrossRef")
+    suspend fun deleteData()
+
+    @Query("SELECT * FROM SongPlaylistCrossRef")
+    suspend fun getAllCrossRef(): List<SongPlaylistCrossRef>
+
+    @Query("SELECT * FROM playlist_data WHERE playlistId = :playlistId")
+    suspend fun getPlaylist(playlistId: String): LibraryItem
 }

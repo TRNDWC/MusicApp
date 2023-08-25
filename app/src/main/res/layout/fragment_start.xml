@@ -46,21 +46,21 @@
             android:textStyle="bold" />
 
 
-        <Button
-            android:id="@+id/googleSignUpButton"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/button_bg2"
-            android:drawableStart="@drawable/google"
-            android:paddingHorizontal="20dp"
-            android:text="@string/continue_with_google"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+<!--        <Button-->
+<!--            android:id="@+id/googleSignUpButton"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="54dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginBottom="20dp"-->
+<!--            android:background="@drawable/button_bg2"-->
+<!--            android:drawableStart="@drawable/google"-->
+<!--            android:paddingHorizontal="20dp"-->
+<!--            android:text="@string/continue_with_google"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold" />-->
 
         <TextView
             android:id="@+id/loginTextView"
