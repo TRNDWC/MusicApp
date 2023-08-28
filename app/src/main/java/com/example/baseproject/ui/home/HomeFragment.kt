@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -24,6 +25,7 @@ import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.library.LibraryItemAdapter
 import com.example.baseproject.ui.play.PlayFragmentDialog
+import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,6 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     lateinit var appNavigation: AppNavigation
     private var musicService: MusicService? = null
     private val viewModel: HomeViewModel by viewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels()
     private lateinit var intent: Intent
     private var isPlaying: Boolean = false
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
@@ -45,8 +48,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             Log.e("HoangDH", "Service Connected from HOME")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
             musicService = myBinder.getMyService()
-            musicService!!.songLiveData.observe(viewLifecycleOwner) {
-                bindingBottomMusicPlayer(it)
+                Log.e("HoangDH", "${playlistViewModel.musicService.value?.songLiveData?.value}")
+//            if(playlistViewModel.musicService.value?.songLiveData?.value != null){
+                musicService!!.songLiveData.observe(viewLifecycleOwner) {
+                    if(it != null){
+                    bindingBottomMusicPlayer(it)
+
+                    }
+//                }
             }
 
             musicService!!.songIsPlaying.observe(viewLifecycleOwner) {

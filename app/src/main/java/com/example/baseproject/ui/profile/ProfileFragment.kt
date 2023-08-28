@@ -4,12 +4,14 @@ package com.example.baseproject.ui.profile
 import android.content.Context
 import android.os.Bundle
 import androidx.core.net.toUri
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.container.MainActivity
 import com.example.baseproject.databinding.FragmentProfileBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.Response
 import com.example.baseproject.utils.SharedPrefs
@@ -32,6 +34,7 @@ class ProfileFragment :
     lateinit var sharedPreferences: SharedPrefs
 
     private val viewModel: ProfileViewModel by viewModels()
+    private val playListViewModel: PlaylistViewModel by activityViewModels()
     override fun getVM(): ProfileViewModel = viewModel
 
     private var profileImageUri: String? = null
@@ -79,6 +82,11 @@ class ProfileFragment :
         super.setOnClick()
         binding.apply {
             btnLogout.setOnClickListener {
+                playListViewModel.musicService.value?.apply {
+                    reset()
+                    stopForeground(true)
+                    songLiveData.postValue(null)
+                }
                 viewModel.get()
                 viewModel.data.observe(viewLifecycleOwner) {
                     viewModel.pushCrossRef(it)

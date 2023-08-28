@@ -1,6 +1,5 @@
 package com.example.baseproject.service
 
-import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -10,7 +9,6 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -19,7 +17,6 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import com.example.baseproject.utils.Random
 import com.example.core.base.BaseService
 
 
@@ -31,8 +28,8 @@ class MusicService : BaseService() {
     private lateinit var songItem: PlaylistSongItem
     private var isLoopingPlaylist: Boolean = false
     private var isShuffle: Boolean = false
-    private val _songLiveData = MutableLiveData<PlaylistSongItem>()
-    val songLiveData: LiveData<PlaylistSongItem> = _songLiveData
+     val songLiveData = MutableLiveData<PlaylistSongItem>()
+
     private val _songIsPlaying: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
     }
@@ -67,8 +64,8 @@ class MusicService : BaseService() {
             songList = bundle.getParcelableArrayList("song_list")!!
             shuffleSongList = bundle.getParcelableArrayList("shuffle_song_list")!!
             songPosition = bundle.getInt("song_position")
-            _songLiveData.value = songItem
-            _songLiveData.postValue(songItem)
+            songLiveData.value = songItem
+            songLiveData.postValue(songItem)
             musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
             sendNotification(songItem)
             startMusic()
@@ -94,14 +91,14 @@ class MusicService : BaseService() {
 
     fun startMusic() {
         musicPlayer.start()
-        sendNotification(_songLiveData.value!!)
+        sendNotification(songLiveData.value!!)
         _songIsPlaying.postValue(true)
         if (isLoopingPlaylist) {
             if (songPosition < songList.size - 1) {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
                     val nextSong = songList[songPosition]
-                    _songLiveData.postValue(nextSong)
+                    songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
                 }
@@ -109,7 +106,7 @@ class MusicService : BaseService() {
                 musicPlayer.setOnCompletionListener {
                     songPosition = 0
                     val nextSong = songList[songPosition]
-                    _songLiveData.postValue(nextSong)
+                    songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
                 }
@@ -119,7 +116,7 @@ class MusicService : BaseService() {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
                     val nextSong = songList[songPosition]
-                    _songLiveData.postValue(nextSong)
+                    songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
                 }
@@ -158,7 +155,7 @@ class MusicService : BaseService() {
 
     fun pauseMusic() {
         musicPlayer.pause()
-        sendNotification(_songLiveData.value!!)
+        sendNotification(songLiveData.value!!)
         _songIsPlaying.postValue(false)
     }
 
@@ -240,20 +237,20 @@ class MusicService : BaseService() {
                     songPosition = 0
                 }
                 val nextSong = songList[songPosition]
-                _songLiveData.value = nextSong
-                _songLiveData.postValue(nextSong)
-                sendNotification(_songLiveData.value!!)
-                autoPlayNextSong(_songLiveData.value!!)
+                songLiveData.value = nextSong
+                songLiveData.postValue(nextSong)
+                sendNotification(songLiveData.value!!)
+                autoPlayNextSong(songLiveData.value!!)
             }
 
             MusicAction.ACTION_PREVIOUS -> {
                 if (songPosition > 0) {
                     songPosition--
                     val nextSong = songList[songPosition]
-                    _songLiveData.value = nextSong
-                    _songLiveData.postValue(nextSong)
-                    sendNotification(_songLiveData.value!!)
-                    autoPlayNextSong(_songLiveData.value!!)
+                    songLiveData.value = nextSong
+                    songLiveData.postValue(nextSong)
+                    sendNotification(songLiveData.value!!)
+                    autoPlayNextSong(songLiveData.value!!)
                 }
             }
         }
