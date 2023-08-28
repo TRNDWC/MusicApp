@@ -13,7 +13,6 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.palette.graphics.Palette
@@ -36,7 +35,6 @@ import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.InputStream
 import java.util.Collections
-
 import javax.inject.Inject
 
 
@@ -53,7 +51,6 @@ class PlaylistFragment :
 
     override fun getVM() = viewModel
     private val random = Random()
-    private var musicService: MusicService? = null
     private var mSongList: List<PlaylistSongItem> = mutableListOf()
     private var mShuffleSongList: List<PlaylistSongItem> = mutableListOf()
     private lateinit var playlistAdapter: PlaylistSongItemAdapter
@@ -61,22 +58,19 @@ class PlaylistFragment :
     private var isServiceConnected: Boolean = false
     private lateinit var intent: Intent
     private lateinit var bundle: Bundle
-    private var firstInit: Boolean = false
     private var previousClickedSong: PlaylistSongItem =
         PlaylistSongItem(songId = 0, songImage = "", songTitle = "", artists = "", resource = "")
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
-
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
             Log.e("HoangDH", "Service Connected from PlayList")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
-            musicService = myBinder.getMyService()
+            viewModel.musicService.postValue(myBinder.getMyService())
             isServiceConnected = true
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isServiceConnected = false
         }
-
     }
 
     override fun setOnClick() {
@@ -111,16 +105,16 @@ class PlaylistFragment :
                         prepareBundle(item)
                         Log.e("HoangDH", "$previousClickedSong")
 
-                        if (!firstInit) {
+                        if (!viewModel.firstInit.value!!) {
                             requireActivity().startService(intent)
                             requireActivity().bindService(
                                 intent,
                                 mServiceConnection,
                                 Context.BIND_AUTO_CREATE
                             )
-                            firstInit = true
+                            viewModel.setFirstInit()
                             previousClickedSong = item
-                            Log.e("HoangDH", "$firstInit")
+//                            Log.e("HoangDH", "$firstInit")
                         } else if (previousClickedSong != item) {
                             requireActivity().stopService(intent)
                             requireActivity().unbindService(mServiceConnection)
@@ -247,7 +241,8 @@ class PlaylistFragment :
         bundle.putInt("song_position", position)
         bundle.putParcelableArrayList(
             "song_list",
-            viewModel.songList.value as ArrayList<PlaylistSongItem>)
+            viewModel.songList.value as ArrayList<PlaylistSongItem>
+        )
         bundle.putParcelableArrayList(
             "shuffle_song_list",
             mShuffleSongList as ArrayList<PlaylistSongItem>
@@ -310,22 +305,19 @@ class PlaylistFragment :
         shuffleSong()
         prepareBundle(item)
         Log.e("HoangDH", "$previousClickedSong")
-
-        if (!firstInit) {
+        if (!viewModel.firstInit.value!!) {
             context?.startService(intent)
             context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-            firstInit = true
-            previousClickedSong = item
-            Log.e("HoangDH", "$firstInit")
-        } else if (previousClickedSong != item) {
-            musicService?.reset()
+            viewModel.setFirstInit()
+        } else {
+            viewModel.musicService.value?.reset()
             context?.stopService(intent)
-            context?.unbindService(mServiceConnection)
+//            context?.unbindService(mServiceConnection)
             context?.startService(intent)
-            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
-            previousClickedSong = item
+//            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
+
     private fun shuffleSong() {
         mShuffleSongList = random.getRandomSongList(mSongList)
     }

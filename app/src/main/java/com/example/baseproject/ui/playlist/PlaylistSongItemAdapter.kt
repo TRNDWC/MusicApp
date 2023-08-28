@@ -1,13 +1,17 @@
 package com.example.baseproject.ui.playlist
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.PlaylistSongItemBinding
+import java.io.File
+
 
 interface OnItemClickListener {
     fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding)
@@ -56,7 +60,13 @@ class PlaylistSongItemAdapter(
         val item = mSongList[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
-        holder.songImage.setImageURI(item.songImage?.toUri())
+        try {
+            holder.songImage.setImageURI(item.songImage?.toUri())
+        } catch (e: Exception) {
+            e.printStackTrace()
+            holder.songImage.setImageResource(R.drawable.ic_music)
+        }
+//        holder.songImage.setImageURI(item.songImage?.toUri())
     }
 
     override fun getItemCount(): Int {

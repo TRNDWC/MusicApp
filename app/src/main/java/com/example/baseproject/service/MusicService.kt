@@ -138,8 +138,6 @@ class MusicService : BaseService() {
         musicPlayer.stop()
     }
 
-
-
     fun repeatPlaylist(loopingPlaylist: Boolean) {
         isLoopingPlaylist = loopingPlaylist
     }

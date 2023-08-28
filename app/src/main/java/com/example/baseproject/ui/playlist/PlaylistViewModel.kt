@@ -10,6 +10,7 @@ import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
+import com.example.baseproject.service.MusicService
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,12 +31,18 @@ class PlaylistViewModel @Inject constructor(
     private val playlistRepositoryFB: PlaylistRepositoryFB
 ) : BaseViewModel() {
     private val repository: MusicRepository
+    var firstInit = MutableLiveData<Boolean>()
+    var musicService = MutableLiveData<MusicService>()
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
+        firstInit.postValue(false)
     }
 
+    fun setFirstInit() {
+        firstInit.value = true
+    }
 
     val cPlaylist = MutableLiveData<LibraryItem>()
 

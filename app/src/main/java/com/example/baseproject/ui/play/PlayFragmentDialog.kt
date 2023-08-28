@@ -194,7 +194,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
             btnNext.setOnClickListener {
 
-                if(isShuffle){
+                if (isShuffle) {
                     Log.e("HoangDH", "shuffle")
                     when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
                         true -> musicService.songPosition++
@@ -203,8 +203,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                     prepareBundle(musicService.shuffleSongList[musicService.songPosition])
                     bindingPlayerView(musicService.shuffleSongList[musicService.songPosition])
                     startMusicService()
-                }
-                else {
+                } else {
                     Log.e("HoangDH", "not shuffle")
                     when (musicService.songPosition < musicService.songList.size - 1) {
                         true -> musicService.songPosition++
@@ -278,34 +277,42 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     }
 
     private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
-        val swatchesTemp = Palette.from(bitmap!!).generate().swatches
-        val swatches: List<Swatch> = ArrayList(swatchesTemp)
-        Collections.sort(
-            swatches
-        ) { swatch1, swatch2 -> swatch2.population - swatch1.population }
-        val gd: GradientDrawable
-        when (swatches.size) {
-            0 ->
-                gd = GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(Color.BLACK, Color.BLACK)
-                )
+        try {
+            val swatchesTemp = Palette.from(bitmap!!).generate().swatches
+            val swatches: List<Swatch> = ArrayList(swatchesTemp)
+            Collections.sort(
+                swatches
+            ) { swatch1, swatch2 -> swatch2.population - swatch1.population }
+            val gd: GradientDrawable
+            when (swatches.size) {
+                0 ->
+                    gd = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(Color.BLACK, Color.BLACK)
+                    )
 
-            1 ->
-                gd = GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(swatches[0].rgb, Color.BLACK)
-                )
+                1 ->
+                    gd = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(swatches[0].rgb, Color.BLACK)
+                    )
 
-            else ->
-                gd = GradientDrawable(
-                    GradientDrawable.Orientation.TOP_BOTTOM,
-                    intArrayOf(swatches[1].rgb, swatches[0].rgb)
-                )
+                else ->
+                    gd = GradientDrawable(
+                        GradientDrawable.Orientation.TOP_BOTTOM,
+                        intArrayOf(swatches[1].rgb, swatches[0].rgb)
+                    )
 
+            }
+            gd.cornerRadius = 0f
+            return gd
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(Color.WHITE, Color.BLACK)
+            )
         }
-        gd.cornerRadius = 0f
-        return gd
     }
 
     private fun prepareBundle(songItem: PlaylistSongItem) {
