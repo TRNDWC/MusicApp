@@ -15,7 +15,7 @@ plugins {
 android {
     compileSdk versions.compileSdk
     defaultConfig {
-        resConfigs("en","vi")
+        resConfigs("en", "vi")
         applicationId "com.project.demo"
         minSdk versions.minSdk
         targetSdk versions.targetSdk
@@ -133,14 +133,15 @@ dependencies {
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
-// GSON
+    // GSON
 
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
-// coroutine
+    // coroutine
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     // picaso
     implementation 'com.squareup.picasso:picasso:2.8'
+
 }

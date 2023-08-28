@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -80,7 +82,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         if (needOpenDialog != null && needOpenDialog) {
             PlayFragmentDialog().show(childFragmentManager, "play_screen")
         }
-        viewModel.crossRefData.observe(viewLifecycleOwner){ response->
+        viewModel.crossRefData.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {}
                 is Response.Failure -> {}
@@ -148,6 +150,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private fun bindingBottomMusicPlayer(songItem: PlaylistSongItem) {
         setOnClickAfterServiceInit()
+//        val bitmap = BitmapFactory.decodeFile(songItem.songImage);
+//        if (bitmap != null)
+//            binding.songImage.setImageBitmap(bitmap)
+//        else {
+//            binding.songImage.setImageResource(R.drawable.spotify)
+//        }
         binding.playBtn.setImageResource(R.drawable.ic_pause)
         binding.songImage.setImageURI(songItem.songImage!!.toUri())
         binding.songTitle.text = songItem.songTitle

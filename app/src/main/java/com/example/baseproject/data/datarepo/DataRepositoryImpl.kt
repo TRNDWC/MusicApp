@@ -6,10 +6,13 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.core.net.toUri
+import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
-import dagger.hilt.android.scopes.ActivityScoped
-import javax.inject.Inject
-
+import com.example.baseproject.utils.AudioUtils
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 class DataRepositoryImpl : DataRepository {
@@ -34,7 +37,22 @@ class DataRepositoryImpl : DataRepository {
                 val thisArtist = musicCursor.getString(artistColumn)
                 val thisSongLink = Uri.parse(musicCursor.getString(songLink))
                 val some = musicCursor.getLong(albumID)
-                val uri = ContentUris.withAppendedId(sArtworkUri, some)
+                val drawableResourceId = R.drawable.ic_music
+                var uri: Uri = Uri.Builder()
+                    .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                    .authority(context.resources.getResourcePackageName(drawableResourceId))
+                    .appendPath(context.resources.getResourceTypeName(drawableResourceId))
+                    .appendPath(context.resources.getResourceEntryName(drawableResourceId))
+                    .build()
+
+
+                val audioUri = Uri.fromFile(File(thisSongLink.toString()))
+                val audioUtils = AudioUtils()
+                val trackArtUri = audioUtils.getTrackArtUri(context, audioUri)
+                if (trackArtUri != null) {
+                    uri = trackArtUri
+                }
+
                 if (thisSongLink.toString().endsWith(".mp3"))
                     musicList.add(
                         PlaylistSongItem(
@@ -45,7 +63,6 @@ class DataRepositoryImpl : DataRepository {
                             thisSongLink.toString()
                         )
                     )
-                Log.d("title", thisSongLink.toString())
             } while (musicCursor.moveToNext())
             assert(musicCursor != null)
             musicCursor.close()

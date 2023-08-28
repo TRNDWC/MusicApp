@@ -3,6 +3,7 @@ package com.example.baseproject.container
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -83,18 +84,24 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     }
 
     private fun showRequestPermission(requestCode: Int) {
-        val permissions: Array<String> = if (requestCode == STORAGE_PERMISSION_ID) {
-            arrayOf(
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                requestPermissions(
+                    this,
+                    requestCode,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                )
+            }
         } else {
-            arrayOf(
-                Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                requestPermissions(
+                    this,
+                    requestCode,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
         }
-        requestPermissions(this, requestCode, *permissions)
     }
 
     override fun onRequestPermissionsResult(
