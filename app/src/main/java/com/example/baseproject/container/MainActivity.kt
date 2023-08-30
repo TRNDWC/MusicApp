@@ -1,17 +1,23 @@
 package com.example.baseproject.container
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.baseproject.R
 import com.example.baseproject.databinding.ActivityMainBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.play.PlayFragmentDialog
+import com.example.baseproject.ui.play.PlayViewModel
 import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.PermissionsUtil
 import com.example.baseproject.utils.PermissionsUtil.requestPermissions
@@ -45,6 +51,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     var sharedPreferences: SharedPrefs? = null
 
     private val viewModel: MainViewModel by viewModels()
+    private val playViewModel: PlayViewModel by viewModels()
     override fun getVM() = viewModel
     override val layoutId = R.layout.activity_main
     private val STORAGE_PERMISSION_ID = 0
@@ -70,6 +77,20 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
                 }
             }
             .launchIn(lifecycleScope)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        val needOpenDialog = intent?.getBundleExtra("notification_bundle")?.getBoolean(MusicService.NEED_OPEN_DIALOG)
+        Log.e("HoangDH", "onNewIntent: $needOpenDialog")
+        if(needOpenDialog != null && needOpenDialog){
+                if(playViewModel.dimissDialog.value == null || playViewModel.dimissDialog.value == true){
+                    playViewModel.switchDismissDialog(false)
+                    PlayFragmentDialog().show(supportFragmentManager, "PlayFragmentDialog")
+                }
+            }
+
+        super.onNewIntent(intent)
+
     }
 
     private fun checkStorePermission(permission: Int): Boolean {

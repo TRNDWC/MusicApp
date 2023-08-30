@@ -22,6 +22,7 @@ import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import com.example.baseproject.R
@@ -31,7 +32,6 @@ import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
-import com.example.baseproject.utils.Random
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -52,8 +52,8 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private var isShuffle: Boolean = false
     private var data: List<LibraryItem>? = null
     private val handler = Handler()
-    private val random = Random()
-    private val viewModel: PlaylistViewModel by activityViewModels()
+    private val viewModel : PlayViewModel by activityViewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
 
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
@@ -95,6 +95,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+        viewModel.switchDismissDialog(false)
         return dialog
     }
 
@@ -108,7 +109,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
-        viewModel.getAllPlaylists()
+        playlistViewModel.getAllPlaylists()
 
         dialogBinding = FragmentPlayDialogBinding.inflate(inflater, container, false)
 
@@ -175,7 +176,14 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        viewModel.getAllPlaylists()
+        viewModel.switchDismissDialog(true)
+        viewModel.dimissDialog.observe(viewLifecycleOwner) {
+
+                Log.e("HoangDH", "onDismiss: ${viewModel.dimissDialog.value}")
+
+
+        }
+        playlistViewModel.getAllPlaylists()
     }
 
     private fun setOnClick() {
@@ -225,9 +233,9 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 startMusicService()
             }
             btnFav.setOnClickListener {
-                viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+                playlistViewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
 
-                viewModel.playlists.observe(viewLifecycleOwner) {
+                playlistViewModel.playlists.observe(viewLifecycleOwner) {
                     data = it
                 }
 

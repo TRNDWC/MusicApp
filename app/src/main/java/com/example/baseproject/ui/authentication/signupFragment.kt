@@ -28,6 +28,7 @@ class signupFragment :
     lateinit var appNavigation: AppNavigation
     @Inject
     lateinit var rxPreferences: RxPreferences
+
     private val viewModel: SignupViewModel by viewModels()
     override fun getVM() = viewModel
 
@@ -70,7 +71,6 @@ class signupFragment :
                         }
                     }
                 }
-
             }
         }
     }

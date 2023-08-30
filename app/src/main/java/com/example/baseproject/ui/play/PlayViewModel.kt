@@ -23,4 +23,11 @@ class PlayViewModel @Inject constructor(
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
     }
+
+    private val _dimissDialog = MutableLiveData<Boolean>()
+    val dimissDialog: LiveData<Boolean> = _dimissDialog
+
+    fun switchDismissDialog(dismissState : Boolean) {
+        _dimissDialog.postValue(dismissState)
+    }
 }

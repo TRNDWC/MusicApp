@@ -4,26 +4,20 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeBinding
 import com.example.baseproject.navigation.AppNavigation
 import com.example.baseproject.service.MusicService
-import com.example.baseproject.ui.library.LibraryItemAdapter
 import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.utils.Response
@@ -48,14 +42,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
             Log.e("HoangDH", "Service Connected from HOME")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
             musicService = myBinder.getMyService()
-                Log.e("HoangDH", "${playlistViewModel.musicService.value?.songLiveData?.value}")
-//            if(playlistViewModel.musicService.value?.songLiveData?.value != null){
-                musicService!!.songLiveData.observe(viewLifecycleOwner) {
-                    if(it != null){
+            musicService!!.songLiveData.observe(viewLifecycleOwner) {
+                if (it != null) {
                     bindingBottomMusicPlayer(it)
-
-                    }
-//                }
+                }
             }
 
             musicService!!.songIsPlaying.observe(viewLifecycleOwner) {
@@ -84,13 +74,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         intent = Intent(context, MusicService::class.java)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
-        val needOpenDialog = arguments?.getBoolean(
-            MusicService.NEED_OPEN_DIALOG, false
-        )
 
-        if (needOpenDialog != null && needOpenDialog) {
-            PlayFragmentDialog().show(childFragmentManager, "play_screen")
-        }
         viewModel.crossRefData.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {}
