@@ -24,7 +24,7 @@ class BaseApplication @Inject constructor() : Application() {
     private fun createNotification() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val channelName = getString(R.string.channel_name)
-            val importance = NotificationManager.IMPORTANCE_HIGH
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(CHANNEL_ID, channelName, importance)
             channel.setSound(null, null)
             val notificationManager : NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -176,12 +176,12 @@ class MusicService : BaseService() {
         val bundle = Bundle()
         bundle.putBoolean(NEED_OPEN_DIALOG, true)
         val notifyIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         notifyIntent.putExtra("notification_bundle", bundle)
         val notifyPendingIntent = PendingIntent.getActivity(
             this,
-            0,
+            1,
            notifyIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
@@ -223,7 +223,7 @@ class MusicService : BaseService() {
                     .setShowActionsInCompactView(1)
 
             )
-            priority = NotificationCompat.PRIORITY_LOW
+            priority = NotificationCompat.PRIORITY_MAX
             setContentIntent(notifyPendingIntent)
         }.build()
         startForeground(1, notification)

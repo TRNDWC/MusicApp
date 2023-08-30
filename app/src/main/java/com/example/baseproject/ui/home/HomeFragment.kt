@@ -74,7 +74,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         intent = Intent(context, MusicService::class.java)
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
-
         viewModel.crossRefData.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {}
