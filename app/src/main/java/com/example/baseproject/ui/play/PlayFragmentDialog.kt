@@ -32,6 +32,7 @@ import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
+import com.example.baseproject.utils.MusicTimer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -52,6 +53,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private var isShuffle: Boolean = false
     private var data: List<LibraryItem>? = null
     private val handler = Handler()
+    private val musicTimer = MusicTimer()
     private val viewModel : PlayViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
@@ -347,6 +349,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private fun initSeekBar() {
         dialogBinding.seekBar.progress = musicService.currentPosition()
         dialogBinding.seekBar.max = musicService.duration()
+        dialogBinding.tvTotalTime.text = musicTimer.setTimer(musicService.duration())
         dialogBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -366,6 +369,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 dialogBinding.seekBar.progress = musicService.currentPosition()
+                dialogBinding.tvCurrentTime.text = musicTimer.setTimer(musicService.currentPosition())
                 handler.postDelayed(this, 0)
             }
         }, 0)

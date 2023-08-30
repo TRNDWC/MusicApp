@@ -55,6 +55,7 @@
     <string name="none">none</string>
     <string name="edit_playlist">Edit playlist</string>
     <string name="log_out">Log out</string>
+    <string name="current_time">0:00</string>
 
 
 </resources>
