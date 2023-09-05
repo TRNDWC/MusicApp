@@ -2,6 +2,7 @@ package com.example.baseproject.ui.authentication
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.baseproject.R
@@ -56,6 +57,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding, LoginViewModel>(R.layou
         }
         lifecycleScope.launch {
             rxPreferences.setEmail(binding.editTextTextEmailAddress.text.toString())
+        }
+
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
     }
 

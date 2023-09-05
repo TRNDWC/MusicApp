@@ -1,7 +1,6 @@
 package com.example.baseproject.container
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.baseproject.R
@@ -25,14 +23,11 @@ import com.example.baseproject.utils.SharedPrefs
 import com.example.core.base.BaseActivity
 import com.example.core.pref.RxPreferences
 import com.example.core.utils.NetworkConnectionManager
-import com.example.core.utils.setLanguage
 import com.example.core.utils.toast
 import com.example.setting.ui.home.DemoDialogListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -58,11 +53,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        if (!checkStorePermission(STORAGE_PERMISSION_ID)) {
-            showRequestPermission(STORAGE_PERMISSION_ID)
-        }
-
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host) as NavHostFragment
@@ -126,8 +116,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String?>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 0) {

@@ -18,7 +18,7 @@ import java.nio.file.Paths
 class DataRepositoryImpl : DataRepository {
 
     override fun getSong(context: Context): List<PlaylistSongItem> {
-        val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
+//        val sArtworkUri = Uri.parse("content://media/external/audio/albumart")
         val musicList = mutableListOf<PlaylistSongItem>()
         val musicResolver: ContentResolver = context.contentResolver
         val musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI

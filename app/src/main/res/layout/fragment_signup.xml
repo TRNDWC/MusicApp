@@ -24,9 +24,10 @@
                     android:gravity="center"
                     android:text="@string/sign_up"
                     android:textColor="@color/white"
-                    android:textSize="28sp"></TextView>
+                    android:textSize="28sp"/>
 
                 <Button
+                    android:id="@+id/btn_back"
                     android:layout_width="31dp"
                     android:layout_height="31dp"
                     android:background="@drawable/ic_backarrow"

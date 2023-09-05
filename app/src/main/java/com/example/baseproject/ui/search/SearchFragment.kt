@@ -26,7 +26,7 @@ class SearchFragment :
     private val viewModel: SearchViewModel by viewModels()
     override fun getVM() = viewModel
     private val categoryList = dummyCategoryList()
-    private val searchCategoryAdapter = CategoryAdapter(categoryList)
+    private val searchCategoryAdapter = CategoryAdapter(categoryList.toMutableList())
 
     override fun setOnClick() {
         super.setOnClick()

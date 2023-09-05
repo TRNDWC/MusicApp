@@ -27,6 +27,7 @@
                     android:textSize="28sp" />
 
                 <Button
+                    android:id="@+id/btn_back"
                     android:layout_width="31dp"
                     android:layout_height="31dp"
                     android:background="@drawable/ic_backarrow"
