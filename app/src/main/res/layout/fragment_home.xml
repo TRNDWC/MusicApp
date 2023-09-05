@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/black">
+        android:background="@drawable/screen_bg"
+        android:orientation="vertical">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/nav_host_container"
@@ -17,51 +17,54 @@
             app:defaultNavHost="true"
             app:navGraph="@navigation/home_navigation"
             tools:layout="@layout/nav_host_container_fragment" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/bottom_music_player"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
-                android:weightSum="6"
-                android:orientation="horizontal"
                 android:layout_gravity="center_vertical"
-                android:padding="5dp"
                 android:layout_margin="5dp"
+                android:background="@drawable/play_background"
+                android:orientation="horizontal"
+                android:padding="5dp"
                 android:visibility="gone"
-                android:background="@drawable/play_background">
+                android:weightSum="6">
+
                 <ImageView
                     android:id="@+id/song_image"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/_10dp">
-                </ImageView>
+                    android:layout_marginEnd="@dimen/_10dp"
+                    android:layout_weight="1"/>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="5"
                     android:orientation="vertical">
-                <TextView
-                    android:id="@+id/song_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:text="ABCDEF"
-                    android:layout_marginTop="7dp"
-                    android:layout_gravity="center_horizontal">
-                </TextView>
+
                     <TextView
-                    android:id="@+id/song_artist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:text="ABCDEF"
-                    android:layout_gravity="center_vertical">
-                </TextView>
+                        android:id="@+id/song_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="7dp"
+                        android:text="ABCDEF"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/song_artist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="ABCDEF"
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -70,20 +73,20 @@
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:backgroundTint="#00FFFFFF"
-                    android:src="@drawable/ic_play">
-                </ImageButton>
+                    android:src="@drawable/ic_play" />
 
             </LinearLayout>
+
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_nav"
                 android:layout_width="match_parent"
                 android:layout_height="65dp"
                 android:background="@drawable/nav_bar"
-                app:menu="@menu/bottom_nav"
                 android:padding="5dp"
                 app:itemIconTint="@color/color_btn"
+                app:itemRippleColor="@color/bottomnav_ripple"
                 app:itemTextColor="@color/color_btn"
-                app:itemRippleColor="@color/bottomnav_ripple" />
+                app:menu="@menu/bottom_nav" />
         </LinearLayout>
     </FrameLayout>
 </layout>

@@ -52,11 +52,6 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!checkStorePermission(STORAGE_PERMISSION_ID)) {
-            showRequestPermission(STORAGE_PERMISSION_ID)
-        }
-
-
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host) as NavHostFragment
         appNavigation.bind(navHostFragment.navController)
@@ -72,41 +67,8 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
             .launchIn(lifecycleScope)
     }
 
-    private fun checkStorePermission(permission: Int): Boolean {
-        return if (permission == STORAGE_PERMISSION_ID) {
-            PermissionsUtil.checkPermissions(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        } else {
-            true
-        }
-    }
-
-    private fun showRequestPermission(requestCode: Int) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (requestCode == STORAGE_PERMISSION_ID) {
-                requestPermissions(
-                    this,
-                    requestCode,
-                    Manifest.permission.READ_MEDIA_AUDIO,
-                )
-            }
-        } else {
-            if (requestCode == STORAGE_PERMISSION_ID) {
-                requestPermissions(
-                    this,
-                    requestCode,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            }
-        }
-    }
-
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String?>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<String?>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 0) {

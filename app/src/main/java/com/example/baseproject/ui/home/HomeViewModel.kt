@@ -1,10 +1,13 @@
 package com.example.baseproject.ui.home
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
+import com.example.baseproject.data.datarepo.DataRepository
 import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.core.base.BaseViewModel
@@ -18,8 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    application: Application,
-    playlistRepositoryFB: PlaylistRepositoryFB
+    private val application: Application,
+    playlistRepositoryFB: PlaylistRepositoryFB,
+    private val data: DataRepository,
 ) : BaseViewModel() {
     private val repository: MusicRepository
 
@@ -44,6 +48,20 @@ class HomeViewModel @Inject constructor(
             viewModelScope.launch {
                 repository.addSongPlaylistCrossRef(it)
             }
+        }
+    }
+
+    fun getSong() {
+        val songData = data.getSong(application)
+        for (items in songData) {
+            Log.d("HoangDH", "getSong: ${items.songTitle}")
+            addSong(items)
+        }
+    }
+
+    private fun addSong(item: PlaylistSongItem) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.addSong(item)
         }
     }
 }

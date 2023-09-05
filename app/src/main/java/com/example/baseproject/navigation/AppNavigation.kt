@@ -10,9 +10,7 @@ interface AppNavigation : BaseNavigator {
     fun openStartToSignUp(bundle: Bundle? = null)
     fun openStartToLogin(bundle: Bundle? = null)
     fun openSignUptoHome(bundle: Bundle? = null)
-
     fun openProfileToStartScreen(bundle: Bundle? = null)
-
     fun openStartToHome(bundle: Bundle? = null)
     fun openSignUptoLogin(bundle: Bundle? = null)
 

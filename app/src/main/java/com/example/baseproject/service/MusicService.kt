@@ -126,7 +126,6 @@ class MusicService : BaseService() {
                     stopSelf()
                     _songIsPlaying.postValue(false)
                 }
-
             }
         }
     }

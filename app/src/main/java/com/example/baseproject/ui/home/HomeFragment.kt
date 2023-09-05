@@ -1,11 +1,14 @@
 package com.example.baseproject.ui.home
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -26,6 +29,7 @@ import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.library.LibraryItemAdapter
 import com.example.baseproject.ui.play.PlayFragmentDialog
 import com.example.baseproject.ui.playlist.PlaylistViewModel
+import com.example.baseproject.utils.PermissionsUtil
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,21 +45,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private val viewModel: HomeViewModel by viewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels()
     private lateinit var intent: Intent
+    private val STORAGE_PERMISSION_ID = 0
     private var isPlaying: Boolean = false
-    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
 
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
             Log.e("HoangDH", "Service Connected from HOME")
             val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
             musicService = myBinder.getMyService()
-                Log.e("HoangDH", "${playlistViewModel.musicService.value?.songLiveData?.value}")
-//            if(playlistViewModel.musicService.value?.songLiveData?.value != null){
-                musicService!!.songLiveData.observe(viewLifecycleOwner) {
-                    if(it != null){
+            Log.e("HoangDH", "${playlistViewModel.musicService.value?.songLiveData?.value}")
+            musicService!!.songLiveData.observe(viewLifecycleOwner) {
+                if (it != null) {
                     bindingBottomMusicPlayer(it)
 
-                    }
-//                }
+                }
             }
 
             musicService!!.songIsPlaying.observe(viewLifecycleOwner) {
@@ -79,6 +82,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     override fun initView(savedInstanceState: Bundle?) {
         super.initView(savedInstanceState)
+
+        if (!checkStorePermission(STORAGE_PERMISSION_ID)) {
+            showRequestPermission(STORAGE_PERMISSION_ID)
+        }
+
         Log.e("HoangDH", "initView")
         setupBottomNavigationBar()
         intent = Intent(context, MusicService::class.java)
@@ -91,6 +99,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         if (needOpenDialog != null && needOpenDialog) {
             PlayFragmentDialog().show(childFragmentManager, "play_screen")
         }
+
         viewModel.crossRefData.observe(viewLifecycleOwner) { response ->
             when (response) {
                 is Response.Loading -> {}
@@ -159,12 +168,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
 
     private fun bindingBottomMusicPlayer(songItem: PlaylistSongItem) {
         setOnClickAfterServiceInit()
-//        val bitmap = BitmapFactory.decodeFile(songItem.songImage);
-//        if (bitmap != null)
-//            binding.songImage.setImageBitmap(bitmap)
-//        else {
-//            binding.songImage.setImageResource(R.drawable.spotify)
-//        }
         binding.playBtn.setImageResource(R.drawable.ic_pause)
         binding.songImage.setImageURI(songItem.songImage!!.toUri())
         binding.songTitle.text = songItem.songTitle
@@ -200,5 +203,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
         super.onDetach()
     }
 
+    private fun checkStorePermission(permission: Int): Boolean {
+        return if (permission == STORAGE_PERMISSION_ID) {
+            PermissionsUtil.checkPermissions(
+                requireContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        } else {
+            true
+        }
+    }
 
+    private fun showRequestPermission(requestCode: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                PermissionsUtil.requestPermissions(
+                    requireActivity(),
+                    requestCode,
+                    Manifest.permission.READ_MEDIA_AUDIO
+                )
+            }
+        } else {
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                PermissionsUtil.requestPermissions(
+                    requireActivity(),
+                    requestCode,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+        }
+    }
 }

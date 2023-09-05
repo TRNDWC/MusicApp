@@ -43,6 +43,9 @@ class signupFragment :
             lifecycleScope.launch {
                 rxPreferences.setEmail(editTextTextEmailAddress.text.toString().trim())
             }
+            binding.btnBack.setOnClickListener {
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
+import com.example.baseproject.data.model.WaitList
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.baseproject.service.MusicService
@@ -16,12 +17,14 @@ import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.util.Deque
 import java.util.Locale
 import javax.inject.Inject
 
@@ -33,11 +36,39 @@ class PlaylistViewModel @Inject constructor(
     private val repository: MusicRepository
     var firstInit = MutableLiveData<Boolean>()
     var musicService = MutableLiveData<MusicService>()
+    var isShuffle = MutableLiveData<Boolean>()
+    var btnState = MutableLiveData<Int>()
+    var waitList = WaitList()
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
         repository = MusicRepository(musicDao)
         firstInit.postValue(false)
+        isShuffle.postValue(false)
+        btnState.postValue(0)
+    }
+
+    fun waitListCheck() {
+        if (waitList.currentPlaylist != cPlaylist.value?.playlistId) {
+            waitList.history.clear()
+            waitList.currentPlaylist = cPlaylist.value?.playlistId.toString()
+        }
+    }
+
+    fun prepare(position: Int) {
+        waitList.waitList.clear()
+        waitList.history.addLast(songList.value!![position])
+        for (i in songList.value!!)
+            if (i !in waitList.history)
+                waitList.waitList.addLast(i)
+    }
+
+    fun addSongToWaitList(song: PlaylistSongItem) {
+        waitList.waitList.addLast(song)
+    }
+
+    fun addSongToHistory(song: PlaylistSongItem) {
+        waitList.history.addLast(song)
     }
 
     fun setFirstInit() {
@@ -57,8 +88,14 @@ class PlaylistViewModel @Inject constructor(
     var songList: LiveData<List<PlaylistSongItem>> = _songList
 
     fun getSong(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _songList.postValue(repository.getSongsOfPlaylist(id).songs)
+        if (id != "-1") {
+            viewModelScope.launch(Dispatchers.IO) {
+                _songList.postValue(repository.getSongsOfPlaylist(id).songs)
+            }
+        } else {
+            viewModelScope.launch(Dispatchers.IO) {
+                _songList.postValue(repository.getAllSong().first())
+            }
         }
     }
 
@@ -69,7 +106,7 @@ class PlaylistViewModel @Inject constructor(
     }
 
 
-    // hiển thị các bài hát để thêm vào playlist hiện tại
+// hiển thị các bài hát để thêm vào playlist hiện tại
 
     val addSongList = MutableLiveData<List<PlaylistSongItem>>()
 
@@ -128,10 +165,9 @@ class PlaylistViewModel @Inject constructor(
         return dataId
     }
 
-    // custom fragment
+// custom fragment
 
     fun reset(newList: List<String>, oldList: List<String>, songId: Int) {
-//        viewModelScope.launch {
         newList.forEach {
             if (it !in oldList) {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -151,12 +187,7 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    val playlistId = MutableLiveData<String>()
-    fun set(id: String) {
-        playlistId.value = id
-    }
-
-    // lấy dữ liệu về các playlist
+// lấy dữ liệu về các playlist
 
     val playlists = SingleLiveEvent<List<LibraryItem>>()
     fun getAllPlaylists() {
@@ -166,7 +197,7 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    // edit playlist
+// edit playlist
 
     fun edit(list: List<Int>, playlistId: String, new_title: String, image: String?) {
         list.forEach {
@@ -201,7 +232,7 @@ class PlaylistViewModel @Inject constructor(
         image.postValue(nImage)
     }
 
-    //
+//
 
 
     // các chức năng khác

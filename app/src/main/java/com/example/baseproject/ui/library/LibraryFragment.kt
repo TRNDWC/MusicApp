@@ -1,5 +1,6 @@
 package com.example.baseproject.ui.library
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.activityViewModels
@@ -13,7 +14,9 @@ import com.example.baseproject.navigation.ItemClickNavigation
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.InputStream
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class LibraryFragment :
@@ -29,6 +32,14 @@ class LibraryFragment :
         super.setOnClick()
         binding.addItem.setOnClickListener {
             AddPlaylistDialog().show(requireActivity().supportFragmentManager, "add_playlist")
+        }
+        binding.allSongLayout.setOnClickListener {
+            val bundle = Bundle()
+            val uri = Uri.parse("android.resource://your.package.here/drawable/ic_music")
+            val item = LibraryItem("-1", "All Song", uri.toString())
+            bundle.putParcelable("playlist", item)
+            this.findNavController()
+                .navigate(R.id.action_libraryFragment_to_playlistFragment, bundle)
         }
     }
 

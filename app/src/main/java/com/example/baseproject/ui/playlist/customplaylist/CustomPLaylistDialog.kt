@@ -83,8 +83,8 @@ class CustomPLaylistDialog(
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        viewModel.playlistId.observe(viewLifecycleOwner) {
-            viewModel.getSong(it)
+        viewModel.cPlaylist.observe(viewLifecycleOwner) {
+            viewModel.getSong(it.playlistId)
         }
     }
 

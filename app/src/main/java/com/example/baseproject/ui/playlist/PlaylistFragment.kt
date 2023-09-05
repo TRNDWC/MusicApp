@@ -33,6 +33,7 @@ import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.joinAll
 import java.io.InputStream
 import java.util.Collections
 import javax.inject.Inject
@@ -128,7 +129,6 @@ class PlaylistFragment :
                         }
                     }
                 }
-
             }
         }
     }
@@ -136,9 +136,13 @@ class PlaylistFragment :
     override fun bindingStateView() {
         super.bindingStateView()
         val item = arguments?.getParcelable<LibraryItem>("playlist")
+
         item?.let {
+            if (it.playlistId == "-1") {
+                binding.btnEdit.visibility = View.GONE
+                binding.addSong.visibility = View.GONE
+            }
             viewModel.getSong(it.playlistId)
-            viewModel.set(it.playlistId)
             viewModel.getData(it.playlistId)
         }
         recyclerviewAction()
@@ -284,13 +288,12 @@ class PlaylistFragment :
         Collections.sort(
             swatches
         ) { swatch1, swatch2 -> swatch2.population - swatch1.population }
-        val gd: GradientDrawable
-        when (swatches.size) {
-            0 -> gd = GradientDrawable(
+        val gd: GradientDrawable = when (swatches.size) {
+            0 -> GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(Color.BLACK, Color.BLACK)
             )
 
-            else -> gd = GradientDrawable(
+            else -> GradientDrawable(
                 GradientDrawable.Orientation.TOP_BOTTOM,
                 intArrayOf(swatches[0].rgb, Color.BLACK)
             )
@@ -302,6 +305,7 @@ class PlaylistFragment :
     override fun onItemClicked(item: PlaylistSongItem, view: PlaylistSongItemBinding) {
 
         Log.e("HoangDH", "itemClicked")
+        viewModel.prepare(viewModel.songList.value!!.indexOf(item))
         shuffleSong()
         prepareBundle(item)
         Log.e("HoangDH", "$previousClickedSong")
@@ -319,6 +323,7 @@ class PlaylistFragment :
     }
 
     private fun shuffleSong() {
-        mShuffleSongList = random.getRandomSongList(mSongList)
+        val randomWaitList = random.getRandomSongList(viewModel.waitList.waitList.toList())
+        mShuffleSongList = viewModel.waitList.history + randomWaitList
     }
 }

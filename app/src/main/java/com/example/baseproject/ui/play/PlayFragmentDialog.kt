@@ -47,9 +47,6 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private lateinit var bundle: Bundle
 
     private var isPlaying: Boolean = false
-    private var isLoopingPlaylist: Boolean = false
-    private var isLoopingSong: Boolean = false
-    private var isShuffle: Boolean = false
     private var data: List<LibraryItem>? = null
     private val handler = Handler()
     private val random = Random()
@@ -111,9 +108,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         viewModel.getAllPlaylists()
 
         dialogBinding = FragmentPlayDialogBinding.inflate(inflater, container, false)
-
         val intent = Intent(context, MusicService::class.java)
-
         context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
 
 
@@ -122,54 +117,35 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             btnDown.setOnClickListener {
                 dialog!!.dismiss()
             }
-
-            btnRepeat.setOnClickListener {
-                isLoopingPlaylist = when (isLoopingPlaylist) {
-                    true -> {
-                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
-                        false
-                    }
-
-                    false -> {
-                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
-                        true
-                    }
+        }
+        viewModel.isShuffle.observe(viewLifecycleOwner) { isShuffle ->
+            when (isShuffle) {
+                false -> {
+                    dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
                 }
-                musicService.repeatPlaylist(isLoopingPlaylist)
 
-            }
-
-            btnRepeat.setOnLongClickListener {
-                isLoopingSong = when (isLoopingSong) {
-                    true -> {
-                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
-                        false
-                    }
-
-                    false -> {
-                        dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat_one)
-                        true
-                    }
+                true -> {
+                    dialogBinding.btnShu.setImageResource(R.drawable.ic_clicked_shuffle)
                 }
-                musicService.repeatSong(isLoopingSong)
-                true
-            }
-
-            btnShu.setOnClickListener {
-                isShuffle = when (isShuffle) {
-                    true -> {
-                        dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
-                        false
-                    }
-
-                    false -> {
-                        dialogBinding.btnShu.setImageResource(R.drawable.ic_clicked_shuffle)
-                        true
-                    }
-                }
-                musicService.shuffleSong(isShuffle)
             }
         }
+
+        viewModel.btnState.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                0 -> {
+                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+                }
+
+                1 -> {
+                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
+                }
+
+                2 -> {
+                    dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat_one)
+                }
+            }
+        }
+
         return dialogBinding.root
     }
 
@@ -181,6 +157,10 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private fun setOnClick() {
 
         dialogBinding.apply {
+
+            btnRepeat.setOnClickListener {
+                viewModel.btnState.postValue((viewModel.btnState.value!! + 1) % 3)
+            }
 
             btnPlay.setOnClickListener {
                 if (!isPlaying) {
@@ -194,7 +174,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
             btnNext.setOnClickListener {
 
-                if (isShuffle) {
+                if (viewModel.isShuffle.value!!) {
                     Log.e("HoangDH", "shuffle")
                     when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
                         true -> musicService.songPosition++
@@ -216,14 +196,25 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnPre.setOnClickListener {
-                when (musicService.songPosition > 0) {
-                    true -> musicService.songPosition--
-                    false -> musicService.songPosition = musicService.songList.size - 1
+                if (viewModel.isShuffle.value!!) {
+                    when (musicService.songPosition > 0) {
+                        true -> musicService.songPosition--
+                        false -> musicService.songPosition = musicService.shuffleSongList.size - 1
+                    }
+                    prepareBundle(musicService.shuffleSongList[musicService.songPosition])
+                    bindingPlayerView(musicService.shuffleSongList[musicService.songPosition])
+                    startMusicService()
+                } else {
+                    when (musicService.songPosition > 0) {
+                        true -> musicService.songPosition--
+                        false -> musicService.songPosition = musicService.songList.size - 1
+                    }
+                    prepareBundle(musicService.songList[musicService.songPosition])
+                    bindingPlayerView(musicService.songList[musicService.songPosition])
+                    startMusicService()
                 }
-                prepareBundle(musicService.songList[musicService.songPosition])
-                bindingPlayerView(musicService.songList[musicService.songPosition])
-                startMusicService()
             }
+
             btnFav.setOnClickListener {
                 viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
 
@@ -244,6 +235,23 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
             dialogBinding.btnDown.setOnClickListener {
                 this@PlayFragmentDialog.dismiss()
+            }
+
+            btnShu.setOnClickListener {
+                viewModel.isShuffle.postValue(
+                    when (viewModel.isShuffle.value!!) {
+                        true -> {
+                            dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
+                            false
+                        }
+
+                        false -> {
+                            dialogBinding.btnShu.setImageResource(R.drawable.ic_clicked_shuffle)
+                            true
+                        }
+                    }
+                )
+                musicService.shuffleSong(viewModel.isShuffle.value!!)
             }
         }
 
@@ -267,13 +275,27 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         val bitmap = BitmapFactory.decodeStream(`is`)
         `is`?.close()
         dialogBinding.playBg.background = getDominantColor(bitmap)
-        isLoopingSong = false
-        if (isLoopingPlaylist) {
-            dialogBinding.btnRepeat.setImageResource(R.drawable.ic_clicked_repeat)
-        } else {
-            dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
+        viewModel.btnState.observe(viewLifecycleOwner) {
+            when (it) {
+                0 -> {
+                    Log.d("trndwcs", "none")
+                    musicService.repeatSong(false)
+                    musicService.repeatPlaylist(false)
+                }
+
+                1 -> {
+                    Log.d("trndwcs", "repeat playlist")
+                    musicService.repeatSong(false)
+                    musicService.repeatPlaylist(true)
+                }
+
+                2 -> {
+                    Log.d("trndwcs", "repeat song")
+                    musicService.repeatSong(true)
+                    musicService.repeatPlaylist(false)
+                }
+            }
         }
-        musicService.repeatSong(isLoopingSong)
     }
 
     private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
