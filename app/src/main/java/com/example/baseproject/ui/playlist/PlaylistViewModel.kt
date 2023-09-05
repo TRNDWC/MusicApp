@@ -41,7 +41,7 @@ class PlaylistViewModel @Inject constructor(
     var isShuffle = MutableLiveData<Boolean>()
     var btnState = MutableLiveData<Int>()
     var waitList = WaitList()
-    var random = Random()
+
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
@@ -54,6 +54,7 @@ class PlaylistViewModel @Inject constructor(
     fun waitListCheck() {
         if (waitList.currentPlaylist != cPlaylist.value?.playlistId) {
             waitList.history.clear()
+            waitList.waitList.clear()
             waitList.currentPlaylist = cPlaylist.value?.playlistId.toString()
         }
     }

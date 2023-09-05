@@ -55,7 +55,7 @@ class LibraryItemAdapter(
                 .load(uri)
                 .into(holder.libraryItemImage)
         } else {
-            holder.libraryItemImage.setImageResource(R.drawable.ic_music)
+            holder.libraryItemImage.setImageResource(R.drawable.spotify)
         }
     }
 }
