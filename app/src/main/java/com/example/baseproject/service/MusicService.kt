@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.provider.MediaStore
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
@@ -29,7 +30,7 @@ class MusicService : BaseService() {
     private lateinit var songItem: PlaylistSongItem
     private var isLoopingPlaylist: Boolean = false
     private var isShuffle: Boolean = false
-     val songLiveData = MutableLiveData<PlaylistSongItem>()
+    val songLiveData = MutableLiveData<PlaylistSongItem>()
 
     private val _songIsPlaying: MutableLiveData<Boolean> by lazy {
         MutableLiveData<Boolean>(false)
@@ -37,6 +38,7 @@ class MusicService : BaseService() {
     val songIsPlaying: LiveData<Boolean> = _songIsPlaying
     lateinit var songList: List<PlaylistSongItem>
     lateinit var shuffleSongList: List<PlaylistSongItem>
+    var song: PlaylistSongItem? = null
     var songPosition: Int = 0
 
 
@@ -64,13 +66,19 @@ class MusicService : BaseService() {
             songItem = bundle!!.getParcelable("song_item")!!
             songList = bundle.getParcelableArrayList("song_list")!!
             shuffleSongList = bundle.getParcelableArrayList("shuffle_song_list")!!
+            songList.forEach() {
+                Log.d("shuffle", it.songTitle.toString())
+            }
+            shuffleSongList.forEach() {
+                Log.d("shuffle1", it.songTitle.toString())
+            }
+            song = bundle.getParcelable("song")
             songPosition = bundle.getInt("song_position")
             songLiveData.value = songItem
             songLiveData.postValue(songItem)
             musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
             sendNotification(songItem)
             startMusic()
-
         }
 
         if (intent?.action != null) {
@@ -121,8 +129,7 @@ class MusicService : BaseService() {
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
                 }
-            }
-            else{
+            } else {
                 musicPlayer.setOnCompletionListener {
                     stopSelf()
                     _songIsPlaying.postValue(false)
@@ -145,6 +152,21 @@ class MusicService : BaseService() {
 
     fun shuffleSong(shuffle: Boolean) {
         isShuffle = shuffle
+        if (!isShuffle) {
+            for (i in shuffleSongList.indices) {
+                if (shuffleSongList[i].songId == songItem.songId) {
+                    songPosition = i
+                    break
+                }
+            }
+        } else {
+            for (i in songList.indices) {
+                if (songList[i].songId == songItem.songId) {
+                    songPosition = i
+                    break
+                }
+            }
+        }
     }
 
     private fun autoPlayNextSong(songItem: PlaylistSongItem) {
@@ -181,7 +203,7 @@ class MusicService : BaseService() {
         val notifyPendingIntent = PendingIntent.getActivity(
             this,
             1,
-           notifyIntent,
+            notifyIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
 //

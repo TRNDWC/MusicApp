@@ -51,7 +51,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private var data: List<LibraryItem>? = null
     private val handler = Handler()
     private val musicTimer = MusicTimer()
-    private val viewModel : PlayViewModel by activityViewModels()
+    private val viewModel: PlayViewModel by activityViewModels()
     private val playlistViewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
 
@@ -183,12 +183,14 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnNext.setOnClickListener {
-
                 if (playlistViewModel.isShuffle.value!!) {
                     Log.e("HoangDH", "shuffle")
                     when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
                         true -> musicService.songPosition++
-                        false -> musicService.songPosition = 0
+                        false -> if (playlistViewModel.btnState.value == 0) musicService.songPosition =
+                            musicService.shuffleSongList.size - 1
+                        else
+                            musicService.songPosition = 0
                     }
                     prepareBundle(musicService.shuffleSongList[musicService.songPosition])
                     bindingPlayerView(musicService.shuffleSongList[musicService.songPosition])
@@ -197,7 +199,10 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                     Log.e("HoangDH", "not shuffle")
                     when (musicService.songPosition < musicService.songList.size - 1) {
                         true -> musicService.songPosition++
-                        false -> musicService.songPosition = 0
+                        false -> if (playlistViewModel.btnState.value == 0) musicService.songPosition =
+                            musicService.shuffleSongList.size - 1
+                        else
+                            musicService.songPosition = 0
                     }
                     prepareBundle(musicService.songList[musicService.songPosition])
                     bindingPlayerView(musicService.songList[musicService.songPosition])
@@ -209,7 +214,10 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 if (playlistViewModel.isShuffle.value!!) {
                     when (musicService.songPosition > 0) {
                         true -> musicService.songPosition--
-                        false -> musicService.songPosition = musicService.shuffleSongList.size - 1
+                        false -> if (playlistViewModel.btnState.value == 0) musicService.songPosition =
+                            0
+                        else
+                            musicService.songPosition = musicService.shuffleSongList.size - 1
                     }
                     prepareBundle(musicService.shuffleSongList[musicService.songPosition])
                     bindingPlayerView(musicService.shuffleSongList[musicService.songPosition])
@@ -217,7 +225,10 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 } else {
                     when (musicService.songPosition > 0) {
                         true -> musicService.songPosition--
-                        false -> musicService.songPosition = musicService.songList.size - 1
+                        false -> if (playlistViewModel.btnState.value == 0) musicService.songPosition =
+                            0
+                        else
+                            musicService.songPosition = musicService.songList.size - 1
                     }
                     prepareBundle(musicService.songList[musicService.songPosition])
                     bindingPlayerView(musicService.songList[musicService.songPosition])
@@ -391,7 +402,8 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 dialogBinding.seekBar.progress = musicService.currentPosition()
-                dialogBinding.tvCurrentTime.text = musicTimer.setTimer(musicService.currentPosition())
+                dialogBinding.tvCurrentTime.text =
+                    musicTimer.setTimer(musicService.currentPosition())
                 handler.postDelayed(this, 0)
             }
         }, 0)
