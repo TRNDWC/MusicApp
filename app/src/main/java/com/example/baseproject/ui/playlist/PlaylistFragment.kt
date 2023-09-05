@@ -311,9 +311,7 @@ class PlaylistFragment :
         } else {
             viewModel.musicService.value?.reset()
             context?.stopService(intent)
-//            context?.unbindService(mServiceConnection)
             context?.startService(intent)
-//            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
