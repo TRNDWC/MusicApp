@@ -153,8 +153,6 @@ class PlaylistFragment :
 
         viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
 
-            viewModel.waitListCheck()
-
             if (item?.playlistImage == null) {
                 binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
                 binding.collapsingToolbar.background = GradientDrawable(
@@ -314,9 +312,7 @@ class PlaylistFragment :
         } else {
             viewModel.musicService.value?.reset()
             context?.stopService(intent)
-//            context?.unbindService(mServiceConnection)
             context?.startService(intent)
-//            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 

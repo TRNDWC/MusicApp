@@ -211,7 +211,7 @@ class MusicService : BaseService() {
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID).apply {
-            setSmallIcon(R.drawable.spotify)
+            setSmallIcon(R.drawable.ic_music)
             setLargeIcon(picture)
             setContentTitle(songItem.songTitle)
             setContentText(songItem.artists)

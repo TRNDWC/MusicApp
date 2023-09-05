@@ -19,6 +19,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageButton
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
@@ -183,6 +184,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnNext.setOnClickListener {
+                disableButtonForOneSecond(dialogBinding.btnNext)
                 if (playlistViewModel.isShuffle.value!!) {
                     Log.e("HoangDH", "shuffle")
                     when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
@@ -211,6 +213,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnPre.setOnClickListener {
+                disableButtonForOneSecond(dialogBinding.btnPre)
                 if (playlistViewModel.isShuffle.value!!) {
                     when (musicService.songPosition > 0) {
                         true -> musicService.songPosition--
@@ -407,5 +410,14 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 handler.postDelayed(this, 0)
             }
         }, 0)
+    }
+
+    private fun disableButtonForOneSecond(button : ImageButton) {
+        button.isEnabled = false // Disable the button
+
+        // Re-enable the button after 1000 milliseconds (1 second)
+        Handler().postDelayed({
+            button.isEnabled = true // Enable the button
+        }, 500)
     }
 }
