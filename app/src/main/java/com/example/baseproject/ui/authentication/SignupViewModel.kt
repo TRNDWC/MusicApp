@@ -15,6 +15,9 @@ class SignupViewModel @Inject constructor(private val authRepository: AuthReposi
     private var _signUpResponse: MutableLiveData<Response<Boolean>> = MutableLiveData()
     val signUpResponse: MutableLiveData<Response<Boolean>> get() = _signUpResponse
 
+    private var _validator: MutableLiveData<Boolean> = MutableLiveData()
+    val validator: MutableLiveData<Boolean> get() = _validator
+
     fun signUp(email: String, password: String, displayName: String) {
         Log.e("SignupViewModel", "signUp: $email $password $displayName")
         viewModelScope.launch {
@@ -23,19 +26,10 @@ class SignupViewModel @Inject constructor(private val authRepository: AuthReposi
         }
     }
 
-    private var _validator: MutableLiveData<Boolean> = MutableLiveData()
-    val validator: MutableLiveData<Boolean> get() = _validator
-    private var _isValidEmail = false
-    private var _isValidPassword = false
-    private var _isValidDisplayName = false
-
     fun setValidState(
-        isValidEmail: Boolean? = _isValidEmail,
-        isValidPassword: Boolean? = _isValidPassword,
-        isValidUserName: Boolean? = _isValidDisplayName) {
-        _isValidEmail = isValidEmail!!
-        _isValidPassword = isValidPassword!!
-        _isValidDisplayName = isValidUserName!!
-        _validator.value = _isValidEmail && _isValidPassword && _isValidDisplayName
+        isValidEmail: Boolean = false,
+        isValidPassword: Boolean = false,
+        isValidUserName: Boolean = false) {
+        _validator.value = isValidEmail && isValidPassword && isValidUserName
     }
 }

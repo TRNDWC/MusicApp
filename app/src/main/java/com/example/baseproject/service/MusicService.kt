@@ -16,6 +16,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
+import com.example.baseproject.container.MainActivity
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.core.base.BaseService
 
@@ -171,11 +172,19 @@ class MusicService : BaseService() {
     }
 
     private fun sendNotification(songItem: PlaylistSongItem) {
-        val pendingIntent = NavDeepLinkBuilder(this).setGraph(R.navigation.main_navigation)
-            .setDestination(R.id.homeFragment).setArguments(Bundle().apply {
-                putBoolean(NEED_OPEN_DIALOG, true)
-            }).createPendingIntent()
-
+        val bundle = Bundle()
+        bundle.putBoolean(NEED_OPEN_DIALOG, true)
+        val notifyIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        notifyIntent.putExtra("notification_bundle", bundle)
+        val notifyPendingIntent = PendingIntent.getActivity(
+            this,
+            1,
+           notifyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+//
         val picture =
             MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
 
@@ -213,8 +222,8 @@ class MusicService : BaseService() {
                     .setShowActionsInCompactView(1)
 
             )
-            priority = NotificationCompat.PRIORITY_LOW
-            setContentIntent(pendingIntent)
+            priority = NotificationCompat.PRIORITY_MAX
+            setContentIntent(notifyPendingIntent)
         }.build()
         startForeground(1, notification)
     }

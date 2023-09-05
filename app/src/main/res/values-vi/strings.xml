@@ -56,4 +56,5 @@
     <string name="edit_playlist">Sửa danh sách phát</string>
     <string name="log_out">Đăng Xuất</string>
     <string name="all_your_songs">All your songs</string>
+    <string name="current_time">0:00</string>
 </resources>

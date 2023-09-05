@@ -22,6 +22,7 @@ import android.view.WindowManager
 import android.widget.SeekBar
 import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
 import com.example.baseproject.R
@@ -31,7 +32,7 @@ import com.example.baseproject.databinding.FragmentPlayDialogBinding
 import com.example.baseproject.service.MusicService
 import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.ui.playlist.customplaylist.CustomPLaylistDialog
-import com.example.baseproject.utils.Random
+import com.example.baseproject.utils.MusicTimer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -49,8 +50,9 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private var isPlaying: Boolean = false
     private var data: List<LibraryItem>? = null
     private val handler = Handler()
-    private val random = Random()
-    private val viewModel: PlaylistViewModel by activityViewModels()
+    private val musicTimer = MusicTimer()
+    private val viewModel : PlayViewModel by activityViewModels()
+    private val playlistViewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
 
     private val mServiceConnection: ServiceConnection = object : ServiceConnection {
@@ -92,6 +94,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 behaviour.state = BottomSheetBehavior.STATE_EXPANDED
             }
         }
+        viewModel.switchDismissDialog(false)
         return dialog
     }
 
@@ -105,7 +108,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
 
-        viewModel.getAllPlaylists()
+        playlistViewModel.getAllPlaylists()
 
         dialogBinding = FragmentPlayDialogBinding.inflate(inflater, container, false)
         val intent = Intent(context, MusicService::class.java)
@@ -118,7 +121,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 dialog!!.dismiss()
             }
         }
-        viewModel.isShuffle.observe(viewLifecycleOwner) { isShuffle ->
+        playlistViewModel.isShuffle.observe(viewLifecycleOwner) { isShuffle ->
             when (isShuffle) {
                 false -> {
                     dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
@@ -130,7 +133,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
         }
 
-        viewModel.btnState.observe(viewLifecycleOwner) { state ->
+        playlistViewModel.btnState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 0 -> {
                     dialogBinding.btnRepeat.setImageResource(R.drawable.ic_repeat)
@@ -151,7 +154,14 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        viewModel.getAllPlaylists()
+        viewModel.switchDismissDialog(true)
+        viewModel.dimissDialog.observe(viewLifecycleOwner) {
+
+            Log.e("HoangDH", "onDismiss: ${viewModel.dimissDialog.value}")
+
+
+        }
+        playlistViewModel.getAllPlaylists()
     }
 
     private fun setOnClick() {
@@ -159,7 +169,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         dialogBinding.apply {
 
             btnRepeat.setOnClickListener {
-                viewModel.btnState.postValue((viewModel.btnState.value!! + 1) % 3)
+                playlistViewModel.btnState.postValue((playlistViewModel.btnState.value!! + 1) % 3)
             }
 
             btnPlay.setOnClickListener {
@@ -174,7 +184,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
             btnNext.setOnClickListener {
 
-                if (viewModel.isShuffle.value!!) {
+                if (playlistViewModel.isShuffle.value!!) {
                     Log.e("HoangDH", "shuffle")
                     when (musicService.songPosition < musicService.shuffleSongList.size - 1) {
                         true -> musicService.songPosition++
@@ -196,7 +206,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnPre.setOnClickListener {
-                if (viewModel.isShuffle.value!!) {
+                if (playlistViewModel.isShuffle.value!!) {
                     when (musicService.songPosition > 0) {
                         true -> musicService.songPosition--
                         false -> musicService.songPosition = musicService.shuffleSongList.size - 1
@@ -216,9 +226,9 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnFav.setOnClickListener {
-                viewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+                playlistViewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
 
-                viewModel.playlists.observe(viewLifecycleOwner) {
+                playlistViewModel.playlists.observe(viewLifecycleOwner) {
                     data = it
                 }
 
@@ -238,8 +248,8 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnShu.setOnClickListener {
-                viewModel.isShuffle.postValue(
-                    when (viewModel.isShuffle.value!!) {
+                playlistViewModel.isShuffle.postValue(
+                    when (playlistViewModel.isShuffle.value!!) {
                         true -> {
                             dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
                             false
@@ -251,7 +261,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                         }
                     }
                 )
-                musicService.shuffleSong(viewModel.isShuffle.value!!)
+                musicService.shuffleSong(playlistViewModel.isShuffle.value!!)
             }
         }
 
@@ -275,7 +285,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         val bitmap = BitmapFactory.decodeStream(`is`)
         `is`?.close()
         dialogBinding.playBg.background = getDominantColor(bitmap)
-        viewModel.btnState.observe(viewLifecycleOwner) {
+        playlistViewModel.btnState.observe(viewLifecycleOwner) {
             when (it) {
                 0 -> {
                     Log.d("trndwcs", "none")
@@ -361,6 +371,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
     private fun initSeekBar() {
         dialogBinding.seekBar.progress = musicService.currentPosition()
         dialogBinding.seekBar.max = musicService.duration()
+        dialogBinding.tvTotalTime.text = musicTimer.setTimer(musicService.duration())
         dialogBinding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -380,6 +391,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 dialogBinding.seekBar.progress = musicService.currentPosition()
+                dialogBinding.tvCurrentTime.text = musicTimer.setTimer(musicService.currentPosition())
                 handler.postDelayed(this, 0)
             }
         }, 0)

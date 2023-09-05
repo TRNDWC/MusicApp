@@ -107,25 +107,13 @@ class PlaylistFragment :
                         Log.e("HoangDH", "$previousClickedSong")
 
                         if (!viewModel.firstInit.value!!) {
-                            requireActivity().startService(intent)
-                            requireActivity().bindService(
-                                intent,
-                                mServiceConnection,
-                                Context.BIND_AUTO_CREATE
-                            )
+                            context?.startService(intent)
+                            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
                             viewModel.setFirstInit()
-                            previousClickedSong = item
-//                            Log.e("HoangDH", "$firstInit")
-                        } else if (previousClickedSong != item) {
-                            requireActivity().stopService(intent)
-                            requireActivity().unbindService(mServiceConnection)
-                            requireActivity().startService(intent)
-                            requireActivity().bindService(
-                                intent,
-                                mServiceConnection,
-                                Context.BIND_AUTO_CREATE
-                            )
-                            previousClickedSong = item
+                        } else {
+                            viewModel.musicService.value?.reset()
+                            context?.stopService(intent)
+                            context?.startService(intent)
                         }
                     }
                 }

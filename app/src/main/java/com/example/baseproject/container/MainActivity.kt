@@ -2,6 +2,7 @@ package com.example.baseproject.container
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,9 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.baseproject.R
 import com.example.baseproject.databinding.ActivityMainBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.play.PlayFragmentDialog
+import com.example.baseproject.ui.play.PlayViewModel
 import com.example.baseproject.utils.LanguageConfig.changeLanguage
 import com.example.baseproject.utils.PermissionsUtil
 import com.example.baseproject.utils.PermissionsUtil.requestPermissions
@@ -19,14 +23,11 @@ import com.example.baseproject.utils.SharedPrefs
 import com.example.core.base.BaseActivity
 import com.example.core.pref.RxPreferences
 import com.example.core.utils.NetworkConnectionManager
-import com.example.core.utils.setLanguage
 import com.example.core.utils.toast
 import com.example.setting.ui.home.DemoDialogListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -45,6 +46,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
     var sharedPreferences: SharedPrefs? = null
 
     private val viewModel: MainViewModel by viewModels()
+    private val playViewModel: PlayViewModel by viewModels()
     override fun getVM() = viewModel
     override val layoutId = R.layout.activity_main
     private val STORAGE_PERMISSION_ID = 0
@@ -65,6 +67,52 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), DemoDia
                 }
             }
             .launchIn(lifecycleScope)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        val needOpenDialog = intent?.getBundleExtra("notification_bundle")?.getBoolean(MusicService.NEED_OPEN_DIALOG)
+        Log.e("HoangDH", "onNewIntent: $needOpenDialog")
+        if(needOpenDialog != null && needOpenDialog){
+                if(playViewModel.dimissDialog.value == null || playViewModel.dimissDialog.value == true){
+                    playViewModel.switchDismissDialog(false)
+                    PlayFragmentDialog().show(supportFragmentManager, "PlayFragmentDialog")
+                }
+            }
+
+        super.onNewIntent(intent)
+
+    }
+
+    private fun checkStorePermission(permission: Int): Boolean {
+        return if (permission == STORAGE_PERMISSION_ID) {
+            PermissionsUtil.checkPermissions(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+        } else {
+            true
+        }
+    }
+
+    private fun showRequestPermission(requestCode: Int) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                requestPermissions(
+                    this,
+                    requestCode,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                )
+            }
+        } else {
+            if (requestCode == STORAGE_PERMISSION_ID) {
+                requestPermissions(
+                    this,
+                    requestCode,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(
