@@ -1,6 +1,7 @@
 package com.example.baseproject.ui.playlist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import com.example.baseproject.data.model.WaitList
 import com.example.baseproject.data.relation.SongPlaylistCrossRef
 import com.example.baseproject.data.repository.playlist.PlaylistRepositoryFB
 import com.example.baseproject.service.MusicService
+import com.example.baseproject.utils.Random
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.SingleLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +33,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PlaylistViewModel @Inject constructor(
     application: Application,
-    private val playlistRepositoryFB: PlaylistRepositoryFB
+    private val playlistRepositoryFB: PlaylistRepositoryFB,
 ) : BaseViewModel() {
     private val repository: MusicRepository
     var firstInit = MutableLiveData<Boolean>()
@@ -39,6 +41,7 @@ class PlaylistViewModel @Inject constructor(
     var isShuffle = MutableLiveData<Boolean>()
     var btnState = MutableLiveData<Int>()
     var waitList = WaitList()
+    var random = Random()
 
     init {
         val musicDao = MusicDatabase.getDatabase(application).musicDao()
@@ -57,10 +60,12 @@ class PlaylistViewModel @Inject constructor(
 
     fun prepare(position: Int) {
         waitList.waitList.clear()
+        waitList.history.clear()
         waitList.history.addLast(songList.value!![position])
         for (i in songList.value!!)
-            if (i !in waitList.history)
+            if (i !in waitList.history) {
                 waitList.waitList.addLast(i)
+            }
     }
 
     fun addSongToWaitList(song: PlaylistSongItem) {
@@ -69,6 +74,7 @@ class PlaylistViewModel @Inject constructor(
 
     fun addSongToHistory(song: PlaylistSongItem) {
         waitList.history.addLast(song)
+        waitList.waitList.remove(song)
     }
 
     fun setFirstInit() {

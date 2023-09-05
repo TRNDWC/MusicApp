@@ -108,7 +108,11 @@ class PlaylistFragment :
 
                         if (!viewModel.firstInit.value!!) {
                             context?.startService(intent)
-                            context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                            context?.bindService(
+                                intent,
+                                mServiceConnection,
+                                Context.BIND_AUTO_CREATE
+                            )
                             viewModel.setFirstInit()
                         } else {
                             viewModel.musicService.value?.reset()
@@ -229,8 +233,11 @@ class PlaylistFragment :
 
     private fun prepareBundle(item: PlaylistSongItem) {
         bundle = Bundle()
-        val position = viewModel.songList.value!!.indexOf(item)
-        bundle.putInt("song_position", position)
+        if (viewModel.isShuffle.value!!) {
+            bundle.putInt("song_position", mShuffleSongList.indexOf(item))
+        } else {
+            bundle.putInt("song_position", mSongList.indexOf(item))
+        }
         bundle.putParcelableArrayList(
             "song_list",
             viewModel.songList.value as ArrayList<PlaylistSongItem>
