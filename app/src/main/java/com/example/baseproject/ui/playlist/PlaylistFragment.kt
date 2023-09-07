@@ -152,6 +152,7 @@ class PlaylistFragment :
         }
 
         viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
+
             if (item?.playlistImage == null) {
                 binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
                 binding.collapsingToolbar.background = GradientDrawable(

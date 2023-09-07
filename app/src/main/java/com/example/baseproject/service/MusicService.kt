@@ -66,12 +66,6 @@ class MusicService : BaseService() {
             songItem = bundle!!.getParcelable("song_item")!!
             songList = bundle.getParcelableArrayList("song_list")!!
             shuffleSongList = bundle.getParcelableArrayList("shuffle_song_list")!!
-            songList.forEach() {
-                Log.d("shuffle", it.songTitle.toString())
-            }
-            shuffleSongList.forEach() {
-                Log.d("shuffle1", it.songTitle.toString())
-            }
             song = bundle.getParcelable("song")
             songPosition = bundle.getInt("song_position")
             songLiveData.value = songItem
@@ -106,7 +100,11 @@ class MusicService : BaseService() {
             if (songPosition < songList.size - 1) {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
-                    val nextSong = songList[songPosition]
+                    val nextSong = if (isShuffle) {
+                        shuffleSongList[songPosition]
+                    } else {
+                        songList[songPosition]
+                    }
                     songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
@@ -114,7 +112,11 @@ class MusicService : BaseService() {
             } else {
                 musicPlayer.setOnCompletionListener {
                     songPosition = 0
-                    val nextSong = songList[songPosition]
+                    val nextSong = if (isShuffle) {
+                        shuffleSongList[songPosition]
+                    } else {
+                        songList[songPosition]
+                    }
                     songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
@@ -124,7 +126,11 @@ class MusicService : BaseService() {
             if (songPosition < songList.size - 1) {
                 musicPlayer.setOnCompletionListener {
                     songPosition++
-                    val nextSong = songList[songPosition]
+                    val nextSong = if (isShuffle) {
+                        shuffleSongList[songPosition]
+                    } else {
+                        songList[songPosition]
+                    }
                     songLiveData.postValue(nextSong)
                     sendNotification(nextSong)
                     autoPlayNextSong(nextSong)
@@ -170,6 +176,7 @@ class MusicService : BaseService() {
     }
 
     private fun autoPlayNextSong(songItem: PlaylistSongItem) {
+        Log.d("song", songItem.songTitle.toString())
         reset()
         musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
         startMusic()
@@ -266,8 +273,12 @@ class MusicService : BaseService() {
                 } else {
                     songPosition = 0
                 }
-                val nextSong = songList[songPosition]
-                songLiveData.value = nextSong
+                val nextSong = if (isShuffle) {
+                    shuffleSongList[songPosition]
+                } else {
+                    songList[songPosition]
+                }
+                Log.d("song", nextSong.songTitle.toString())
                 songLiveData.postValue(nextSong)
                 sendNotification(songLiveData.value!!)
                 autoPlayNextSong(songLiveData.value!!)
@@ -276,11 +287,16 @@ class MusicService : BaseService() {
             MusicAction.ACTION_PREVIOUS -> {
                 if (songPosition > 0) {
                     songPosition--
-                    val nextSong = songList[songPosition]
+                    val nextSong = if (isShuffle) {
+                        shuffleSongList[songPosition]
+                    } else {
+                        songList[songPosition]
+                    }
                     songLiveData.value = nextSong
                     songLiveData.postValue(nextSong)
                     sendNotification(songLiveData.value!!)
                     autoPlayNextSong(songLiveData.value!!)
+                    Log.d("song", nextSong.songTitle.toString())
                 }
             }
         }
