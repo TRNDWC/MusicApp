@@ -279,6 +279,7 @@ class MusicService : BaseService() {
                     songList[songPosition]
                 }
                 Log.d("song", nextSong.songTitle.toString())
+                songLiveData.value = nextSong
                 songLiveData.postValue(nextSong)
                 sendNotification(songLiveData.value!!)
                 autoPlayNextSong(songLiveData.value!!)
