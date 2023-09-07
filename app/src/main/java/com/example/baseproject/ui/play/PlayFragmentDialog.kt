@@ -266,16 +266,17 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                     when (playlistViewModel.isShuffle.value!!) {
                         true -> {
                             dialogBinding.btnShu.setImageResource(R.drawable.ic_shuffle)
+                            musicService.shuffleSong(false)
                             false
                         }
 
                         false -> {
                             dialogBinding.btnShu.setImageResource(R.drawable.ic_clicked_shuffle)
+                            musicService.shuffleSong(true)
                             true
                         }
                     }
                 )
-                musicService.shuffleSong(playlistViewModel.isShuffle.value!!)
             }
         }
 
