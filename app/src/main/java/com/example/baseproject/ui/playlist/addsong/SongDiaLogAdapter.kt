@@ -13,8 +13,8 @@ import com.example.baseproject.databinding.DialogSongItemBinding
 import com.example.core.utils.toast
 
 interface OnItemClickListener {
-    fun onItemClicked(itemId: Int, view: DialogSongItemBinding)
-    fun onAddClicked(position: Int, itemId: Int, view: DialogSongItemBinding)
+    fun onItemClicked(itemId: Long, view: DialogSongItemBinding)
+    fun onAddClicked(position: Int, itemId: Long, view: DialogSongItemBinding)
 }
 
 class SongDiaLogAdapter(
@@ -40,11 +40,13 @@ class SongDiaLogAdapter(
         init {
             mPlaylistSongItem.apply {
                 add.setOnClickListener {
-                    onItemClickListener.onAddClicked(
-                        adapterPosition,
-                        mSongList[adapterPosition].songId,
-                        mPlaylistSongItem
-                    )
+                    mSongList[adapterPosition].songId?.let { it1 ->
+                        onItemClickListener.onAddClicked(
+                            adapterPosition,
+                            it1,
+                            mPlaylistSongItem
+                        )
+                    }
                     it.isClickable = false
                     this@SongDiaLogAdapter.mSongList.removeAt(adapterPosition)
                     notifyItemRemoved(adapterPosition)

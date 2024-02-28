@@ -13,7 +13,7 @@ import com.example.baseproject.databinding.EditPlaylistRcvItemBinding
 
 interface OnItemClickListener {
 
-    fun onRemoveClicked(itemId: Int)
+    fun onRemoveClicked(itemId: Long)
 }
 
 class EditPlaylistDialogAdapter(
@@ -33,9 +33,11 @@ class EditPlaylistDialogAdapter(
         init {
             mPlaylistSongItem.apply {
                 btnDelete.setOnClickListener {
-                    onItemClickListener.onRemoveClicked(
-                        mSongList[adapterPosition].songId
-                    )
+                    mSongList[adapterPosition].songId?.let { it1 ->
+                        onItemClickListener.onRemoveClicked(
+                            it1
+                        )
+                    }
                     it.isClickable = false
                     this@EditPlaylistDialogAdapter.mSongList.removeAt(adapterPosition)
                     notifyItemRemoved(adapterPosition)

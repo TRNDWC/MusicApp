@@ -86,11 +86,11 @@ class AddSongDialog(private val playlistId: String) : BottomSheetDialogFragment(
         return dialogBinding.root
     }
 
-    override fun onItemClicked(itemId: Int, view: DialogSongItemBinding) {
+    override fun onItemClicked(itemId: Long, view: DialogSongItemBinding) {
         Log.d("trndwcs", "clicked")
     }
 
-    override fun onAddClicked(position: Int, itemId: Int, view: DialogSongItemBinding) {
+    override fun onAddClicked(position: Int, itemId: Long, view: DialogSongItemBinding) {
         viewModel.addSongtoPlaylist(itemId, playlistId)
     }
 

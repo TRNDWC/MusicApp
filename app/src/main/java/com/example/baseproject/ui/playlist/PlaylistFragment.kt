@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.IBinder
@@ -18,6 +19,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -152,7 +155,6 @@ class PlaylistFragment :
         }
 
         viewModel.cPlaylist.observe(viewLifecycleOwner) { item ->
-
             if (item?.playlistImage == null) {
                 binding.playlistCover.background = resources.getDrawable(R.drawable.spotify)
                 binding.collapsingToolbar.background = GradientDrawable(
@@ -169,21 +171,44 @@ class PlaylistFragment :
                 Glide.with(requireContext())
                     .load(item.playlistImage!!.toUri())
                     .into(binding.playlistCover)
-                getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
-                    if (bitmap != null) {
-                        binding.collapsingToolbar.background = getDominantColor(bitmap)
-                        binding.apply {
-                            nestedScrollView.visibility = View.VISIBLE
-                            collapsingToolbar.visibility = View.VISIBLE
-                            btnPlaylistPlay.visibility = View.VISIBLE
-                            ProgressBar.visibility = View.GONE
+
+                try {
+                    getBitmapFromFirebaseStorage(item.playlistImage!!) { bitmap ->
+                        if (bitmap != null) {
+                            binding.collapsingToolbar.background = getDominantColor(bitmap)
+                            binding.apply {
+                                nestedScrollView.visibility = View.VISIBLE
+                                collapsingToolbar.visibility = View.VISIBLE
+                                btnPlaylistPlay.visibility = View.VISIBLE
+                                ProgressBar.visibility = View.GONE
+                            }
+                        } else {
+                            binding.apply {
+                                nestedScrollView.visibility = View.GONE
+                                collapsingToolbar.visibility = View.GONE
+                                btnPlaylistPlay.visibility = View.GONE
+                                ProgressBar.visibility = View.VISIBLE
+                            }
+
                         }
-                    } else {
-                        binding.apply {
-                            nestedScrollView.visibility = View.GONE
-                            collapsingToolbar.visibility = View.GONE
-                            btnPlaylistPlay.visibility = View.GONE
-                            ProgressBar.visibility = View.VISIBLE
+                    }
+                } catch (e: Exception) {
+                    getBitmapFromUrl(item.playlistImage!!) { bitmap ->
+                        if (bitmap != null) {
+                            binding.collapsingToolbar.background = getDominantColor(bitmap)
+                            binding.apply {
+                                nestedScrollView.visibility = View.VISIBLE
+                                collapsingToolbar.visibility = View.VISIBLE
+                                btnPlaylistPlay.visibility = View.VISIBLE
+                                ProgressBar.visibility = View.GONE
+                            }
+                        } else {
+                            binding.apply {
+                                nestedScrollView.visibility = View.GONE
+                                collapsingToolbar.visibility = View.GONE
+                                btnPlaylistPlay.visibility = View.GONE
+                                ProgressBar.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
@@ -214,6 +239,21 @@ class PlaylistFragment :
                 viewModel.image.postValue(null)
             }
         }
+    }
+
+    private fun getBitmapFromUrl(url: String, callback: (Bitmap?) -> Unit) {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(url)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    callback(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    callback(null)
+                }
+            })
     }
 
     private fun getBitmapFromFirebaseStorage(url: String, callback: (Bitmap?) -> Unit) {

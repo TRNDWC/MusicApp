@@ -10,6 +10,7 @@ import android.content.ServiceConnection
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.os.Handler
@@ -26,6 +27,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.palette.graphics.Palette
 import androidx.palette.graphics.Palette.Swatch
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.baseproject.R
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
@@ -240,20 +244,26 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
             }
 
             btnFav.setOnClickListener {
-                playlistViewModel.getPlaylistOfSong(musicService.songList[musicService.songPosition].songId)
+                musicService.songList[musicService.songPosition].songId?.let { it1 ->
+                    playlistViewModel.getPlaylistOfSong(
+                        it1
+                    )
+                }
 
                 playlistViewModel.playlists.observe(viewLifecycleOwner) {
                     data = it
                 }
 
                 data?.let {
-                    CustomPLaylistDialog(
-                        data!!.toMutableList(),
-                        musicService.songList[musicService.songPosition].songId
-                    ).show(
-                        childFragmentManager,
-                        "custom playlist"
-                    )
+                    musicService.songList[musicService.songPosition].songId?.let { it1 ->
+                        CustomPLaylistDialog(
+                            data!!.toMutableList(),
+                            it1
+                        ).show(
+                            childFragmentManager,
+                            "custom playlist"
+                        )
+                    }
                 }
             }
 
@@ -292,14 +302,24 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun bindingPlayerView(song: PlaylistSongItem) {
-        dialogBinding.songImage.setImageURI(song.songImage!!.toUri())
+        Glide.with(requireContext())
+            .load(song.songImage!!.toUri())
+            .into(dialogBinding.songImage)
         dialogBinding.songTitle.text = "${song.songTitle}"
         dialogBinding.songArtis.text = "${song.artists}"
-        val `is`: InputStream? =
-            requireActivity().contentResolver.openInputStream(song.songImage!!.toUri())
-        val bitmap = BitmapFactory.decodeStream(`is`)
-        `is`?.close()
-        dialogBinding.playBg.background = getDominantColor(bitmap)
+        try {
+            val `is`: InputStream? =
+                requireActivity().contentResolver.openInputStream(song.songImage!!.toUri())
+            val bitmap = BitmapFactory.decodeStream(`is`)
+            `is`?.close()
+            dialogBinding.playBg.background = getDominantColor(bitmap)
+        } catch (e: Exception) {
+            Log.e("HoangDH", "bindingPlayerView: ${e.message}")
+            getBitmapFromUrl(song.songImage!!) {
+                dialogBinding.playBg.background = getDominantColor(it)
+            }
+        }
+
         playlistViewModel.btnState.observe(viewLifecycleOwner) {
             when (it) {
                 0 -> {
@@ -321,6 +341,21 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
                 }
             }
         }
+    }
+
+    private fun getBitmapFromUrl(url: String, callback: (Bitmap?) -> Unit) {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(url)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    callback(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    callback(null)
+                }
+            })
     }
 
     private fun getDominantColor(bitmap: Bitmap?): GradientDrawable {
@@ -413,7 +448,7 @@ class PlayFragmentDialog() : BottomSheetDialogFragment() {
         }, 0)
     }
 
-    private fun disableButtonForOneSecond(button : ImageButton) {
+    private fun disableButtonForOneSecond(button: ImageButton) {
         button.isEnabled = false // Disable the button
 
         // Re-enable the button after 1000 milliseconds (1 second)

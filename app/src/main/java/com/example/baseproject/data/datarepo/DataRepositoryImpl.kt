@@ -56,7 +56,7 @@ class DataRepositoryImpl : DataRepository {
                 if (thisSongLink.toString().endsWith(".mp3"))
                     musicList.add(
                         PlaylistSongItem(
-                            thisId,
+                            thisId.toLong(),
                             uri.toString(),
                             thisTitle,
                             thisArtist,
