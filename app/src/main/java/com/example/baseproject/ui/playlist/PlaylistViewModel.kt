@@ -5,8 +5,10 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.baseproject.ApiService.ApiService
 import com.example.baseproject.data.MusicDatabase
 import com.example.baseproject.data.MusicRepository
+import com.example.baseproject.data.model.Album
 import com.example.baseproject.data.model.LibraryItem
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.data.model.WaitList
@@ -79,8 +81,52 @@ class PlaylistViewModel @Inject constructor(
     fun getSong(id: String) {
         if (id != "-1") {
             viewModelScope.launch(Dispatchers.IO) {
-                _songList.postValue(repository.getSongsOfPlaylist(id).songs)
+                try {
+                    _songList.postValue(repository.getSongsOfPlaylist(id).songs)
+                } catch (e: Exception) {
+                    Log.d("PlaylistViewModel", "getSong: ${e.message}")
+                }
             }
+
+            Log.d("PlaylistViewModel", "getSong: $id")
+
+            ApiService.create().getAlbum(id).enqueue(object : retrofit2.Callback<Album> {
+                override fun onResponse(
+                    call: retrofit2.Call<Album>,
+                    response: retrofit2.Response<Album>
+                ) {
+                    if (response.isSuccessful) {
+                        val tracks = response.body()!!.tracks.data
+                        val list = mutableListOf<PlaylistSongItem>()
+                        tracks.forEach {
+                            list.add(
+                                PlaylistSongItem(
+                                    songId = it.id.toLong(),
+                                    songTitle = it.title,
+                                    songImage = it.album.cover,
+                                    artists = it.artist.name,
+                                    resource = it.preview
+                                )
+                            )
+                            Log.d("PlaylistViewModel", "onResponse: ${it.album.cover}")
+                        }
+
+                        cPlaylist.postValue(
+                            LibraryItem(
+                                playlistId = id,
+                                playlistTitle = response.body()!!.title,
+                                playlistImage = response.body()!!.cover
+                            )
+                        )
+                        Log.d("PlaylistViewModel", "onResponse: ${response.body()!!.cover}")
+                        _songList.postValue(list)
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<Album>, t: Throwable) {
+                    Log.d("Chart", "onFailure: ${t.message}")
+                }
+            })
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 _songList.postValue(repository.getAllSong().first())
@@ -88,7 +134,7 @@ class PlaylistViewModel @Inject constructor(
         }
     }
 
-    fun addSongtoPlaylist(songId: Int, playlistId: String) {
+    fun addSongtoPlaylist(songId: Long, playlistId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addSongPlaylistCrossRef(SongPlaylistCrossRef(songId, playlistId))
         }
@@ -108,21 +154,22 @@ class PlaylistViewModel @Inject constructor(
             }.onCompletion {
                 isLoading.value = false
             }.onEach {
-
                 addSongList.value = addDialogFilter(it)
             }.catch {
                 messageError.value = it.message
             }.launchIn(viewModelScope)
+
+
     }
 
     private fun addDialogFilter(list: List<PlaylistSongItem>): List<PlaylistSongItem> {
-        val data = mutableListOf<Int>()
+        val data = mutableListOf<Long>()
         songList.value?.forEach {
-            data.add(it.songId)
+            data.add(it.songId!!)
         }
         val result = mutableListOf<PlaylistSongItem>()
         list.forEach {
-            if (!data.contains(it.songId)) {
+            if (it.songId !in data) {
                 result.add(it)
             }
         }
@@ -132,7 +179,7 @@ class PlaylistViewModel @Inject constructor(
     // play fragment dialog
     val tPlaylistListId = SingleLiveEvent<List<String>>()
 
-    fun getPlaylistOfSong(id: Int) {
+    fun getPlaylistOfSong(id: Long) {
         repository.getPlaylistsOfSong(id)
             .flowOn(Dispatchers.IO)
             .onStart {
@@ -156,7 +203,7 @@ class PlaylistViewModel @Inject constructor(
 
 // custom fragment
 
-    fun reset(newList: List<String>, oldList: List<String>, songId: Int) {
+    fun reset(newList: List<String>, oldList: List<String>, songId: Long) {
         newList.forEach {
             if (it !in oldList) {
                 viewModelScope.launch(Dispatchers.IO) {
@@ -188,7 +235,7 @@ class PlaylistViewModel @Inject constructor(
 
 // edit playlist
 
-    fun edit(list: List<Int>, playlistId: String, new_title: String, image: String?) {
+    fun edit(list: List<Long>, playlistId: String, new_title: String, image: String?) {
         list.forEach {
             viewModelScope.launch(Dispatchers.IO) {
                 repository.deleteSongPlaylistCrossRef(SongPlaylistCrossRef(it, playlistId))

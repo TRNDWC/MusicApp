@@ -40,4 +40,8 @@ data class LibraryItem(
             return arrayOfNulls(size)
         }
     }
+
+    override fun toString(): String {
+        return "LibraryItem(playlistId='$playlistId', playlistTitle=$playlistTitle, playlistImage=$playlistImage)"
+    }
 }

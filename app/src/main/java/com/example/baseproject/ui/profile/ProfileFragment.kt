@@ -99,6 +99,7 @@ class ProfileFragment :
                     "EditProfileDialog"
                 )
             }
+
             btnLanguage.setOnClickListener {
                 if (sharedPreferences.locale == "en") {
                     sharedPreferences.locale = "vi"

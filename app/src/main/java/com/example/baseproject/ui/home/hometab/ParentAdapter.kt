@@ -1,5 +1,6 @@
 package com.example.baseproject.ui.home.hometab
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -8,16 +9,28 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.baseproject.databinding.ParentLayoutBinding
 
 
-class ParentAdapter(private val ParentItemList: List<ParentItem>) :
+interface RecyclerViewClickListener {
+    fun onRecyclerViewItemClick(parentItem: ParentItem, childItem: ChildItem)
+}
+
+class ParentAdapter(
+    private val ParentItemList: List<ParentItem>,
+    private val listener: RecyclerViewClickListener
+) :
     RecyclerView.Adapter<ParentAdapter.ParentViewHolder>() {
 
-    var onItemClick: ((ParentItem, ChildItem) -> Unit)? = null
 
     inner class ParentViewHolder(itemView: ParentLayoutBinding) :
         RecyclerView.ViewHolder(itemView.root) {
         var ParentItemTitle: TextView = itemView.parentTitle
         val ChildRecyclerView: RecyclerView = itemView.childRcv
+
+        init {
+            itemView.apply {
+            }
+        }
     }
+
 
     private val viewPool = RecyclerView.RecycledViewPool()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParentViewHolder {
@@ -43,15 +56,11 @@ class ParentAdapter(private val ParentItemList: List<ParentItem>) :
         layoutManager.initialPrefetchItemCount = parent
             .childItemList
             .size
+
         val childItemAdapter = ChildAdapter(
-            parent
-                .childItemList
+            parent.childItemList, parent, listener
         )
 
-        childItemAdapter.onItemClick = {
-            val cItem = it
-            onItemClick?.invoke(ParentItemList[position], cItem)
-        }
 
         holder.ChildRecyclerView.layoutManager = layoutManager
         holder.ChildRecyclerView.adapter = childItemAdapter

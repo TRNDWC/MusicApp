@@ -1,24 +1,48 @@
 package com.example.baseproject.ui.home.hometab
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.baseproject.R
+import com.example.baseproject.data.model.ChartModel
+import com.example.baseproject.data.model.LibraryItem
+import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeTabBinding
 import com.example.baseproject.navigation.AppNavigation
+import com.example.baseproject.service.MusicService
+import com.example.baseproject.ui.playlist.PlaylistViewModel
 import com.example.baseproject.utils.Response
 import com.example.core.base.BaseFragment
+import com.example.core.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeTabFragment :
-    BaseFragment<FragmentHomeTabBinding, HomeTabViewModel>(R.layout.fragment_home_tab) {
+    BaseFragment<FragmentHomeTabBinding, HomeTabViewModel>(R.layout.fragment_home_tab),
+    RecyclerViewClickListener {
+    private lateinit var parentAdapter: ParentAdapter
+    private val playListViewModel: PlaylistViewModel by activityViewModels()
 
-    var mList = ParentItemList()
-    private val parentAdapter = ParentAdapter(mList)
+    private val mServiceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(componentName: ComponentName?, iBinder: IBinder?) {
+            Log.e("HoangDH", "Service Connected from PlayList")
+            val myBinder: MusicService.MyBinder = iBinder as MusicService.MyBinder
+            playListViewModel.musicService.postValue(myBinder.getMyService())
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+        }
+    }
 
     @Inject
     lateinit var appNavigation: AppNavigation
@@ -26,16 +50,12 @@ class HomeTabFragment :
     override fun getVM() = viewModel
     override fun setOnClick() {
         super.setOnClick()
-        binding.ProgressBar.visibility= android.view.View.VISIBLE
-        parentAdapter.onItemClick = { parentItem: ParentItem, childItem: ChildItem ->
-            val bundle = Bundle()
+        binding.ProgressBar.visibility = android.view.View.VISIBLE
+    }
 
-            val title = parentItem.parentItemTitle + "\n" + childItem.childItemTitle
-            bundle.putString("title", title)
-            this.findNavController()
-                .navigate(R.id.action_homeTabFragment_to_playlistFragment, bundle)
-
-        }
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
+        viewModel.getChart()
     }
 
     override fun bindingStateView() {
@@ -49,48 +69,122 @@ class HomeTabFragment :
                         .load(response.data.profilePictureUrl)
                         .into(binding.imgProfile)
                     binding.titleTv.text = getString(R.string.hello) + " ${response.data.name}"
-                    binding.ProgressBar.visibility= android.view.View.GONE
+                    binding.ProgressBar.visibility = android.view.View.GONE
                 }
             }
         }
+
+        viewModel.chartUpdate.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Response.Loading -> {}
+                is Response.Failure -> {}
+                is Response.Success -> {
+                    binding.ProgressBar.visibility = android.view.View.GONE
+                    setUpParentItemList(response.data)
+                    "data: ${response.data}".toast(requireContext())
+                }
+            }
+        }
+    }
+
+    private fun setUpParentItemList(chart: ChartModel) {
+        val parentItemList = mutableListOf<ParentItem>()
+        chart.tracks?.let {
+            parentItemList.add(it.getParentItem())
+        }
+        chart.albums?.let {
+            parentItemList.add(it.getParentItem())
+        }
+        chart.artists?.let {
+            parentItemList.add(it.getParentItem())
+        }
+        chart.playlists?.let {
+            parentItemList.add(it.getParentItem())
+        }
+        chart.podcasts?.let {
+            parentItemList.add(it.getParentItem())
+        }
+        parentAdapter = ParentAdapter(parentItemList, this)
         binding.rcvFrg.adapter = parentAdapter
         binding.rcvFrg.layoutManager = LinearLayoutManager(
             requireContext(), LinearLayoutManager.VERTICAL,
             false
         )
+        playListViewModel.firstInit.postValue(false)
     }
 
-    private fun ParentItemList(): List<ParentItem> {
-        val itemList: MutableList<ParentItem> = ArrayList()
-        val item = ParentItem(
-            "Title 1",
-            ChildItemList()
-        )
-        itemList.add(item)
-        val item1 = ParentItem(
-            "Title 2",
-            ChildItemList()
-        )
-        itemList.add(item1)
-        val item2 = ParentItem(
-            "Title 3",
-            ChildItemList()
-        )
-        itemList.add(item2)
-        val item3 = ParentItem(
-            "Title 4",
-            ChildItemList()
-        )
-        itemList.add(item3)
-        return itemList
-    }
 
-    private fun ChildItemList(): List<ChildItem> {
-        val ChildItemList: MutableList<ChildItem> = ArrayList()
-        ChildItemList.add(ChildItem("Card 1"))
-        ChildItemList.add(ChildItem("Card 2"))
-        ChildItemList.add(ChildItem("Card 3"))
-        ChildItemList.add(ChildItem("Card 4"))
-        return ChildItemList
+    override fun onRecyclerViewItemClick(parentItem: ParentItem, childItem: ChildItem) {
+        when (parentItem.parentItemTitle) {
+            "Tracks" -> {
+                val bundle = Bundle()
+                bundle.putParcelable("song_item", childItem.toPlaylistSongItem())
+                bundle.putParcelableArrayList(
+                    "song_list",
+                    arrayListOf(childItem.toPlaylistSongItem())
+                )
+                bundle.putParcelableArrayList(
+                    "shuffle_song_list",
+                    arrayListOf(childItem.toPlaylistSongItem())
+                )
+                bundle.putInt("position", 0)
+
+
+                val intent = Intent(context, MusicService::class.java)
+                intent.putExtra("song_bundle", bundle)
+
+                if (!playListViewModel.firstInit.value!!) {
+                    context?.startService(intent)
+                    context?.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE)
+                    playListViewModel.setFirstInit()
+                } else {
+                    playListViewModel.musicService.value?.reset()
+                    context?.stopService(intent)
+                    context?.startService(intent)
+                }
+            }
+
+            "Albums" -> {
+                val bundle = Bundle()
+                bundle.putParcelable("playlist", childItem.toLibraryItem())
+                findNavController().navigate(
+                    R.id.action_homeTabFragment_to_playlistFragment,
+                    bundle
+                )
+            }
+
+            "Artists" -> {
+//                val libraryItem = LibraryItem(
+//                    playlistId = childItem.data!!,
+//                    playlistTitle = childItem.childItemTitle,
+//                    playlistImage = childItem.childItemImage
+//                )
+//                Log.d("HoangDH", "Artist: $libraryItem")
+//                val bundle = Bundle()
+//                bundle.putParcelable("playlist", libraryItem)
+//                findNavController().navigate(
+//                    R.id.action_homeTabFragment_to_playlistFragment,
+//                    bundle
+//                )
+            }
+
+            "Playlists" -> {
+//                val bundle = Bundle()
+//                bundle.putParcelable("playlist", childItem)
+//                findNavController().navigate(
+//                    R.id.action_homeTabFragment_to_playlistFragment,
+//                    bundle
+//                )
+            }
+
+            "Podcasts" -> {
+//                val bundle = Bundle()
+//                bundle.putParcelable("podcast", childItem)
+//                findNavController().navigate(
+//                    R.id.action_homeTabFragment_to_playlistFragment,
+//                    bundle
+//                )
+            }
+        }
     }
 }

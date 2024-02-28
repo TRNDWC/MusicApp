@@ -38,7 +38,7 @@ class MusicRepository(private val musicDao: MusicDao) {
         return musicDao.getSongsofPlaylist(id)
     }
 
-    fun getPlaylistsOfSong(id: Int) = flow {
+    fun getPlaylistsOfSong(id: Long) = flow {
         coroutineScope {
             val playlists = async { musicDao.getPlaylistsOfSong(id) }
             emit(playlists.await())

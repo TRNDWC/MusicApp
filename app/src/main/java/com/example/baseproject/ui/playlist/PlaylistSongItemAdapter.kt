@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.PlaylistSongItemBinding
@@ -60,13 +61,10 @@ class PlaylistSongItemAdapter(
         val item = mSongList[position]
         holder.songItemTitle.text = item.songTitle
         holder.songItemArtist.text = item.artists
-        try {
-            holder.songImage.setImageURI(item.songImage?.toUri())
-        } catch (e: Exception) {
-            e.printStackTrace()
-            holder.songImage.setImageResource(R.drawable.ic_music)
-        }
-//        holder.songImage.setImageURI(item.songImage?.toUri())
+        Glide.with(holder.itemView.context)
+            .load(item.songImage)
+            .placeholder(R.drawable.ic_music)
+            .into(holder.songImage)
     }
 
     override fun getItemCount(): Int {

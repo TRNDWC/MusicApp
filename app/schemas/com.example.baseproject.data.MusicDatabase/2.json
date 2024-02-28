@@ -2,17 +2,17 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "b3bb77beddabc69fd05dd743cf213c02",
+    "identityHash": "2b3e410538f300b0e3732701e37e5e18",
     "entities": [
       {
         "tableName": "song_data",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `songImage` TEXT, `songTitle` TEXT, `artists` TEXT, `resource` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` INTEGER PRIMARY KEY AUTOINCREMENT, `songImage` TEXT, `songTitle` TEXT, `artists` TEXT, `resource` TEXT)",
         "fields": [
           {
             "fieldPath": "songId",
             "columnName": "songId",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "songImage",
@@ -111,7 +111,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b3bb77beddabc69fd05dd743cf213c02')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2b3e410538f300b0e3732701e37e5e18')"
     ]
   }
 }

@@ -15,6 +15,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavDeepLinkBuilder
+import com.bumptech.glide.Glide
 import com.example.baseproject.BaseApplication.Companion.CHANNEL_ID
 import com.example.baseproject.R
 import com.example.baseproject.container.MainActivity
@@ -54,6 +55,7 @@ class MusicService : BaseService() {
     override fun onCreate() {
         super.onCreate()
         mediaSession = MediaSessionCompat(this, "PlayerAudio")
+        Log.d("song", "onCreate")
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -61,6 +63,7 @@ class MusicService : BaseService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("song", "onStartCommand")
         if (intent?.getBundleExtra("song_bundle") != null) {
             val bundle = intent.getBundleExtra("song_bundle")
             songItem = bundle!!.getParcelable("song_item")!!
@@ -71,7 +74,8 @@ class MusicService : BaseService() {
             songLiveData.value = songItem
             songLiveData.postValue(songItem)
             musicPlayer = MediaPlayer.create(this, songItem.resource?.toUri())
-            sendNotification(songItem)
+            Log.d("song", songItem.toString())
+//            sendNotification(songItem)
             startMusic()
         }
 
@@ -89,12 +93,16 @@ class MusicService : BaseService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        musicPlayer.stop()
+        try {
+            musicPlayer.stop()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun startMusic() {
         musicPlayer.start()
-        sendNotification(songLiveData.value!!)
+//        sendNotification(songLiveData.value!!)
         _songIsPlaying.postValue(true)
         if (isLoopingPlaylist) {
             if (songPosition < songList.size - 1) {
@@ -213,13 +221,8 @@ class MusicService : BaseService() {
             notifyIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
-//
-        val picture =
-            MediaStore.Images.Media.getBitmap(this.contentResolver, songItem.songImage?.toUri())
-
         val notification = NotificationCompat.Builder(this, CHANNEL_ID).apply {
             setSmallIcon(R.drawable.ic_music)
-            setLargeIcon(picture)
             setContentTitle(songItem.songTitle)
             setContentText(songItem.artists)
             addAction(

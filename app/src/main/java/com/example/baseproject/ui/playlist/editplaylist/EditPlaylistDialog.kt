@@ -30,7 +30,7 @@ class EditPlaylistDialog(
     BottomSheetDialogFragment(),
     OnItemClickListener {
     private lateinit var dialogBinding: PlaylistEditDialogBinding
-    private val removeList: MutableList<Int> = mutableListOf()
+    private val removeList: MutableList<Long> = mutableListOf()
     private var newImage: String? = null
     private val viewModel: PlaylistViewModel by activityViewModels()
     fun getVM() = viewModel
@@ -139,7 +139,7 @@ class EditPlaylistDialog(
             }
         }
 
-    override fun onRemoveClicked(itemId: Int) {
+    override fun onRemoveClicked(itemId: Long) {
         removeList.add(itemId)
     }
 

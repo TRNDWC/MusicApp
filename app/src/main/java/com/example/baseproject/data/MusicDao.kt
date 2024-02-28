@@ -45,7 +45,7 @@ interface MusicDao {
 
     @Transaction
     @Query("SELECT * FROM song_data WHERE songId = :songId")
-    suspend fun getPlaylistsOfSong(songId: Int): SongWithPlaylists
+    suspend fun getPlaylistsOfSong(songId: Long): SongWithPlaylists
 
     @Delete
     suspend fun deleteSongPlaylistCrossRef(crossRef: SongPlaylistCrossRef)

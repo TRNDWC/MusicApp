@@ -8,22 +8,23 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "song_data")
 data class PlaylistSongItem(
     @PrimaryKey(autoGenerate = true)
-    var songId: Int,
+    var songId: Long? = null,
     var songImage: String?,
     var songTitle: String?,
     var artists: String?,
     var resource: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readInt(),
+        parcel.readValue(Long::class.java.classLoader) as? Long,
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()
-    )
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(songId)
+        parcel.writeValue(songId)
         parcel.writeString(songImage)
         parcel.writeString(songTitle)
         parcel.writeString(artists)

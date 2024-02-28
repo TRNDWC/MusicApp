@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.baseproject.R
 import com.example.baseproject.data.model.PlaylistSongItem
 import com.example.baseproject.databinding.FragmentHomeBinding
@@ -151,7 +152,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>(R.layout.f
     private fun bindingBottomMusicPlayer(songItem: PlaylistSongItem) {
         setOnClickAfterServiceInit()
         binding.playBtn.setImageResource(R.drawable.ic_pause)
-        binding.songImage.setImageURI(songItem.songImage!!.toUri())
+        Glide.with(requireContext())
+            .load(songItem.songImage)
+            .into(binding.songImage)
         binding.songTitle.text = songItem.songTitle
         binding.songArtist.text = songItem.artists
         binding.bottomMusicPlayer.visibility = View.VISIBLE
